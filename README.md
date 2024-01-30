@@ -16,45 +16,45 @@ This opens new possibilities of usecases like watching more TV channels at the s
 and reading news in other windows on one screen.
 
 # CURRENT FEATURES
-- different screen layouts for each tab
-- rolling browser windows (navigation inside of one tab)
-- left sidebar as a storage for permanently visible websites
-- browser navigation (back, forward, refresh, clear page)
-- file download
-- open link in next browser window, open link in next empty window
-- settings
-- keyboard shortcuts
-- add bookmarks (editing available only manualy in barker_browser.json)
+* different screen layouts for each tab
+* rolling browser windows (navigation inside of one tab)
+* left sidebar as a storage for permanently visible websites
+* browser navigation (back, forward, refresh, clear page)
+* file download
+* open link in next browser window, open link in next empty window
+* settings
+* keyboard shortcuts
+* add bookmarks (editing available only manualy in barker_browser.json)
 
 # NEXT STEPS
-FIRST
-- add tab context menu (rename tab, refresh whole tab, mute tab)
-- add ... button to browser header for more actions
-- add ctrl+f to ... actions
-- save page (from ... actions)
-- print page, print to pdf (from ... actions)
-- fix sidebar open link in next window
-- sidebar add bokmark
-- address completion based on URL history
+## FIRST
+* add tab context menu (rename tab, refresh whole tab, mute tab)
+* add ... button to browser header for more actions
+* add ctrl+f to ... actions
+* save page (from ... actions)
+* print page, print to pdf (from ... actions)
+* fix sidebar open link in next window
+* sidebar add bokmark
+* address completion based on URL history
 
-LATER
-- mute browser window (new icon in browser header)
-- F12 - display dev console (right bar probably)
-- packager → exe
-- reddit channel
-- show page source code (maybe not necessary when F12 is working)
-- move tabs (change tab order)
-- restore zoom browser window functionality
-- use right sidebar (for zoom and/or dev console)
-- add menu item to open all bookmarks from current menu in new tab
+## LATER
+* mute browser window (new icon in browser header)
+* F12 * display dev console (right bar probably)
+* packager → exe
+* reddit channel
+* show page source code (maybe not necessary when F12 is working)
+* move tabs (change tab order)
+* restore zoom browser window functionality
+* use right sidebar (for zoom and/or dev console)
+* add menu item to open all bookmarks from current menu in new tab
 
-IDEAS (not sure if will be implemented)
-- scrape url
-- console
-- share my views
-- download video
-- loop video
-- addons (edit page (insertText(), replaceText(), apply transformation))
+## IDEAS (not sure if will be implemented)
+* scrape url
+* console
+* share my views
+* download video
+* loop video
+* addons (edit page (insertText(), replaceText(), apply transformation))
 
 # HISTORY
 development started from 1.1.2024 
@@ -63,39 +63,39 @@ development started from 1.1.2024
 ## week1: basic UI (one address input for whole tab), create tab, delete tab, rename tab
 ## week2: context menu to zoom / unzoom window (disabled by changes in week4 :)
 ## week3: 
-- UI redesign (one address for each displayed browser window, possibility to roll windows)
-- save tabs / load addresses at startup
-- introduced browser window header (icons - back/forward, refresh, clear page)
-- open link in next window
-- find text in page (ctrl+f)
+* UI redesign (one address for each displayed browser window, possibility to roll windows)
+* save tabs / load addresses at startup
+* introduced browser window header (icons * back/forward, refresh, clear page)
+* open link in next window
+* find text in page (ctrl+f)
 ## week4: 
-- file download
-- settings
-- keyboard shortcuts to access individual tabs / layouts
-- left sidebar
+* file download
+* settings
+* keyboard shortcuts to access individual tabs / layouts
+* left sidebar
 ## week5: 
-- add bookmark
+* add bookmark
 
 # KNOWN BUGS
-- show link on hover (in statusbar)
-- address input click should select address text
-- clear page => delete also address
-- clear page + back => bug
-- address navigation does not always change
-- delete tab does not work
-- test big layouts how behave
-- test closing all tabs
-- ctrl+f in sidebar does not work
-- ctrl+f in main area works only if some browser window is clicked (activated) before
+* show link on hover (in statusbar)
+* address input click should select address text
+* clear page => delete also address
+* clear page + back => bug
+* address navigation does not always change
+* delete tab does not work
+* test big layouts how behave
+* test closing all tabs
+* ctrl+f in sidebar does not work
+* ctrl+f in main area works only if some browser window is clicked (activated) before
 
 # RECOMMENDED MINIMAL TEST SET BEFORE COMMIT
-- start app, see if tabs are loaded
-- create new tab, close tab, rename tab, switch tab
-- set address (enter + go button) in main aread but also left sidebar
-- change layouts (main window, sidebar)
-- file download (direct, indirect)
-- show preferences
-- test keyboard shortcuts (eg ctrl+1, ctrl+f1)
+* start app, see if tabs are loaded
+* create new tab, close tab, rename tab, switch tab
+* set address (enter + go button) in main aread but also left sidebar
+* change layouts (main window, sidebar)
+* file download (direct, indirect)
+* show preferences
+* test keyboard shortcuts (eg ctrl+1, ctrl+f1)
 
 # ARCHITECTURE
 
@@ -103,40 +103,41 @@ Main process is started by main.ts which creates BrowserWindow object.
 BrowserWindow loads local HTML file index_frames.html which refers to other HTML frames. 
 These other frames files contain reference to different renderers, see map below
 
-frame_topbar.html   -> renderer_topbar.js
-frame_sidebar.html  -> renderer_left.js
-frame_main.html     -> renderer_main.js
-frame_right.html    -> renderer_right.js
-frame_bottom.html   -> renderer_bottom.js
+* frame_topbar.html   -> renderer_topbar.js
+* frame_sidebar.html  -> renderer_left.js
+* frame_main.html     -> renderer_main.js
+* frame_right.html    -> renderer_right.js
+* frame_bottom.html   -> renderer_bottom.js
 
 HTML files creates fixed user interface elements but many elements are created 
 dynamicaly by javascript/typescript(tabs, browser headers) or Electron framework 
 (browser windows) during runtime as needed.
 
-Start of application looks like this
-- main.ts createMainWindow() loads HTML and starts renderer process
-- different HTML files are loaded as frames
-- when page loading is finished, renderer method onLoad is started 
+## Start of application looks like this
+* main.ts createMainWindow() loads HTML and starts renderer process
+* different HTML files are loaded as frames
+* when page loading is finished, renderer method onLoad is started 
   (last method in each renderer) and sends back info to main process 
   using Electron IPC API (see also preload.ts)
-- these info is handled in main_ipc.ts by methods like ipcMainBodyLoaded()
-- when all 5 info messages arrive, BarkerBrowser.showBrowsersIfBodyFullyLoaded() 
+* these info is handled in main_ipc.ts by methods like ipcMainBodyLoaded()
+* when all 5 info messages arrive, BarkerBrowser.showBrowsersIfBodyFullyLoaded() 
   starts method BarkerBrowser.showBrowsers which displays individual browser windows 
   both in sidebar and main area
-- BrowserView objects are responsible webpage navigation and as such are independent 
+* BrowserView objects are responsible webpage navigation and as such are independent 
   from HTML elements, therefore resize events have to handled in a such way that 
   BrowserView elements are always displayed inside of corresponding frames
 
-Why frames? 
+## Why frames? 
 I know it is controversial topic and not recommended for modern websites but  
 Electron framework does not really offer any good possibility to handle resize 
 of internal page parts like sidebar (handling it via standard Electron API is 
 very slow and not practical).
 
+## Settings
 Settings are stored in file preferences.json in app folder.
+
+## Saved history
 Saved addresses and tabs with history are stored in user folder in file barker_browser.json
-(in windows 11 user folder is folder c:\users\<user>\AppData\Roaming\Electron).
 Both files use JSON format.
 Please be careful when manualy editing these files, every missing or additional comma 
 can lead to error at application start.
-
