@@ -60,20 +60,20 @@ IDEAS (not sure if will be implemented)
 development started from 1.1.2024 
 (first concepts were done a month or two before that time but real work started in 2024)
 
-week1: basic UI (one address input for whole tab), create tab, delete tab, rename tab
-week2: context menu to zoom / unzoom window (disabled by changes in week4 :)
-week3: 
+## week1: basic UI (one address input for whole tab), create tab, delete tab, rename tab
+## week2: context menu to zoom / unzoom window (disabled by changes in week4 :)
+## week3: 
 - UI redesign (one address for each displayed browser window, possibility to roll windows)
 - save tabs / load addresses at startup
 - introduced browser window header (icons - back/forward, refresh, clear page)
 - open link in next window
 - find text in page (ctrl+f)
-week4: 
+## week4: 
 - file download
 - settings
 - keyboard shortcuts to access individual tabs / layouts
 - left sidebar
-week5: 
+## week5: 
 - add bookmark
 
 # KNOWN BUGS
