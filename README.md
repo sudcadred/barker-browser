@@ -1,5 +1,5 @@
 
-#WHY THIS PROJECT?  
+# WHY THIS PROJECT?  
 
 BARKER BROWSER is a project to make my own internet browsing more easy. 
 I am type of person who likes to open a lot of tabs and websites at once. 
@@ -15,7 +15,7 @@ Barker Browser offers more layouts (1, 2, 4, 9, 16, 25 and optionaly also more).
 This opens new possibilities of usecases like watching more TV channels at the same time 
 and reading news in other windows on one screen.
 
-#CURRENT FEATURES
+# CURRENT FEATURES
 - different screen layouts for each tab
 - rolling browser windows (navigation inside of one tab)
 - left sidebar as a storage for permanently visible websites
@@ -26,7 +26,7 @@ and reading news in other windows on one screen.
 - keyboard shortcuts
 - add bookmarks (editing available only manualy in barker_browser.json)
 
-#NEXT STEPS
+# NEXT STEPS
 FIRST
 - add tab context menu (rename tab, refresh whole tab, mute tab)
 - add ... button to browser header for more actions
@@ -56,7 +56,7 @@ IDEAS (not sure if will be implemented)
 - loop video
 - addons (edit page (insertText(), replaceText(), apply transformation))
 
-#HISTORY
+# HISTORY
 development started from 1.1.2024 
 (first concepts were done a month or two before that time but real work started in 2024)
 
@@ -76,7 +76,7 @@ week4:
 week5: 
 - add bookmark
 
-#KNOWN BUGS
+# KNOWN BUGS
 - show link on hover (in statusbar)
 - address input click should select address text
 - clear page => delete also address
@@ -88,7 +88,7 @@ week5:
 - ctrl+f in sidebar does not work
 - ctrl+f in main area works only if some browser window is clicked (activated) before
 
-#RECOMMENDED MINIMAL TEST SET BEFORE COMMIT
+# RECOMMENDED MINIMAL TEST SET BEFORE COMMIT
 - start app, see if tabs are loaded
 - create new tab, close tab, rename tab, switch tab
 - set address (enter + go button) in main aread but also left sidebar
@@ -97,7 +97,7 @@ week5:
 - show preferences
 - test keyboard shortcuts (eg ctrl+1, ctrl+f1)
 
-#ARCHITECTURE
+# ARCHITECTURE
 
 Main process is started by main.ts which creates BrowserWindow object.
 BrowserWindow loads local HTML file index_frames.html which refers to other HTML frames. 
