@@ -60,8 +60,11 @@ and reading news in other windows on one screen.
 development started from 1.1.2024 
 (first concepts were done a month or two before that time but real work started in 2024)
 
-## week1: basic UI (one address input for whole tab), create tab, delete tab, rename tab
-## week2: context menu to zoom / unzoom window (disabled by changes in week4 :)
+## week1: 
+* basic UI (one address input for whole tab)
+* create tab, delete tab, rename tab
+## week2: 
+* context menu to zoom / unzoom window (disabled by changes in week4 :)
 ## week3: 
 * UI redesign (one address for each displayed browser window, possibility to roll windows)
 * save tabs / load addresses at startup
