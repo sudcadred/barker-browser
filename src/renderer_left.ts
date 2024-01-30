@@ -95,7 +95,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     backButton.textContent = 'Back';
     backButton.id = 'backButton_sidebar' + browserNo;
     backButton.className += 'tabButton';
-    backButton.innerHTML = '<img src="./img/back1.png" width=20px height=20px />';
+    backButton.innerHTML = '<img src="../img/back1.png" width=20px height=20px />';
     divHeader.appendChild(backButton);
 
     //Back button click
@@ -109,7 +109,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     forwardButton.textContent = 'Forward';
     forwardButton.id = 'forwardButton_sidebar' + browserNo;
     forwardButton.className += 'tabButton';
-    forwardButton.innerHTML = '<img src="./img/forward1.png" width=20px height=20px />';
+    forwardButton.innerHTML = '<img src="../img/forward1.png" width=20px height=20px />';
     divHeader.appendChild(forwardButton);
 
     forwardButton.addEventListener('click', () => {
@@ -122,7 +122,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //refreshButton.textContent = 'Refresh';
     refreshButton.id = 'refreshButton_sidebar' + browserNo;
     refreshButton.className += 'tabButton';
-    refreshButton.innerHTML = '<img src="./img/refresh.png" width=20px height=20px />';
+    refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
     divHeader.appendChild(refreshButton);
 
     //Refresh button click
@@ -136,7 +136,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //clearPageButton.textContent = 'Clear page';
     clearPageButton.id = 'clearPageButton_sidebar' + browserNo;
     clearPageButton.className += 'tabButton';
-    clearPageButton.innerHTML = '<img src="./img/clear.png" width=20px height=20px />';
+    clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
     divHeader.appendChild(clearPageButton);
 
     //ClearPage button click
