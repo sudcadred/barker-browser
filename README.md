@@ -122,13 +122,13 @@ dynamicaly by javascript/typescript(tabs, browser headers) or Electron framework
 * when page loading is finished, renderer method onLoad is started 
   (last method in each renderer) and sends back info to main process 
   using Electron IPC API (see also preload.ts)
-* these info is handled in main_ipc.ts by methods like ipcMainBodyLoaded()
+* these info messages are handled in main_ipc.ts by methods like ipcMainBodyLoaded()
 * when all 5 info messages arrive, BarkerBrowser.showBrowsersIfBodyFullyLoaded() 
   starts method BarkerBrowser.showBrowsers which displays individual browser windows 
   both in sidebar and main area
-* BrowserView objects are responsible webpage navigation and as such are independent 
-  from HTML elements, therefore resize events have to handled in a such way that 
-  BrowserView elements are always displayed inside of corresponding frames
+* BrowserView objects are responsible for webpage navigation and as such are independent 
+  from HTML elements, therefore resize events have to be handled in a such way that 
+  BrowserView elements are always displayed inside of corresponding HTML frames
 
 ## Why frames? 
 I know it is controversial topic and not recommended for modern websites but  
