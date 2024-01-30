@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+   <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
+   <link href="styles.css" rel="stylesheet">
+  </head>
+ <body id="body_sidebar">
+
+    <div id="divBody_sidebar">
+
+	<div id="layoutDiv" class="layoutBar">
+    
+	<button id="previousBrowserButton_sidebar" class="layoutButton"><i class="arrow left"></i></button>
+	<button id="nextBrowserButton_sidebar" class="layoutButton"><i class="arrow right"></i></button>
+	<label id="labelBrowserRollingNumber_sidebar" class="layoutButton">1/25</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<label class="layoutButton">Rows</label>
+	<button id="layout1button_sidebar" class="layoutButton">1</button>
+	<button id="layout2button_sidebar" class="layoutButton">2</button>
+	<button id="layout3button_sidebar" class="layoutButton">3</button>
+    <script>
+    function setButtonsColor() {
+        document.getElementById('layout1button_sidebar').background='ButtonFace'
+        document.getElementById('layout2button_sidebar').background='ButtonFace'
+        document.getElementById('layout3button_sidebar').background='ButtonFace'
+    }
+    </script>
+    </div>
+    </div>  <!--divBody-->
+
+    <script type="text/javascript" src="./dist/renderer_left.js"></script>
+  </body>
+</html>

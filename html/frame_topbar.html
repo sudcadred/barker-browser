@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+   <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
+   <link href="styles.css" rel="stylesheet">
+  </head>
+ <body>
+
+<div id="divBody">
+
+	<div id="layoutDiv" class="layoutBar">
+    
+	<button id="addNewTabButton" class="tabButtonAddTab">Add new tab +</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button id="previousBrowserButton" class="layoutButton"><i class="arrow left"></i></button>
+	<button id="nextBrowserButton" class="layoutButton"><i class="arrow right"></i></button>
+	<label id="labelBrowserRollingNumber" class="layoutButton">1/25</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<label class="layoutButton">Layout</label>
+	<button id="layout1button" class="layoutButton" hidden>1</button>
+	<button id="layout2button" class="layoutButton" hidden>2</button>
+	<button id="layout4button" class="layoutButton" hidden>4</button>
+	<button id="layout9button" class="layoutButton" hidden>9</button>
+	<button id="layout16button" class="layoutButton" hidden>16</button>
+	<button id="layout25button" class="layoutButton" hidden>25</button>
+	<button id="layout36button" class="layoutButton" hidden>36</button>
+	<button id="layout49button" class="layoutButton" hidden>49</button>
+    <script>
+    function setButtonsColor() {
+        document.getElementById('layout1button').background='ButtonFace'
+        document.getElementById('layout2button').background='ButtonFace'
+        document.getElementById('layout4button').background='ButtonFace'
+        document.getElementById('layout9button').background='ButtonFace'
+        document.getElementById('layout16button').background='ButtonFace'
+        document.getElementById('layout25button').background='ButtonFace'
+        document.getElementById('layout36button').background='ButtonFace'
+        document.getElementById('layout49button').background='ButtonFace'
+    }
+    </script>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button id="saveTabsButton" class="tabButtonAddTab">Save tabs</button>
+    </div>
+    
+    
+    <div id="divShowHeaders">
+    <input id="showHeadersCheckbox" type="checkbox" name="showHeadersCheckbox" checked class="layoutButton">
+    <label for="showHeadersCheckbox" class="layoutButton">Show addressbar</label>
+    </div>
+
+    <div id="searchPanel" hidden>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       <input id="searchPanelInput" type="text" placeholder="type word to search...">
+       <button id="searchPanelSearch">Find in Text</button>
+       <button id="searchPanelClearSearch">Clear Selection</button>
+    </div>
+
+
+	<!-- </div>  divLayout-->
+
+    <div id="tabDiv" class="tabBar">
+    <div id="renameTabDiv" style="display: none;">
+       <input type="text" id="renameTabInput" name="renameTabInput">
+       <button onclick="renameTab()">Rename</button>
+       <button onclick="hideRenameTab()">Cancel</button>
+    </div>
+    </div>  <!-- tabDiv -->
+
+	</div>  <!--divBody-->
+
+  <script type="text/javascript" src="./dist/renderer_topbar.js"></script>
+
+  </body>
+</html>

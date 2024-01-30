@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+   <head>
+   </head>
+
+ <!-- since drag and drop support in Electron practicaly does not exist (using IPC is extremely slow),
+      frames are used as a workaroud here to allow user-resizable panels
+  -->
+ 
+ <frameset id="main_frame" rows="*, 20px"> 
+        <frameset cols="30%,*,2%"> 
+            <frame id="frame_sidebar" src="frame_sidebar.html" name="frame_sidebar">
+            <frameset rows="100px,*"> 
+                <frame id="frame_topbar" src="frame_topbar.html" name="frame_topbar">
+                <frame id="frame_main" src="frame_main.html" name="frame_main"> 
+            </frameset> 
+            <frame id="frame_right" src="frame_right.html" name="frame_right"> 
+        </frameset>
+        <frame id="frame_bottom" src="frame_bottom.html" name="frame_bottom">
+    </frameset>
+</html>
