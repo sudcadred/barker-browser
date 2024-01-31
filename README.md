@@ -27,18 +27,19 @@ and reading news in other windows on one screen.
 * add bookmarks (editing available only manualy in barker_browser.json)
 
 # NEXT STEPS
-## FIRST
-* add tab context menu (rename tab, refresh whole tab, mute tab)
-* add ... button to browser header for more actions
-* add ctrl+f to ... actions
-* save page (from ... actions)
-* print page, print to pdf (from ... actions)
+
+## NOW
+... actions
+
+## NEXT
+* fix 'find in page'
 * fix sidebar open link in next window
-* sidebar add bokmark
+* sidebar add bookmark
 * address completion based on URL history
+* add tab context menu (rename tab, refresh whole tab, mute tab)
 
 ## LATER
-* mute browser window (new icon in browser header)
+* muted browser window indication
 * F12 * display dev console (right bar probably)
 * packager → exe
 * reddit channel
@@ -77,7 +78,8 @@ development started from 1.1.2024
 * keyboard shortcuts to access individual tabs / layouts
 * left sidebar
 ## week5: 
-* add bookmark
+* bookmarks
+* 'more actions' button in browser header (mute, unmute, find in, save, print, bookmark)
 
 # KNOWN BUGS
 * show link on hover (in statusbar)
@@ -144,3 +146,10 @@ Saved addresses and tabs with history are stored in user folder in file barker_b
 Both files use JSON format.
 Please be careful when manualy editing these files, every missing or additional comma 
 can lead to error at application start.
+
+
+# HOW TO RUN APP FROM SOURCE CODE
+
+* git clone https://github.com/sudcadred/barker-browser
+* npm install
+* npm start

@@ -52,7 +52,7 @@ static activeBrowserView: Electron.BrowserView = null;
 static showBrowserHeaders = true;
 static browserHeaderButtonsString: string;
 static actualTabId = 'NewTab1';
-    
+
 //ctor    
 constructor (mainWindow: Electron.BrowserWindow) {
     BarkerBrowser.mainWindow = mainWindow;
@@ -158,7 +158,7 @@ static addToBookmarks(uri: string) {
     }
     BarkerData.addBookmark('Bookmarks', BarkerUtils.getNameFromUrl(uri), uri);
     BarkerSaveLoadState.saveBookmark('Bookmarks', uri);
-    BarkerMenu.createMainMenu();
+    BarkerMenu.createMainMenu(BarkerBrowser.mainWindow);
 }
 
 static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean) {

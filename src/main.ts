@@ -4,7 +4,6 @@ import { BarkerUtils } from './main_utils';
 import { BarkerData } from "./main_data";
 import { BarkerBrowser } from "./main_browser";
 import { BarkerSettings } from "./main_settings";
-import { BarkerMenu } from "./main_menu";
 import { BarkerDownload } from "./main_download";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerKeyboardShortcuts } from "./main_keyboardShortcuts";

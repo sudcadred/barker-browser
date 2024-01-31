@@ -63,6 +63,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     reloadPage_sidebar: (browserNo: number) => { ipcRenderer.send('reload-page-sidebar', browserNo) },
     reloadTab_sidebar: (tabId: string) => { ipcRenderer.send('reload-tab-sidebar', tabId) },
     clearPage_sidebar: (browserNo: number) => { ipcRenderer.send('clear-page-sidebar', browserNo) },
+    showThreeDotsMenu: (browserNo:number) => {ipcRenderer.send('show-three-dots-menu', browserNo) },
 
     //startup events
     topBodyLoaded: (height: number) => { ipcRenderer.send('top-body-loaded', height) },

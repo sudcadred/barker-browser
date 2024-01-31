@@ -71,20 +71,11 @@ function loadURL(browserNo: number, uri: string) {
 };
 
 (windowMain as any).electronAPI.onCreateBrowserHeader((browserNo: number, left: number, top: number, browser_width: number) => {
-    //alert('onCreateBrowserHeader() browserNo=' + browserNo + ", left=" + left + ", top=" + top+", browser_width="+browser_width);
 
     var divHeader = document.createElement('div');
     divHeader.id =  'divBrowserHeader' + browserNo;
-    //divHeader.style.cssText = 'display:inline-block;width:300px;white-space:nowrap; overflow-x: scroll;position:absolute;left:' + left + 'px;top:' + top + 'px;opacity:0.3;z-index:100;background:#000; border: 1px solid black;';
     divHeader.style.cssText = 'display:inline-block;width:'+browser_width+'px;white-space:nowrap; overflow-x: scroll;position:absolute;left:' + left + 'px;top:' + top + 'px;opacity:0.3;z-index:100;background:#000; border: 1px solid black; cursor:pointer;';
     document.body.appendChild(divHeader);
-
-    //create label 'Window no:'
-    //var labelWindowNo = document.createElement('label');
-    //labelWindowNo.innerHTML = browserNo.toString();
-    //labelWindowNo.id = 'labelWindowNo' + browserNo;
-    //labelWindowNo.className += 'tabButton';
-    //divHeader.appendChild(labelWindowNo);
 
     //create back button
     const backButton = document.createElement('button');
@@ -126,7 +117,6 @@ function loadURL(browserNo: number, uri: string) {
 
     //create refresh button
     const refreshButton = document.createElement('button');
-    //refreshButton.textContent = 'Refresh';
     refreshButton.id = 'refreshButton' + browserNo;
     refreshButton.className += 'tabButton';
     refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
@@ -146,7 +136,6 @@ function loadURL(browserNo: number, uri: string) {
 
     //create ClearPage button
     const clearPageButton = document.createElement('button');
-    //clearPageButton.textContent = 'Clear page';
     clearPageButton.id = 'clearPageButton' + browserNo;
     clearPageButton.className += 'tabButton';
     clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
@@ -164,13 +153,6 @@ function loadURL(browserNo: number, uri: string) {
         clearPageButton.style.display = 'none';
     }
 
-    //create label 'URL address'
-    //var labelUrlAddress = document.createElement('label');
-    //labelUrlAddress.innerHTML = "URL";
-    //labelUrlAddress.id = 'labelUrlAddress' + browserNo;
-    //labelUrlAddress.className += 'tabButton';
-    //divHeader.appendChild(labelUrlAddress);
-
     //create input for 'URL address'
     var inputUrlAddress = document.createElement('input');
     inputUrlAddress.id = 'inputUrlAddress' + browserNo;
@@ -185,24 +167,44 @@ function loadURL(browserNo: number, uri: string) {
     goButton.className += 'tabButton';
     divHeader.appendChild(goButton);
 
-    //----------------------------
-    // ---- click events ---------
-    //----------------------------
-
     function setUrl(event:KeyboardEvent) {
         if(event.key === 'Enter') {
             const address = inputUrlAddress.value;
             loadURL(browserNo, address);
         }
     }
-
     //Go button click
     goButton.addEventListener('click', () => {
       console.log('Go to address');
       const address = inputUrlAddress.value;
       loadURL(browserNo, address);
     });
+
+    //create ... button
+    const threeDotsButton = document.createElement('button');
+    threeDotsButton.id = 'threeDotsButton' + browserNo;
+    threeDotsButton.className += 'tabButton';
+    threeDotsButton.innerHTML = '<img src="../img/dots.png" width=20px height=20px />';
+    divHeader.appendChild(threeDotsButton);
+
+    //... dots button click
+    threeDotsButton.addEventListener('click', () => {
+        showThreeDotsMenu(browserNo);
+      });
+  
+    if (browserHeader_refresh) {
+    threeDotsButton.style.display = 'inline-block';
+    } else {
+    threeDotsButton.style.display = 'none';
+    }
+  
+  
 });
+
+function showThreeDotsMenu(browserNo: number) {
+    //alert('left='+left+', top='+top);
+    (windowMain as any).electronAPI.showThreeDotsMenu(browserNo)
+}
 
 (windowMain as any).electronAPI.onDeleteAllBrowserHeaders(() => {
     for (let i=1; i<=108; i++) {
@@ -214,7 +216,6 @@ function loadURL(browserNo: number, uri: string) {
 (windowMain as any).electronAPI.onUpdateUrl((browserNo: number, uri: string) => {
     const urlInput = document.getElementById('inputUrlAddress' + browserNo);
     if (urlInput) {
-        //alert('onUpdateUrl(): browserNo='+browserNo+', uri='+uri+', urlInput='+urlInput);
         (urlInput as any).value= uri;
     }
 });

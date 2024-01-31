@@ -111,7 +111,7 @@ static loadTab(tabIdNo: number, tabName: string, tabLayout: number) {
 static loadTabsFromFile() {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTabsFromFile()");
     BarkerSaveLoadState.loadBookmarks();
-    BarkerMenu.createMainMenu();
+    BarkerMenu.createMainMenu(BarkerSaveLoadState.mainWindow);
 
     //load sidebar
     BarkerData.setSidebarLayoutNo(Number(BarkerSaveLoadState.store.get('sidebar.layout')));

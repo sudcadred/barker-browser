@@ -6,6 +6,7 @@ import { BarkerSettings } from "./main_settings";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerZoom } from "./main_zoom";
 import { BarkerSideBar } from "./main_sidebar";
+import { BarkerMenu } from "./main_menu";
 
 /* this class handles IPC (inter-process communication) between renderer and main process 
    see method registerIpcMethods() at the end for complete list of methods
@@ -233,6 +234,10 @@ static ipcClearPage(event: IpcMainEvent, browserNo: number) {
     }
 }
 
+static ipcShowThreeDotsMenu(event: IpcMainEvent, browserNo: number) {
+    BarkerMenu.createThreeDotsMenu(browserNo).popup();
+}
+
 //---sidebar
 static ipcGoBackSidebar (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
@@ -361,6 +366,7 @@ static registerIpcMethods() {
     ipcMain.on('reload-page-sidebar', BarkerIpc.ipcReloadPageSidebar);
     ipcMain.on('reload-tab-sidebar', BarkerIpc.ipcReloadTabSidebar);
     ipcMain.on('clear-page-sidebar', BarkerIpc.ipcClearPageSidebar);
+    ipcMain.on('show-three-dots-menu', BarkerIpc.ipcShowThreeDotsMenu);
     
     ipcMain.on('main-body-loaded', BarkerIpc.ipcMainBodyLoaded);
     ipcMain.on('top-body-loaded', BarkerIpc.ipcTopBodyLoaded);
