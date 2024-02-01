@@ -112,6 +112,7 @@ static loadTabsFromFile() {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTabsFromFile()");
     BarkerSaveLoadState.loadBookmarks();
     BarkerMenu.createMainMenu(BarkerSaveLoadState.mainWindow);
+    BarkerSaveLoadState.loadTypedAddressesIntoData();
 
     //load sidebar
     BarkerData.setSidebarLayoutNo(Number(BarkerSaveLoadState.store.get('sidebar.layout')));
@@ -156,6 +157,28 @@ static loadBookmarks() {
             let bookmarkName = BarkerSaveLoadState.store.get('bookmarks.addresses.'+i+'.name');
             BarkerData.addBookmarkTopic(category);
             BarkerData.addBookmark(category, bookmarkName, bookmarkUri);
+        }
+    }
+}
+
+static saveTypedAddress(uri: string) {
+    var typedAddresses_count = BarkerSaveLoadState.store.get('typedAddresses_count');
+    if (!typedAddresses_count) typedAddresses_count = 0;
+    const new_count = Number(typedAddresses_count)+1;
+    BarkerSaveLoadState.store.set('typedAddresses_count', new_count);
+    BarkerSaveLoadState.store.set('typedAddresses.'+new_count, uri);
+    BarkerData.addTypedAddress(uri);
+}
+
+static loadTypedAddressesIntoData() {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTypedAddressesIntoData()");
+    var typedAddresses_count = BarkerSaveLoadState.store.get('typedAddresses_count');
+    for (let i=1; i<= Number(typedAddresses_count); i++) {
+        let uri = BarkerSaveLoadState.store.get('typedAddresses.'+i);
+        if (uri) {
+            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTypedAddressesIntoData(): loading uri="+uri);
+            BarkerData.addTypedAddress(uri);
+            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTypedAddressesIntoData(): BarkerData.getTypedAddresses.length="+BarkerData.getTypedAddresses.length);
         }
     }
 }

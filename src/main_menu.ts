@@ -95,4 +95,13 @@ static createThreeDotsMenu(browserNo: number): Menu {
     return menu;
 }
 
+static createUriSimilarityMenu(browserNo: number, uri: string) {
+    const template: Electron.MenuItemConstructorOptions[]  = [
+        {label: uri,
+         click: () => { BarkerBrowser.loadUrlInActualTab(browserNo, uri); }},
+    ];
+    const menu = Menu.buildFromTemplate(template);
+    return menu;
+}
+
 }

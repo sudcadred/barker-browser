@@ -29,20 +29,22 @@ and reading news in other windows on one screen.
 # NEXT STEPS
 
 ## NOW
-... actions
+* address completion based on URL history
+* alt+f4 leads now to crash:)
 
 ## NEXT
+* fix URL name in address during app startup
+* change file names (preferences.json)
+* add tab context menu (rename tab, refresh whole tab, mute tab)
 * fix 'find in page'
 * fix sidebar open link in next window
 * sidebar add bookmark
-* address completion based on URL history
-* add tab context menu (rename tab, refresh whole tab, mute tab)
 
 ## LATER
+* what happens if BarkerBrowser.showBrowsersIfBodyFullyLoaded() is called more times?
 * muted browser window indication
 * F12 * display dev console (right bar probably)
 * packager → exe
-* reddit channel
 * show page source code (maybe not necessary when F12 is working)
 * move tabs (change tab order)
 * restore zoom browser window functionality

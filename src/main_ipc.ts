@@ -238,6 +238,15 @@ static ipcShowThreeDotsMenu(event: IpcMainEvent, browserNo: number) {
     BarkerMenu.createThreeDotsMenu(browserNo).popup();
 }
 
+static addressKeyPressed(event: IpcMainEvent, browserNo: number, inputUrlAddress: string) {
+    const uri = BarkerUtils.getMostSimilarTypedAddress(inputUrlAddress);
+    if (uri) {
+        //BarkerMenu.createUriSimilarityMenu(browserNo, uri).popup();
+        BarkerBrowser.showMatchedAddresses(uri, browserNo);
+        //BarkerBrowser.mainWindow.webContents.send('focus-addressbar', BarkerData.getBrowserHeaderString());
+    }
+}
+
 //---sidebar
 static ipcGoBackSidebar (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
@@ -367,6 +376,7 @@ static registerIpcMethods() {
     ipcMain.on('reload-tab-sidebar', BarkerIpc.ipcReloadTabSidebar);
     ipcMain.on('clear-page-sidebar', BarkerIpc.ipcClearPageSidebar);
     ipcMain.on('show-three-dots-menu', BarkerIpc.ipcShowThreeDotsMenu);
+    ipcMain.on('address-key-pressed', BarkerIpc.addressKeyPressed)
     
     ipcMain.on('main-body-loaded', BarkerIpc.ipcMainBodyLoaded);
     ipcMain.on('top-body-loaded', BarkerIpc.ipcTopBodyLoaded);

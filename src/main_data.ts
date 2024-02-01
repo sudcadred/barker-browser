@@ -18,6 +18,7 @@ static mapTabsToBrowserOffset = new Map<string, number>;
 static mapsDownloadItemsToProgress = new Map<string, number>;
 static bookmarkTopics: string[] = [];
 static bookmarks = [{'category': '', 'name': '', 'uri': ''}];
+static typedAddresses: string[] = [];
 
 static sidebarAddresses: string[] = [];
 static sidebarLayoutNo: number;
@@ -109,6 +110,8 @@ static getLayoutString() { return BarkerData.layoutString;}
 static setLayoutString(layoutString: string) { BarkerData.layoutString = layoutString;}
 static getBrowserHeaderString() { return BarkerData.browserHeaderButtonsString;}
 static setBrowserHeaderString(s: string) { BarkerData.browserHeaderButtonsString = s;}
+static getTypedAddresses() {BarkerData.typedAddresses;}
+static getTypedAddress(i: number): string {return BarkerData.typedAddresses[i];}
 
 //other methods
 static bookmarkTopicExists(category: string): boolean { 
@@ -126,6 +129,23 @@ static addBookmarkTopic(category: string) {
 
 static addBookmark(category: string, name: string, uri: string) {
    BarkerData.bookmarks.push({'category': category, 'name': name, 'uri': uri});
+}
+
+static uriAlreadyAdded(uri: string): boolean {
+   for (let i=0; i < BarkerData.typedAddresses.length; i++) {
+      if (uri == BarkerData.typedAddresses[i]) {
+         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "uriAlreadyAdded(): uri="+uri);
+         return true;
+      }
+   }
+   return false;
+}
+
+static addTypedAddress(uri: string) {
+   BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "addTypedAddress(): uri="+uri);
+   if (!BarkerData.uriAlreadyAdded(uri)) {
+      BarkerData.typedAddresses.push(uri);
+   }
 }
 
 }

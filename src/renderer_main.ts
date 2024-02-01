@@ -171,6 +171,8 @@ function loadURL(browserNo: number, uri: string) {
         if(event.key === 'Enter') {
             const address = inputUrlAddress.value;
             loadURL(browserNo, address);
+        } else {
+            (windowMain as any).electronAPI.addressKeyPressed(browserNo, inputUrlAddress.value);
         }
     }
     //Go button click
@@ -217,6 +219,13 @@ function showThreeDotsMenu(browserNo: number) {
     const urlInput = document.getElementById('inputUrlAddress' + browserNo);
     if (urlInput) {
         (urlInput as any).value= uri;
+    }
+});
+
+(windowMain as any).electronAPI.onCtrlL((browserNo: number) => {
+    const addressBar = document.getElementById('inputUrlAddress' + browserNo);
+    if (addressBar) {
+        addressBar.focus();
     }
 });
 
