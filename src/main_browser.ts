@@ -189,7 +189,7 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
 
     if (firstBrowser) {
         let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-        let firstBrowserNo = browserViews.length;
+        let firstBrowserNo = browserViews.length - 1;
         BarkerData.setTabFirstBrowserViewNo(tabId, firstBrowserNo);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserView(): _mapTabsToFirstBrowserViewNo sets tabId=" + tabId + ", firstBrowserViewNo="+firstBrowserNo);
     }
@@ -232,37 +232,27 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
             {
                 label: 'Zoom',
                 visible: !BarkerZoom.isZoomed(tabNo, browserNo),
-                click: () => {
-                    BarkerZoom.zoomBrowserView(browserNo);
-                }
+                click: () => {BarkerZoom.zoomBrowserView(browserNo);}
             },
             {
                 label: 'Unzoom',
                 visible: BarkerZoom.isZoomed(tabNo, browserNo),
-                click: () => {
-                    BarkerZoom.unzoomBrowserView();
-                }
+                click: () => {BarkerZoom.unzoomBrowserView(); }
             },*/         
             {
                 label: 'Download',
                 visible: ((parameters as any).linkURL),
-                click: () => {
-                    BarkerDownload.downloadFile((parameters as any).linkURL);
-                }
+                click: () => { BarkerDownload.downloadFile((parameters as any).linkURL); }
             },
             {
                 label: 'Bookmark link',
                 visible: ((parameters as any).linkURL),
-                click: () => {
-                    BarkerBrowser.addToBookmarks((parameters as any).linkURL);
-                }
+                click: () => { BarkerBrowser.addToBookmarks((parameters as any).linkURL); }
             },
             {
                 label: 'Bookmark actual address',
                 visible: true,
-                click: () => {
-                    BarkerBrowser.addToBookmarks(browser.webContents.getURL());
-                }
+                click: () => { BarkerBrowser.addToBookmarks(browser.webContents.getURL());}
             },
             ]
     });
@@ -273,10 +263,7 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
             event.preventDefault();
             BarkerData.setActiveBrowserView(browser);
             BarkerBrowser.mainWindow.webContents.send('show-searchbar');
-        }/* else if (input.control && input.key.toLowerCase() === 'p') {      //ctrl+p
-            event.preventDefault();
-            showPreferences();
-        } */else if ((input.control && input.key.toLowerCase() === 'r') || (input.key === 'F5')) {    //ctrl+r/F5
+        } else if ((input.control && input.key.toLowerCase() === 'r') || (input.key === 'F5')) {    //ctrl+r/F5
             browser.webContents.reloadIgnoringCache();
         }
     })
@@ -346,15 +333,14 @@ static showBrowsers_showSidebar() {
     const sidebar_browser_height = Math.floor((maxHeight-BarkerData.getFrameTopBarHeight()-BarkerData.getFrameBottomBarHeight())/ sidebar_browser_rows);
     var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), " showBrowsers(): firstBrowserViewNo="+firstBrowserViewNo+", _left="+_left+", _top="+_top+", sidebar_browser_rows="+sidebar_browser_rows+", sidebar_browser_width="+sidebar_browser_width+", sidebar_browser_height="+sidebar_browser_height);
-    let browserNo = 0;
     for (var i = 1; i<= sidebar_browser_rows; i++) {
+        const browserViewNo = BarkerData.getSidebarRollingWindowOffset()+firstBrowserViewNo+i-1;
         if (BarkerSettings.getShowBrowserHeaders()) {
-            BarkerSideBar.showSidebarBrowserHeader(BarkerData.getSidebarRollingWindowOffset()+browserNo+1, _left, _top, sidebar_browser_width, BarkerSettings.getBrowserHeaderHeight());
-            BarkerBrowser.showBrowserView(BarkerData.getSidebarRollingWindowOffset()+firstBrowserViewNo+browserNo+1, _left, _top+BarkerSettings.getBrowserHeaderHeight(), sidebar_browser_width, sidebar_browser_height-BarkerSettings.getBrowserHeaderHeight());
+            BarkerSideBar.showSidebarBrowserHeader(BarkerData.getSidebarRollingWindowOffset()+i, _left, _top, sidebar_browser_width, BarkerSettings.getBrowserHeaderHeight());
+            BarkerBrowser.showBrowserView(browserViewNo, _left, _top+BarkerSettings.getBrowserHeaderHeight(), sidebar_browser_width, sidebar_browser_height-BarkerSettings.getBrowserHeaderHeight());
         } else {
-            BarkerBrowser.showBrowserView(BarkerData.getSidebarRollingWindowOffset()+firstBrowserViewNo+browserNo+1, _left, _top, sidebar_browser_width, sidebar_browser_height);
+            BarkerBrowser.showBrowserView(browserViewNo, _left, _top, sidebar_browser_width, sidebar_browser_height);
         }
-        browserNo++;
         _top+= sidebar_browser_height;
     }
 }
@@ -424,7 +410,7 @@ static showBrowsers_showMainArea(windowsCnt: number, tabId: string, offset: numb
     for (var i = 1; i<= windowsCnt; i++) {
         BarkerBrowser.calculateBrowserWindowPosition_mainArea(windowsCnt, i);
         BarkerBrowser.showBrowserHeader(offset+i, BarkerBrowser.browserHeaderPosition.x, BarkerBrowser.browserHeaderPosition.y, BarkerBrowser.browserHeaderPosition.width); //position relative in frame
-        const browserViewNo = offset+firstBrowserViewNo+i-2;
+        const browserViewNo = offset+firstBrowserViewNo+i-1;
         BarkerBrowser.showBrowserView(browserViewNo, BarkerBrowser.browserWindowPosition.x, BarkerBrowser.browserWindowPosition.y, BarkerBrowser.browserWindowPosition.width, BarkerBrowser.browserWindowPosition.height);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): browserViewNo="+browserViewNo+", x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
     }
@@ -439,7 +425,7 @@ static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
     /*
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
     let emptyZoomWindow = browserViews[firstBrowserViewNo-3];
-    let zoomedWindowOnOriginalPosition = browserViews[firstBrowserViewNo-2];
+    let zoomedWindowOnOriginalPosition = browserViews[firstBrowserViewNo];
     const zoomedBrowserView = BarkerData.getZoomedBrowserViewNo(BarkerBrowser.actualTabId);
     if (zoomedBrowserView) {
         emptyZoomWindow.setBounds({ x: 0, y: 0, width: 0, height: 0 });
@@ -473,12 +459,12 @@ static loadUrlInActualTab(browserNo: number, uri: string) {
 
 static loadURL (tabIdName: string, browserNo: number, uri: string) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserNo="+browserNo+", uri="+uri);
-    if (browserNo<1 || browserNo>BarkerSettings.getMaxBrowserViewsPerTab()) {
+    if (browserNo>BarkerSettings.getMaxBrowserViewsPerTab()) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL() ERROR - browserNo not valid! browserNo="+browserNo);
-        browserNo = 1;
+        return;
     }
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdName) - 2;
+    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdName);
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): BarkerBrowser.actualTabId="+BarkerBrowser.actualTabId+", firstBrowserNo="+firstBrowserNo);
     
     var uriWithProtocol = uri;
@@ -486,8 +472,8 @@ static loadURL (tabIdName: string, browserNo: number, uri: string) {
         uriWithProtocol = 'https://' + uri;
     }    
 
+    const browserViewNo = firstBrowserNo+browserNo-1;   //browserNo starts from 1
     if (isUrlHttp(uriWithProtocol)) {
-        const browserViewNo = firstBrowserNo+browserNo;
         browserViews[browserViewNo].webContents.loadURL(uriWithProtocol);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserViewNo="+browserViewNo);
         
@@ -495,7 +481,7 @@ static loadURL (tabIdName: string, browserNo: number, uri: string) {
             BarkerSaveLoadState.saveTypedAddress(uriWithProtocol);
         }
     } else {
-        browserViews[firstBrowserNo+browserNo].webContents.loadURL('https://www.google.com/search?q='+uri);
+        browserViews[browserViewNo].webContents.loadURL('https://www.google.com/search?q='+uri);
     }
 
     const addresses = BarkerData.getTabAddresses(tabIdName);    //get map of addresses for current tab
@@ -540,7 +526,7 @@ static getMatchedAddressBarBounds(browserNo: number) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getMatchedAddressBarBounds(): browserNo="+browserNo);
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-2];
+    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo];
     if (browser) {
         const currentBounds = browser.getBounds();
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getMatchedAddressBarBounds(): x="+currentBounds.x+", y="+currentBounds.y+", width="+currentBounds.width+", height="+currentBounds.height);

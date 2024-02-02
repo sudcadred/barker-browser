@@ -63,12 +63,14 @@ static saveCurrentTabs() {
 static loadAddressesFromFile() {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile()");
     const tabCount = BarkerSaveLoadState.store.get('tabcount');
+    const sidebarCount = BarkerSaveLoadState.store.get('sidebar.addresses_count');
     
     //sidebar
-    for (let i=0; i<BarkerData.getSidebarAddresses().length; i++) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): i="+i+", _sidebarAddresses[i]="+BarkerData.getSidebarUrl(i));
-        if (BarkerData.getSidebarUrl(i) != '') {
-            BarkerSideBar.loadURLSidebar(i+1, BarkerData.getSidebarUrl(i));
+    for (let i=1; i<=sidebarCount; i++) {
+        let sideBarAddress = BarkerSaveLoadState.store.get('sidebar.addresses.'+i);
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): i="+i+", sideBarAddress="+sideBarAddress);
+        if (sideBarAddress) {
+            BarkerSideBar.loadURLSidebar(i, sideBarAddress);
         }
     }
 
@@ -113,18 +115,20 @@ static loadTabsFromFile() {
     BarkerSaveLoadState.loadBookmarks();
     BarkerMenu.createMainMenu(BarkerSaveLoadState.mainWindow);
     BarkerSaveLoadState.loadTypedAddressesIntoData();
-
-    //load sidebar
     BarkerData.setSidebarLayoutNo(Number(BarkerSaveLoadState.store.get('sidebar.layout')));
+
+    /*
+    //load sidebar
     for (let j=1; j<=BarkerSettings.getMaxBrowserViewsPerTab(); j++) {
         let url = BarkerSaveLoadState.store.get('sidebar.addresses.'+j);
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTabsFromFile(): j="+j+", url="+url);
+        const browserNo = BarkerData.getFirstBrowserViewNo_sidebar() + j -1;
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadTabsFromFile(): j="+j+", sidebar url="+url+", browserNo="+browserNo);
         if (url) {
-            BarkerData.setSidebarUrl(j-1, url);
+            BarkerData.setSidebarUrl(browserNo, url);
         } else {
-            BarkerData.setSidebarUrl(j-1, '');
+            BarkerData.setSidebarUrl(browserNo, '');
         }
-    }
+    }*/
     
     //load tabs
     const tabCount = BarkerSaveLoadState.store.get('tabcount');

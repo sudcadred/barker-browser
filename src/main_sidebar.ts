@@ -5,6 +5,7 @@ import contextMenu from "electron-context-menu";
 import { BarkerData } from "./main_data";
 import { BarkerDownload } from "./main_download";
 import isUrlHttp from 'is-url-http';
+import { BarkerBrowser } from "./main_browser";
 
 /* This class handles left sidebar creation (displayed in BarkerBrowser.showBrowser())
 */
@@ -68,7 +69,7 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
 
     if (firstBrowser) {
         let browserViews = BarkerSideBar.mainWindow.getBrowserViews();
-        let firstBrowserNo = browserViews.length;
+        let firstBrowserNo = browserViews.length -1;
         BarkerData.setFirstBrowserViewNo_sidebar(firstBrowserNo);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createSideBarBrowserView(): _firstBrowserViewNo_sidebar sets firstBrowserNo="+firstBrowserNo);
     }
@@ -152,19 +153,20 @@ static loadURLSidebar (browserNo: number, uri: string) {
     }
     let browserViews = BarkerSideBar.mainWindow.getBrowserViews();
     const firstBrowserNo = BarkerData.firstBrowserViewNo_sidebar;
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURLSidebar(): firstBrowserNo="+firstBrowserNo);
     
     var uriWithProtocol = uri;
     if (!/^https?:\/\//i.test(uri)) {
         uriWithProtocol = 'https://' + uri;
     }    
 
+    const browserViewNo = firstBrowserNo+browserNo-1;
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURLSidebar(): firstBrowserNo="+firstBrowserNo+", browserViewNo="+browserViewNo);
     if (isUrlHttp(uriWithProtocol)) {
-        browserViews[firstBrowserNo+browserNo].webContents.loadURL(uriWithProtocol);
-        BarkerData.setSidebarUrl(browserNo-1, uriWithProtocol);
+        browserViews[browserViewNo].webContents.loadURL(uriWithProtocol);
+        BarkerData.setSidebarUrl(browserNo, uriWithProtocol);
     } else {
-        browserViews[firstBrowserNo+browserNo].webContents.loadURL('https://www.google.com/search?q='+uri);
-        BarkerData.setSidebarUrl(browserNo-1, uri);
+        browserViews[browserViewNo].webContents.loadURL('https://www.google.com/search?q='+uri);
+        BarkerData.setSidebarUrl(browserNo, uri);
     }
 }
 

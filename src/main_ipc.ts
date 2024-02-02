@@ -36,7 +36,7 @@ static ipcChangeSidebarLayout (event: IpcMainEvent, cnt: number) {
 
 static ipcLoadURL (event: IpcMainEvent, browserNo: number, address: string) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadURL(): browserNo="+browserNo+", address="+address);
-    BarkerBrowser.loadUrlInActualTab(browserNo, address);
+    BarkerBrowser.loadUrlInActualTab(browserNo-1, address);
 }
 
 static ipcLoadURLSidebar (event: IpcMainEvent, browserNo: number, address: string) {
@@ -62,7 +62,7 @@ static ipcChangeTab (event: IpcMainEvent, tabId: string) {
     BarkerData.setActualTabId(tabId);
     BarkerIpc.mainWindow.webContents.send('set-layout', layout);
     BarkerIpc.mainWindow.webContents.send('set-next-tab-name', BarkerBrowser.getNextTabId());
-    BarkerBrowser.showBrowsers(layout, tabId, BarkerData.getTabBrowserOffset(BarkerData.getActualTabId()));
+    BarkerBrowser.showBrowsers(layout, tabId, BarkerData.getTabBrowserOffset(tabId));
 }
 
 static ipcDeleteTab(tabNo: number) {
