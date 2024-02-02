@@ -341,6 +341,7 @@ static showBrowsers_showSidebar() {
         } else {
             BarkerBrowser.showBrowserView(browserViewNo, _left, _top, sidebar_browser_width, sidebar_browser_height);
         }
+        BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', i, BarkerData.getSidebarUrl(i));
         _top+= sidebar_browser_height;
     }
 }

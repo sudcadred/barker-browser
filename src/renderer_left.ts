@@ -196,10 +196,9 @@ function loadURLSidebar(browserNo: number, uri: string) {
     }
 });
 
-(windowLeft as any).electronAPI.onUpdateUrl((browserNo: number, uri: string) => {
+(windowLeft as any).electronAPI.onUpdateUrlSidebar((browserNo: number, uri: string) => {
     const urlInput = document.getElementById('inputUrlAddress_sidebar' + browserNo);
     if (urlInput) {
-        //alert('onUpdateUrl(): browserNo='+browserNo+', uri='+uri+', urlInput='+urlInput);
         (urlInput as any).value= uri;
     }
 });

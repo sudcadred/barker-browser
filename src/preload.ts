@@ -95,6 +95,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onUpdateRollingBrowsersText: (callback: Function) => ipcRenderer.on('update-rolling-browsers-text', (_event, value) => callback(value)),
     onUpdateRollingBrowsersText_sidebar: (callback: Function) => ipcRenderer.on('update-rolling-browsers-text-sidebar', (_event, value) => callback(value)),
     onUpdateUrl: (callback: Function) => ipcRenderer.on('update-url', (_event, browserNo, uri) => callback(browserNo, uri)), 
+    onUpdateUrlSidebar: (callback: Function) => ipcRenderer.on('update-url-sidebar', (_event, browserNo, uri) => callback(browserNo, uri)), 
     onShowSearchbar: (callback: Function) => ipcRenderer.on('show-searchbar', () => callback()), 
     onSetLayoutButtons: (callback: Function) => ipcRenderer.on('set-layout-buttons', (_event, value) => callback(value)), 
     onSetBrowserHeaderButtons: (callback: Function) => ipcRenderer.on('set-browser-header-buttons', (_event, value) => callback(value)), 

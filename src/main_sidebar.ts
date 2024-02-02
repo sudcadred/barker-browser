@@ -78,7 +78,7 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
     browser.webContents.on('will-navigate', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
         BarkerData.setSidebarUrl(browserNo, url);
-        BarkerSideBar.mainWindow.webContents.send('update-url', browserNo, url);
+        BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', browserNo, url);
     });
 
     //BrowserView zoom ability
