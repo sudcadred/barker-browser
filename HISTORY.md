@@ -28,17 +28,17 @@ development started from 1.1.2024
 # NEXT STEPS
 
 ## NOW
-* address input click should select address text
-* add history file
 
 ## NEXT
-* add tab context menu (rename tab, refresh whole tab, mute tab)
-* fix 'find in page'
 * fix sidebar open link in next window
 * sidebar add bookmark
 * sidebar address completion
+* add tab context menu (rename tab, refresh whole tab, mute tab)
+* fix 'find in page'
+* ctrl+f in sidebar does not work (add more actions)
 
 ## LATER
+* think how to hide suggestion box when clicked elsewhere
 * muted browser window indication
 * scrape url
 * addons support
@@ -57,8 +57,6 @@ development started from 1.1.2024
 * delete tab
 * test big layouts how behave
 * test closing all tabs
-* ctrl+f in sidebar does not work
-* ctrl+f in main area works only if some browser window is clicked (activated) before
 * what happens if BarkerBrowser.showBrowsersIfBodyFullyLoaded() is called more times?
 
 ## IDEAS (not sure if will be implemented)

@@ -36,7 +36,16 @@ static ipcChangeSidebarLayout (event: IpcMainEvent, cnt: number) {
 
 static ipcLoadURL (event: IpcMainEvent, browserNo: number, address: string) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadURL(): browserNo="+browserNo+", address="+address);
-    BarkerBrowser.loadUrlInActualTab(browserNo-1, address);
+    BarkerBrowser.loadUrlInActualTab(browserNo, address);
+
+    //restore BrowserView height
+    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+    let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
+    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
+    if (browser) {
+        BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabId()), browserNo);
+        browser.setBounds({ x:BarkerBrowser.browserWindowPosition.x, y:BarkerBrowser.browserWindowPosition.y, width:BarkerBrowser.browserWindowPosition.width, height:BarkerBrowser.browserWindowPosition.height});
+    }
 }
 
 static ipcLoadURLSidebar (event: IpcMainEvent, browserNo: number, address: string) {
@@ -241,9 +250,7 @@ static ipcShowThreeDotsMenu(event: IpcMainEvent, browserNo: number) {
 static ipcAddressKeyPressed(event: IpcMainEvent, browserNo: number, inputUrlAddress: string) {
     const uri = BarkerUtils.getMostSimilarTypedAddress(inputUrlAddress);
     if (uri) {
-        //BarkerMenu.createUriSimilarityMenu(browserNo, uri).popup();
         BarkerBrowser.showMatchedAddresses(uri, browserNo);
-        //BarkerBrowser.mainWindow.webContents.send('focus-addressbar', BarkerData.getBrowserHeaderString());
     }
 }
 

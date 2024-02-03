@@ -63,7 +63,7 @@ of internal page parts like sidebar (handling it via standard Electron API is
 very slow and not practical).
 
 ## Settings
-Settings are stored in file preferences.json in app folder.
+Settings are stored in file barker_browser_preferences.json.json in user folder.
 
 ## Saved history
 Saved addresses and tabs with history are stored in user folder in file barker_browser.json

@@ -80,14 +80,10 @@ static isBodyFullyLoaded() {
 static showBrowsersIfBodyFullyLoaded() {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded()");
     if (BarkerBrowser.isBodyFullyLoaded()) {
-        const browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-        const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo('NewTab1');
-        const tabLayout = BarkerSettings.getFirstLayout();
-        const sidebarLayout = BarkerSettings.getSidebarLayout();
+        const tabLayout = BarkerData.getTabLayoutNo(BarkerData.getActualTabId());
+        const sidebarLayout = BarkerData.getSidebarLayoutNo();
     
-        const statusbar = new BarkerStatusBar(BarkerBrowser.mainWindow);
         BarkerStatusBar.createStatusBar();
-        const sidebar = new BarkerSideBar(BarkerBrowser.mainWindow);
         BarkerSideBar.createSidebar();
         BarkerBrowser.mainWindow.webContents.send('set-browser-header-buttons', BarkerData.getBrowserHeaderString());
 
@@ -354,13 +350,15 @@ static showBrowsers_showSidebar() {
     }
 }
 
-//calculate browser window position (relative to position in main frame - sent to renderer)
+//calculate browser window position 
+//(browserHeader is relative to position in main frame - sent to renderer and created there
+// but browserWindow is absolute position)
 static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: number) {
-    var browser_width: number, browser_height: number, maxWidth: number, maxHeight: number;
+    var browser_width: number, maxWidth: number, maxHeight: number;
     let _left = 10;
     let _top = 100;
     const currentBounds = BarkerBrowser.mainWindow.getBounds();
-    maxHeight = currentBounds.height - 100;  //probably menu and app border takes about 60px
+    maxHeight = currentBounds.height - BarkerData.frameBottomBar_height;
     maxWidth = currentBounds.width - 30;
     maxWidth -= BarkerData.getFrameSidebarWidth();
     maxWidth -= BarkerData.getFrameRightBarWidth();
@@ -373,7 +371,7 @@ static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: nu
 
     if (windowsCnt == 2) {
         browser_width = Math.floor(maxWidth / 2);
-        browser_height = maxHeight - BarkerData.getFrameTopBarHeight() - browserHeadersHeight;
+        const browser_height = maxHeight - _top - browserHeadersHeight - 70;
 
         BarkerBrowser.browserHeaderPosition.x = _leftHeader + (browser_width * (browserNo-1));
         BarkerBrowser.browserHeaderPosition.y = _topHeader;
@@ -391,19 +389,23 @@ static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: nu
         const browser_cols = Math.floor(Math.sqrt(windowsCnt));
         const browser_rowNo = Math.floor((browserNo-1)/browser_rows);
         const browser_colNo = (browserNo-1) % browser_cols;
-        browser_width = Math.floor(maxWidth / Math.floor(Math.sqrt(windowsCnt)));
-        browser_height = Math.floor((maxHeight-_top) / Math.floor(Math.sqrt(windowsCnt)));
+        browser_width = Math.floor(maxWidth / browser_cols);
+        const browser_height_brutto = Math.floor((maxHeight-_top) / browser_rows);
+        const browser_height_netto = browser_height_brutto - browserHeadersHeight;
 
-        BarkerBrowser.browserHeaderPosition.x = _leftHeader + (browser_width * (browserNo-1));
-        BarkerBrowser.browserHeaderPosition.y = _topHeader;
+        BarkerBrowser.browserHeaderPosition.x = _leftHeader + (browser_colNo * browser_width);
+        BarkerBrowser.browserHeaderPosition.y = _topHeader + (browser_rowNo * browser_height_brutto);
         BarkerBrowser.browserHeaderPosition.width = browser_width;
         BarkerBrowser.browserHeaderPosition.height = browserHeadersHeight;
 
         BarkerBrowser.browserWindowPosition.x = _left + (browser_colNo * browser_width);
-        BarkerBrowser.browserWindowPosition.y = _top + (browser_rowNo * (browser_height+browserHeadersHeight));
+        BarkerBrowser.browserWindowPosition.y = _top + (browser_rowNo * browser_height_brutto);
         BarkerBrowser.browserWindowPosition.width = browser_width;
-        BarkerBrowser.browserWindowPosition.height = browser_height;
+        BarkerBrowser.browserWindowPosition.height = browser_height_netto;
     }
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): browserNo="+browserNo);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): header x="+BarkerBrowser.browserHeaderPosition.x+", y="+BarkerBrowser.browserHeaderPosition.y+", width="+BarkerBrowser.browserHeaderPosition.width+", height="+BarkerBrowser.browserHeaderPosition.height);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): window x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
 }
 
 static showBrowsers_showMainArea(windowsCnt: number, tabId: string, offset: number) {
@@ -422,7 +424,6 @@ static showBrowsers_showMainArea(windowsCnt: number, tabId: string, offset: numb
         BarkerBrowser.showBrowserHeader(offset+i, BarkerBrowser.browserHeaderPosition.x, BarkerBrowser.browserHeaderPosition.y, BarkerBrowser.browserHeaderPosition.width); //position relative in frame
         const browserViewNo = offset+firstBrowserViewNo+i-1;
         BarkerBrowser.showBrowserView(browserViewNo, BarkerBrowser.browserWindowPosition.x, BarkerBrowser.browserWindowPosition.y, BarkerBrowser.browserWindowPosition.width, BarkerBrowser.browserWindowPosition.height);
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): browserViewNo="+browserViewNo+", x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
     }
 }
 
@@ -454,7 +455,9 @@ static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
     if (addresses) {
         for (let i=offset; i<=offset+windowsCnt; i++) {
             const address = addresses.get(i);
-            BarkerBrowser.mainWindow.webContents.send('update-url', i, address);
+            if (address) {
+                BarkerBrowser.mainWindow.webContents.send('update-url', i, address);
+            }
         }
     }
 
@@ -541,6 +544,7 @@ static showMatchedAddresses(uri: string, browserNo: number) {
         //(it is not possible to draw HTML element over BrowserView object in Electron)
         BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabId()), browserNo);
         BarkerBrowser.browserWindowPosition.y += 50;
+        BarkerBrowser.browserWindowPosition.height -= 50;
         browser.setBounds({ x:BarkerBrowser.browserWindowPosition.x, y:BarkerBrowser.browserWindowPosition.y, width:BarkerBrowser.browserWindowPosition.width, height:BarkerBrowser.browserWindowPosition.height});
 
         //draw suggestion box

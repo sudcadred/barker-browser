@@ -202,12 +202,9 @@ function loadURL(browserNo: number, uri: string) {
     } else {
     threeDotsButton.style.display = 'none';
     }
-  
-  
 });
 
 function showThreeDotsMenu(browserNo: number) {
-    //alert('left='+left+', top='+top);
     (windowMain as any).electronAPI.showThreeDotsMenu(browserNo)
 }
 
