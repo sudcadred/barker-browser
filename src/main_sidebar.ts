@@ -6,6 +6,7 @@ import { BarkerData } from "./main_data";
 import { BarkerDownload } from "./main_download";
 import isUrlHttp from 'is-url-http';
 import { BarkerBrowser } from "./main_browser";
+import { BarkerStatusBar } from "./main_statusbar";
 
 /* This class handles left sidebar creation (displayed in BarkerBrowser.showBrowser())
 */
@@ -79,6 +80,11 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
         BarkerData.setSidebarUrl(browserNo, url);
         BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', browserNo, url);
+    });
+
+    //event hover over link, display link in statusbar
+    browser.webContents.on('update-target-url', function(event, url) {
+        BarkerStatusBar.updateStatusBarText(url);
     });
 
     //BrowserView zoom ability

@@ -208,6 +208,11 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
         BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
     });
 
+    //event hover over link, display link in statusbar
+    browser.webContents.on('update-target-url', function(event, url) {
+        BarkerStatusBar.updateStatusBarText(url);
+    });
+
     //BrowserView zoom ability
     browser.webContents.setVisualZoomLevelLimits(1, 5);
     browser.webContents.on("zoom-changed", (event, zoomDirection) => {
