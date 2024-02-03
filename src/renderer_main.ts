@@ -159,6 +159,9 @@ function loadURL(browserNo: number, uri: string) {
     inputUrlAddress.className += 'headerUrlInput';
     inputUrlAddress.onkeydown = setUrl;
     divHeader.appendChild(inputUrlAddress);
+    inputUrlAddress.addEventListener('click', () => {
+        inputUrlAddress.select();
+    });
 
     //create button Go
     const goButton = document.createElement('button');

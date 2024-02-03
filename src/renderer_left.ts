@@ -83,13 +83,6 @@ function loadURLSidebar(browserNo: number, uri: string) {
     divHeader.style.cssText = ' white-space:nowrap;width:'+_leftSidebarWidth+'px; overflow-x: scroll;position:absolute;left:' + left + 'px;top:' + top + 'px;opacity:0.3;z-index:100;background:#000';
     document.body.appendChild(divHeader);
 
-    //create label 'Window no:'
-    //var labelWindowNo = document.createElement('label');
-    //labelWindowNo.innerHTML = browserNo.toString();
-    //labelWindowNo.id = 'labelWindowNo_sidebar' + browserNo;
-    //labelWindowNo.className += 'tabButton';
-    //divHeader.appendChild(labelWindowNo);
-
     //create back button
     const backButton = document.createElement('button');
     backButton.textContent = 'Back';
@@ -119,7 +112,6 @@ function loadURLSidebar(browserNo: number, uri: string) {
     
     //create refresh button
     const refreshButton = document.createElement('button');
-    //refreshButton.textContent = 'Refresh';
     refreshButton.id = 'refreshButton_sidebar' + browserNo;
     refreshButton.className += 'tabButton';
     refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
@@ -133,7 +125,6 @@ function loadURLSidebar(browserNo: number, uri: string) {
 
     //create ClearPage button
     const clearPageButton = document.createElement('button');
-    //clearPageButton.textContent = 'Clear page';
     clearPageButton.id = 'clearPageButton_sidebar' + browserNo;
     clearPageButton.className += 'tabButton';
     clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
@@ -145,21 +136,16 @@ function loadURLSidebar(browserNo: number, uri: string) {
       (window as any).electronAPI.clearPage_sidebar(browserNo);
     });
 
-    //create label 'URL address'
-    //var labelUrlAddress = document.createElement('label');
-    //labelUrlAddress.innerHTML = "URL";
-    //labelUrlAddress.id = 'labelUrlAddress_sidebar' + browserNo;
-    //labelUrlAddress.className += 'tabButton';
-    //divHeader.appendChild(labelUrlAddress);
-
     //create input for 'URL address'
     var inputUrlAddress = document.createElement('input');
     inputUrlAddress.id = 'inputUrlAddress_sidebar' + browserNo;
-    //alert('createBrowserHeader(): inputUrlAddress.id=' + inputUrlAddress.id);
     inputUrlAddress.className += 'headerUrlInput';
     inputUrlAddress.style.width = (_leftSidebarWidth-100).toString+'px';
     inputUrlAddress.onkeydown = setUrlSidebar;
     divHeader.appendChild(inputUrlAddress);
+    inputUrlAddress.addEventListener('click', () => {
+        inputUrlAddress.select();
+    });
 
     //create button Go
     const goButton = document.createElement('button');
