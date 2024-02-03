@@ -56,10 +56,13 @@ static actualTabId = 'NewTab1';
 static matchedAddressesBrowerView: Electron.BrowserView = null;
 static browserHeaderPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
 static browserWindowPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
+static suggestionBoxBrowserNo = 0;
 
 //ctor    
 constructor (mainWindow: Electron.BrowserWindow) {
     BarkerBrowser.mainWindow = mainWindow;
+
+    //create BrowserView for matched addresses window
     let browser = new BrowserView({webPreferences: {
         devTools: true, 
         autoplayPolicy: 'document-user-activation-required',
@@ -346,6 +349,7 @@ static showBrowsers_showSidebar() {
     }
 }
 
+//calculate browser window position (relative to position in main frame - sent to renderer)
 static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: number) {
     var browser_width: number, browser_height: number, maxWidth: number, maxHeight: number;
     let _left = 10;
@@ -523,27 +527,27 @@ static updateRollingText() {
     BarkerBrowser.mainWindow.webContents.send('update-rolling-browsers-text', rollingText);
 }
 
-static getMatchedAddressBarBounds(browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getMatchedAddressBarBounds(): browserNo="+browserNo);
+static showMatchedAddresses(uri: string, browserNo: number) {
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo];
+    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
     if (browser) {
-        const currentBounds = browser.getBounds();
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getMatchedAddressBarBounds(): x="+currentBounds.x+", y="+currentBounds.y+", width="+currentBounds.width+", height="+currentBounds.height);
-        currentBounds.y += 20;
-        currentBounds.width = 200;
-        currentBounds.height = 50;
-        return currentBounds;
-    } else {
-        //return Electron.Rectangle(0,0,0,0);
-    }
-}
+        //shift BrowserView top border lower to see suggestion bar 
+        //(it is not possible to draw HTML element over BrowserView object in Electron)
+        BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabId()), browserNo);
+        BarkerBrowser.browserWindowPosition.y += 50;
+        browser.setBounds({ x:BarkerBrowser.browserWindowPosition.x, y:BarkerBrowser.browserWindowPosition.y, width:BarkerBrowser.browserWindowPosition.width, height:BarkerBrowser.browserWindowPosition.height});
 
-static showMatchedAddresses(uri: string, browserNo: number) {
-    BarkerBrowser.matchedAddressesBrowerView.webContents.loadURL("data:text/html;charset=utf-8,<body>" + uri + "</body>");
-    BarkerBrowser.matchedAddressesBrowerView.setBounds(BarkerBrowser.getMatchedAddressBarBounds(browserNo));
-    BarkerBrowser.mainWindow.setTopBrowserView(BarkerBrowser.matchedAddressesBrowerView);
+        //draw suggestion box
+        BarkerBrowser.browserHeaderPosition.x += 220;
+        BarkerBrowser.browserHeaderPosition.y += BarkerSettings.getBrowserHeaderHeight();
+        BarkerBrowser.browserHeaderPosition.width = BarkerBrowser.browserHeaderPosition.width / 3;
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showMatchedAddresses(): x="+BarkerBrowser.browserHeaderPosition.x+", y="+BarkerBrowser.browserHeaderPosition.y+", width="+BarkerBrowser.browserHeaderPosition.width+", height="+BarkerBrowser.browserHeaderPosition.height);
+        BarkerBrowser.mainWindow.webContents.send('show-matched-addresses', uri, BarkerBrowser.browserHeaderPosition.x, BarkerBrowser.browserHeaderPosition.y);
+
+        //store browserNo for time when address is clicked
+        BarkerBrowser.suggestionBoxBrowserNo = browserNo;
+    }
 }
 
 }

@@ -238,12 +238,27 @@ static ipcShowThreeDotsMenu(event: IpcMainEvent, browserNo: number) {
     BarkerMenu.createThreeDotsMenu(browserNo).popup();
 }
 
-static addressKeyPressed(event: IpcMainEvent, browserNo: number, inputUrlAddress: string) {
+static ipcAddressKeyPressed(event: IpcMainEvent, browserNo: number, inputUrlAddress: string) {
     const uri = BarkerUtils.getMostSimilarTypedAddress(inputUrlAddress);
     if (uri) {
         //BarkerMenu.createUriSimilarityMenu(browserNo, uri).popup();
         BarkerBrowser.showMatchedAddresses(uri, browserNo);
         //BarkerBrowser.mainWindow.webContents.send('focus-addressbar', BarkerData.getBrowserHeaderString());
+    }
+}
+
+static ipcMatchedAddressSelected(event: IpcMainEvent, uri: string) {
+    const browserNo = BarkerBrowser.suggestionBoxBrowserNo;
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMatchedAddressSelected(): browserNo="+BarkerBrowser.suggestionBoxBrowserNo+", uri="+uri);
+    BarkerBrowser.loadUrlInActualTab(browserNo, uri);
+
+    //restore BrowserView height
+    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+    let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
+    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
+    if (browser) {
+        BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabId()), browserNo);
+        browser.setBounds({ x:BarkerBrowser.browserWindowPosition.x, y:BarkerBrowser.browserWindowPosition.y, width:BarkerBrowser.browserWindowPosition.width, height:BarkerBrowser.browserWindowPosition.height});
     }
 }
 
@@ -376,7 +391,8 @@ static registerIpcMethods() {
     ipcMain.on('reload-tab-sidebar', BarkerIpc.ipcReloadTabSidebar);
     ipcMain.on('clear-page-sidebar', BarkerIpc.ipcClearPageSidebar);
     ipcMain.on('show-three-dots-menu', BarkerIpc.ipcShowThreeDotsMenu);
-    ipcMain.on('address-key-pressed', BarkerIpc.addressKeyPressed)
+    ipcMain.on('address-key-pressed', BarkerIpc.ipcAddressKeyPressed);
+    ipcMain.on('matched-address-selected', BarkerIpc.ipcMatchedAddressSelected);
     
     ipcMain.on('main-body-loaded', BarkerIpc.ipcMainBodyLoaded);
     ipcMain.on('top-body-loaded', BarkerIpc.ipcTopBodyLoaded);

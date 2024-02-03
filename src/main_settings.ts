@@ -52,7 +52,7 @@ static createPreferences(mainWindow: Electron.BrowserWindow, store: Object) {
             parent: mainWindow
         },
         css: 'preference-styles.css',
-        dataStore: path.join(app.getPath("userData"), 'preferences.json'),
+        dataStore: path.join(app.getPath("userData"), 'barker_browser_preferences.json'),
         defaults: { 
             mainSection: { appTitle: BarkerSettings.appTitle,
                            maxBrowsersPerTab: '25' ,

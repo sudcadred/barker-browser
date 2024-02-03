@@ -29,35 +29,44 @@ and reading news in other windows on one screen.
 # NEXT STEPS
 
 ## NOW
-* address completion based on URL history
-* alt+f4 leads now to crash:)
+* show link on hover in statusbar
+* address input click should select address text
 
 ## NEXT
-* fix URL name in address during app startup
-* change file names (preferences.json)
 * add tab context menu (rename tab, refresh whole tab, mute tab)
 * fix 'find in page'
 * fix sidebar open link in next window
 * sidebar add bookmark
+* sidebar address completion
 
 ## LATER
-* what happens if BarkerBrowser.showBrowsersIfBodyFullyLoaded() is called more times?
 * muted browser window indication
-* F12 * display dev console (right bar probably)
-* packager → exe
+* scrape url
+* addons support
+* F12 display dev console (right bar probably)
+* packager → exe (github release)
 * show page source code (maybe not necessary when F12 is working)
 * move tabs (change tab order)
 * restore zoom browser window functionality
 * use right sidebar (for zoom and/or dev console)
 * add menu item to open all bookmarks from current menu in new tab
 
+## KNOWN BUGS
+* clear page => delete also address
+* clear page + back => bug
+* address navigation does not always change
+* delete tab
+* test big layouts how behave
+* test closing all tabs
+* ctrl+f in sidebar does not work
+* ctrl+f in main area works only if some browser window is clicked (activated) before
+* what happens if BarkerBrowser.showBrowsersIfBodyFullyLoaded() is called more times?
+
 ## IDEAS (not sure if will be implemented)
-* scrape url
-* console
+* barker console
 * share my views
 * download video
 * loop video
-* addons (edit page (insertText(), replaceText(), apply transformation))
 
 # HISTORY
 development started from 1.1.2024 
@@ -82,18 +91,6 @@ development started from 1.1.2024
 ## week5: 
 * bookmarks
 * 'more actions' button in browser header (mute, unmute, find in, save, print, bookmark)
-
-# KNOWN BUGS
-* show link on hover (in statusbar)
-* address input click should select address text
-* clear page => delete also address
-* clear page + back => bug
-* address navigation does not always change
-* delete tab does not work
-* test big layouts how behave
-* test closing all tabs
-* ctrl+f in sidebar does not work
-* ctrl+f in main area works only if some browser window is clicked (activated) before
 
 # RECOMMENDED MINIMAL TEST SET BEFORE COMMIT
 * start app, see if tabs are loaded

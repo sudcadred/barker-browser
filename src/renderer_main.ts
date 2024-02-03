@@ -162,7 +162,7 @@ function loadURL(browserNo: number, uri: string) {
 
     //create button Go
     const goButton = document.createElement('button');
-    goButton.textContent = 'Go';
+    goButton.textContent = 'Go ('+browserNo+')';
     goButton.id = 'goButton' + browserNo;
     goButton.className += 'tabButton';
     divHeader.appendChild(goButton);
@@ -228,6 +228,22 @@ function showThreeDotsMenu(browserNo: number) {
         addressBar.focus();
     }
 });
+
+(windowMain as any).electronAPI.onShowMatchedAddresses((uri: string, left: number, top: number) => {
+    var matchedAddressesButton = document.getElementById("matchedAddressesButton");
+    matchedAddressesButton.innerText = uri;
+
+    var divMatchedAddresses = document.getElementById("divMatchedAddresses");
+    divMatchedAddresses.style.cssText = 'display:inline-block;position:absolute;left:' + left + 'px;top:' + top + 'px;background:yellow; border: 1px solid black; cursor:pointer;';
+});
+
+var matchedAddressesButton = document.getElementById("matchedAddressesButton");
+matchedAddressesButton.addEventListener("click",function() {
+    (windowMain as any).electronAPI.matchedAddressSelected(matchedAddressesButton.innerText);
+    var divMatchedAddresses = document.getElementById("divMatchedAddresses");
+    divMatchedAddresses.style.display = 'none';
+});
+
 
 //------------------- BODY ONLOAD -----------------------
 

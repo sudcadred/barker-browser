@@ -65,6 +65,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     clearPage_sidebar: (browserNo: number) => { ipcRenderer.send('clear-page-sidebar', browserNo) },
     showThreeDotsMenu: (browserNo:number) => {ipcRenderer.send('show-three-dots-menu', browserNo) },
     addressKeyPressed: (browserNo: number, inputUrlAddress: string) => {ipcRenderer.send('address-key-pressed', browserNo, inputUrlAddress) },
+    matchedAddressSelected: (uri:string) => {ipcRenderer.send('matched-address-selected', uri) },
 
     //startup events
     topBodyLoaded: (height: number) => { ipcRenderer.send('top-body-loaded', height) },
@@ -99,4 +100,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onShowSearchbar: (callback: Function) => ipcRenderer.on('show-searchbar', () => callback()), 
     onSetLayoutButtons: (callback: Function) => ipcRenderer.on('set-layout-buttons', (_event, value) => callback(value)), 
     onSetBrowserHeaderButtons: (callback: Function) => ipcRenderer.on('set-browser-header-buttons', (_event, value) => callback(value)), 
-})
+    onShowMatchedAddresses: (callback: Function) => ipcRenderer.on('show-matched-addresses', (_event, uri, left, top) => callback(uri, left, top)), 
+  })
