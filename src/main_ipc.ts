@@ -24,7 +24,7 @@ constructor (mainWindow: Electron.BrowserWindow) {
 static ipcChangeLayout (event: IpcMainEvent, cnt: number) {
 	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeLayout(): cnt="+cnt)
     BarkerData.setTabLayoutNo(BarkerData.getActualTabId(), cnt);
-    BarkerBrowser.showBrowsers(cnt, BarkerData.getActualTabId(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabId()));
+    BarkerBrowser.updateMainArea(cnt, BarkerData.getActualTabId(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabId()));
 }
 
 static ipcChangeSidebarLayout (event: IpcMainEvent, cnt: number) {
