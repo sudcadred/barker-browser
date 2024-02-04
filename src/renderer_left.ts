@@ -136,8 +136,10 @@ function loadURLSidebar(browserNo: number, uri: string) {
 
     //ClearPage button click
     clearPageButton.addEventListener('click', () => {
-      console.log('Clear page');
-      (windowLeft as any).electronAPI.clearPage_sidebar(browserNo);
+        const divMatchedAddresses_sidebar = document.getElementById("divMatchedAddresses_sidebar");
+        divMatchedAddresses_sidebar.style.display = 'none';
+        (inputUrlAddress as any).value = '';
+        (windowLeft as any).electronAPI.clearPage_sidebar(browserNo);
     });
 
     //create input for 'URL address'

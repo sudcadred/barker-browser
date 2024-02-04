@@ -147,8 +147,10 @@ function loadURL(browserNo: number, uri: string) {
 
     //ClearPage button click
     clearPageButton.addEventListener('click', () => {
-      console.log('Clear page');
-      (windowMain as any).electronAPI.clearPage(browserNo);
+        var divMatchedAddresses = document.getElementById("divMatchedAddresses");
+        divMatchedAddresses.style.display = 'none';
+        (inputUrlAddress as any).value = '';
+        (windowMain as any).electronAPI.clearPage(browserNo);
     });
 
     if (browserHeader_clear) {
