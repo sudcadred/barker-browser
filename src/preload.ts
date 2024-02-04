@@ -44,10 +44,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     //browser headers
     toggleShowHeaders: () => { ipcRenderer.send('toggle-show-headers') },
 
-    //zoom
-    zoomBrowserView: (browserNo: number) => { ipcRenderer.send('zoom-browser-view', browserNo) },
-    unzoom: () => { ipcRenderer.send('unzoom') }, 
-
     //page navigation
     loadURL: (browserNo: number, address: string) => { ipcRenderer.send('load-url', browserNo, address) },
     loadURL_sidebar: (browserNo: number, address: string) => { ipcRenderer.send('load-url-sidebar', browserNo, address) },

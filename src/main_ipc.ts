@@ -4,7 +4,6 @@ import { BarkerBrowser } from './main_browser';
 import { BarkerData } from "./main_data";
 import { BarkerSettings } from "./main_settings";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
-import { BarkerZoom } from "./main_zoom";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerMenu } from "./main_menu";
 
@@ -174,15 +173,6 @@ static ipcToggleShowHeaders (event: IpcMainEvent) {
     var browserOffset = BarkerData.getTabBrowserOffset(BarkerData.getActualTabId());
     const layout = BarkerData.getTabLayoutNo(BarkerData.getActualTabId());
     BarkerBrowser.showBrowsers(layout, BarkerData.getActualTabId(), browserOffset);
-}
-
-static ipcZoomBrowserView (event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcZoomBrowserView()");
-    BarkerZoom.zoomBrowserView(browserNo);
-}
-
-static ipcUnzoom (event: IpcMainEvent) {
-    BarkerZoom.unzoomBrowserView();
 }
 
 static ipcFindInPage (event: IpcMainEvent, text: string) {
@@ -408,9 +398,6 @@ static registerIpcMethods() {
     ipcMain.on('show-previous-browser-sidebar', BarkerIpc.ipcShowPreviousBrowserSidebar);
 
     ipcMain.on('toggle-show-headers', BarkerIpc.ipcToggleShowHeaders);
-
-    ipcMain.on('zoom-browser-view', BarkerIpc.ipcZoomBrowserView);
-    ipcMain.on('unzoom', BarkerIpc.ipcUnzoom);
 
     ipcMain.on('load-url', BarkerIpc.ipcLoadURL);
     ipcMain.on('load-url-sidebar', BarkerIpc.ipcLoadURLSidebar);

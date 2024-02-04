@@ -7,7 +7,6 @@ import { BarkerDownload } from "./main_download";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerKeyboardShortcuts } from "./main_keyboardShortcuts";
-import { BarkerZoom } from "./main_zoom";
 import isUrlHttp from 'is-url-http';
 import contextMenu from "electron-context-menu";
 import { BarkerMenu } from "./main_menu";
@@ -232,17 +231,6 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
                 visible: ((parameters as any).linkURL) &&(BarkerBrowser.getNextEmptyBrowserNo(browserNo) > 0),
                 click: () => { BarkerBrowser.openLinkInNextEmptyWindow(browserNo, (parameters as any).linkURL); }
             },
-            /*
-            {
-                label: 'Zoom',
-                visible: !BarkerZoom.isZoomed(tabNo, browserNo),
-                click: () => {BarkerZoom.zoomBrowserView(browserNo);}
-            },
-            {
-                label: 'Unzoom',
-                visible: BarkerZoom.isZoomed(tabNo, browserNo),
-                click: () => {BarkerZoom.unzoomBrowserView(); }
-            },*/         
             {
                 label: 'Download',
                 visible: ((parameters as any).linkURL),
@@ -276,9 +264,6 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
 static createBrowserViewsForOneTab(tabNo: number) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserViewsForOneTab()");
 
-    //create 2 zoom browsers windows
-    BarkerZoom.createZoomWindowsForOneTab(tabNo);
-     
      //create browser windows
      BarkerBrowser.createBrowserView(tabNo, 1, true);
     for (let i=1; i<BarkerSettings.getMaxBrowserViewsPerTab();i++) {
@@ -432,24 +417,6 @@ static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
     BarkerBrowser.showBrowsers_showSidebar();
     BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabId, offset);
 
-    //display zoomed window does not work now
-    /*
-    let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-    let emptyZoomWindow = browserViews[firstBrowserViewNo-3];
-    let zoomedWindowOnOriginalPosition = browserViews[firstBrowserViewNo];
-    const zoomedBrowserView = BarkerData.getZoomedBrowserViewNo(BarkerBrowser.actualTabId);
-    if (zoomedBrowserView) {
-        emptyZoomWindow.setBounds({ x: 0, y: 0, width: 0, height: 0 });
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setting Zoom window coordinates: ("+(zoomWindow_left.toString())+", 100, "+(zoomWindow_width.toString())+", "+((currentBounds.height-100).toString())+")");
-        (<BrowserView>zoomedWindowOnOriginalPosition).setBounds(zoomedBrowserView.getBounds());
-        (<BrowserView>zoomedBrowserView).setBounds({ x: zoomWindow_left, y: 100, width: zoomWindow_width, height: currentBounds.height-100 });
-    } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setting empty Zoom window coordinates: ("+(zoomWindow_left.toString())+", 100, "+(zoomWindow_width.toString())+", "+((currentBounds.height-100).toString())+")");
-        emptyZoomWindow.setBounds({ x: zoomWindow_left, y: 100, width: zoomWindow_width, height: currentBounds.height-100 });
-        //restore zoomedBrowserView???
-    } 
-    */
-
     //update URL in browser headers
     const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);
     if (addresses) {
@@ -540,7 +507,7 @@ static showMatchedAddresses(uri: string, browserNo: number) {
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
     let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
     if (browser) {
-        //shift BrowserView top border lower to see suggestion bar 
+        //shift BrowserView top-border lower to see suggestion bar 
         //(it is not possible to draw HTML element over BrowserView object in Electron)
         BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabId()), browserNo);
         BarkerBrowser.browserWindowPosition.y += 50;

@@ -21,7 +21,7 @@ development started from 1.1.2024
 ## week5: 
 * bookmarks
 * 'more actions' button in browser header (mute, unmute, find in, save, print, bookmark)
-* suggestion box for previously typed addresses (only in main are so far)
+* suggestion box for previously typed addresses
 * show link on hover
 
 
@@ -30,19 +30,17 @@ development started from 1.1.2024
 ## NOW
 
 ## NEXT
-* fix sidebar open link in next window
-* sidebar add bookmark
-* sidebar address completion
-* add tab context menu (rename tab, refresh whole tab, mute tab)
 * fix 'find in page'
-* ctrl+f in sidebar does not work (add more actions)
+* add tooltips to browser header buttons
+* during change layout seems that page is loaded again
+* add tab context menu (rename tab, refresh whole tab, mute tab)
 
 ## LATER
 * think how to hide suggestion box when clicked elsewhere
 * muted browser window indication
 * scrape url
 * addons support
-* F12 display dev console (right bar probably)
+* display dev console (more actions)
 * packager → exe (github release)
 * show page source code (maybe not necessary when F12 is working)
 * move tabs (change tab order)

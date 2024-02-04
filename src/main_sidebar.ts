@@ -20,9 +20,6 @@ static showSidebarBrowserHeader(browserNo: number, left: number, top: number, wi
 static loadURLSidebar (browserNo: number, uri: string) {
 static openLinkInNextSidebarWindow(browserNo: number, uri: string)
 static openLinkInNextEmptySidebarWindow(browserNo: number, uri: string)
-static isZoomedSidebar(browserNo: number): boolean
-static zoomSidebarView(browserNo: number)
-static unzoomSidebarView()
 static updateRollingTextSidebar()
 */
 
@@ -114,20 +111,6 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
                 click: () => { BarkerSideBar.openLinkInNextEmptySidebarWindow(browserNo, (parameters as any).linkURL); }
             },
             {
-                label: 'Zoom',
-                visible: !BarkerSideBar.isZoomedSidebar(browserNo),
-                click: () => {
-                    BarkerSideBar.zoomSidebarView(browserNo);
-                }
-            },
-            {
-                label: 'Unzoom',
-                visible: BarkerSideBar.isZoomedSidebar(browserNo),
-                click: () => {
-                    BarkerSideBar.unzoomSidebarView();
-                }
-            },         
-            {
                 label: 'Download',
                 visible: ((parameters as any).linkURL),
                 click: () => {
@@ -179,12 +162,6 @@ static loadURLSidebar (browserNo: number, uri: string) {
     }
 }
 
-static unzoomSidebarView() {
-}
-
-static zoomSidebarView(browserNo: number) {
-}
-
 static openLinkInNextSidebarWindow(browserNo: number, uri: string) {
     if (browserNo < BarkerSettings.getMaxBrowserViewsPerTab()) {
         browserNo++;
@@ -202,10 +179,6 @@ static openLinkInNextEmptySidebarWindow(browserNo: number, uri: string) {
     }
 }
 
-static isZoomedSidebar(browserNo: number): boolean {
-    return false;
-}
-
 static updateRollingTextSidebar() {
     var rollingText = (BarkerData.getSidebarRollingWindowOffset()+1).toString();
     const layout = BarkerData.getSidebarLayoutNo();
@@ -221,7 +194,6 @@ static calculateBrowserWindowPosition_sidebar(browserNo: number) {
     const currentBounds = BarkerBrowser.mainWindow.getBounds();
     maxHeight = currentBounds.height - 100;  //probably menu and app border takes about 60px
     maxWidth = currentBounds.width - 30;
-    browserNo -= BarkerData.getSidebarRollingWindowOffset();
 
     const sidebar_browser_rows = BarkerData.getSidebarLayoutNo();
     const sidebar_browser_width = BarkerData.getFrameSidebarWidth() - 10;
