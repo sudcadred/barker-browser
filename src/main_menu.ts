@@ -48,10 +48,15 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
     Menu.setApplicationMenu(BarkerMenu.menu);
 }
 
-static createThreeDotsMenu(browserNo: number): Menu {
-    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
+    var firstBrowserNo: number;
+    if (sidebar) {
+        firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
+    } else {
+        firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+    }
     let browserViews = BarkerMenu.mainWindow.getBrowserViews();
-    let browser = browserViews[firstBrowserNo + browserNo - 2];
+    let browser = browserViews[firstBrowserNo + browserNo - 1];
 
     const template: Electron.MenuItemConstructorOptions[]  = [
         {label: "mute page",

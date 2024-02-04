@@ -162,6 +162,8 @@ function loadURLSidebar(browserNo: number, uri: string) {
         if(event.key === 'Enter') {
             const address = inputUrlAddress.value;
             loadURLSidebar(browserNo, address);
+        } else {
+            (windowLeft as any).electronAPI.ipcAddressKeyPressedSidebar(browserNo, inputUrlAddress.value);
         }
     }
 
@@ -172,8 +174,22 @@ function loadURLSidebar(browserNo: number, uri: string) {
       loadURLSidebar(browserNo, address);
     });
 
-});
+    //create ... button
+    const threeDotsButton_sidebar = document.createElement('button');
+    threeDotsButton_sidebar.id = 'threeDotsButton_sidebar' + browserNo;
+    threeDotsButton_sidebar.className += 'tabButton';
+    threeDotsButton_sidebar.innerHTML = '<img src="../img/dots.png" width=20px height=20px />';
+    divHeader.appendChild(threeDotsButton_sidebar);
 
+    //... dots button click
+    threeDotsButton_sidebar.addEventListener('click', () => {
+        showThreeDotsMenu_sidebar(browserNo);
+      });
+  });
+
+function showThreeDotsMenu_sidebar(browserNo: number) {
+    (windowLeft as any).electronAPI.showThreeDotsMenu_sidebar(browserNo);
+}
 
 (windowLeft as any).electronAPI.onDeleteAllBrowserHeaders(() => {
     for (let i=1; i<=108; i++) {
@@ -185,7 +201,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
 (windowLeft as any).electronAPI.onUpdateUrlSidebar((browserNo: number, uri: string) => {
     const urlInput = document.getElementById('inputUrlAddress_sidebar' + browserNo);
     if (urlInput) {
-        (urlInput as any).value= uri;
+        if (uri) (urlInput as any).value= uri;
     }
 });
 
@@ -193,6 +209,21 @@ window.addEventListener('resize', function() {
     _leftSidebarWidth = window.innerWidth;
     (windowLeft as any).electronAPI.leftSidebarResized(_leftSidebarWidth);
 }, true);
+
+(windowLeft as any).electronAPI.onShowMatchedAddresses_sidebar((uri: string, left: number, top: number) => {
+    const matchedAddressesButton_sidebar = document.getElementById("matchedAddressesButton_sidebar");
+    matchedAddressesButton_sidebar.innerText = uri;
+
+    const divMatchedAddresses_sidebar = document.getElementById("divMatchedAddresses_sidebar");
+    divMatchedAddresses_sidebar.style.cssText = 'display:inline-block;position:absolute;left:' + left + 'px;top:' + top + 'px;background:yellow; border: 1px solid black; cursor:pointer;';
+});
+
+var matchedAddressesButton_sidebar = document.getElementById("matchedAddressesButton_sidebar");
+matchedAddressesButton_sidebar.addEventListener("click",function() {
+    (windowLeft as any).electronAPI.matchedAddressSelected_sidebar(matchedAddressesButton_sidebar.innerText);
+    const divMatchedAddresses_sidebar = document.getElementById("divMatchedAddresses_sidebar");
+    divMatchedAddresses_sidebar.style.display = 'none';
+});
 
 //------------------- BODY ONLOAD -----------------------
 

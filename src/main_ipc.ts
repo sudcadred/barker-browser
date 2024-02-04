@@ -244,7 +244,13 @@ static ipcClearPage(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcShowThreeDotsMenu(event: IpcMainEvent, browserNo: number) {
+	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcShowThreeDotsMenu(): browserNo="+browserNo)
     BarkerMenu.createThreeDotsMenu(browserNo).popup();
+}
+
+static ipcShowThreeDotsMenuSidebar(event: IpcMainEvent, browserNo: number) {
+	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcShowThreeDotsMenuSidebar(): browserNo="+browserNo)
+    BarkerMenu.createThreeDotsMenu(browserNo, true).popup();
 }
 
 static ipcAddressKeyPressed(event: IpcMainEvent, browserNo: number, inputUrlAddress: string) {
@@ -270,6 +276,29 @@ static ipcMatchedAddressSelected(event: IpcMainEvent, uri: string) {
 }
 
 //---sidebar
+
+static ipcAddressKeyPressedSidebar(event: IpcMainEvent, browserNo: number, inputUrlAddress: string) {
+    const uri = BarkerUtils.getMostSimilarTypedAddress(inputUrlAddress);
+    if (uri) {
+        BarkerSideBar.showMatchedAddresses(uri, browserNo);
+    }
+}
+
+static ipcMatchedAddressSelectedSidebar(event: IpcMainEvent, uri: string) {
+    const browserNo = BarkerSideBar.suggestionBoxBrowserNo;
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMatchedAddressSelectedSidebar(): browserNo="+BarkerSideBar.suggestionBoxBrowserNo+", uri="+uri);
+    BarkerSideBar.loadURLSidebar(browserNo, uri);
+
+    //restore BrowserView height
+    const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
+    let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
+    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
+    if (browser) {
+        BarkerSideBar.calculateBrowserWindowPosition_sidebar(browserNo);
+        browser.setBounds({ x:BarkerSideBar.browserWindowPosition.x, y:BarkerSideBar.browserWindowPosition.y, width:BarkerSideBar.browserWindowPosition.width, height:BarkerSideBar.browserWindowPosition.height});
+    }
+}
+
 static ipcGoBackSidebar (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
@@ -398,8 +427,11 @@ static registerIpcMethods() {
     ipcMain.on('reload-tab-sidebar', BarkerIpc.ipcReloadTabSidebar);
     ipcMain.on('clear-page-sidebar', BarkerIpc.ipcClearPageSidebar);
     ipcMain.on('show-three-dots-menu', BarkerIpc.ipcShowThreeDotsMenu);
+    ipcMain.on('show-three-dots-menu-sidebar', BarkerIpc.ipcShowThreeDotsMenuSidebar)
     ipcMain.on('address-key-pressed', BarkerIpc.ipcAddressKeyPressed);
+    ipcMain.on('address-key-pressed-sidebar', BarkerIpc.ipcAddressKeyPressedSidebar);
     ipcMain.on('matched-address-selected', BarkerIpc.ipcMatchedAddressSelected);
+    ipcMain.on('matched-address-selected-sidebar', BarkerIpc.ipcMatchedAddressSelectedSidebar);
     
     ipcMain.on('main-body-loaded', BarkerIpc.ipcMainBodyLoaded);
     ipcMain.on('top-body-loaded', BarkerIpc.ipcTopBodyLoaded);

@@ -196,12 +196,6 @@ function loadURL(browserNo: number, uri: string) {
     threeDotsButton.addEventListener('click', () => {
         showThreeDotsMenu(browserNo);
       });
-  
-    if (browserHeader_refresh) {
-    threeDotsButton.style.display = 'inline-block';
-    } else {
-    threeDotsButton.style.display = 'none';
-    }
 });
 
 function showThreeDotsMenu(browserNo: number) {

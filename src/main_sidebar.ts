@@ -27,6 +27,9 @@ static updateRollingTextSidebar()
 */
 
 static mainWindow: Electron.BrowserWindow = null;
+static browserHeaderPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
+static browserWindowPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
+static suggestionBoxBrowserNo = 0;
 
 constructor(mainWindow: Electron.BrowserWindow) {
     BarkerSideBar.mainWindow = mainWindow;
@@ -41,10 +44,10 @@ static createSidebar() {
 }
 
 static getNextEmptyBrowserNo(browserNo: number) {
-    const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabId());
+    const addresses = BarkerData.getSidebarAddresses();
     if (addresses) {
         for (let i=browserNo+1; i< BarkerSettings.getMaxBrowserViewsPerTab()-browserNo; i++) {
-                const address = addresses.get(i);
+                const address = addresses[i];
                 BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextEmptyBrowserNo(): address="+address+", i="+i+", browserNo="+browserNo);
                 if (!address) {
                     return i;
@@ -183,9 +186,20 @@ static zoomSidebarView(browserNo: number) {
 }
 
 static openLinkInNextSidebarWindow(browserNo: number, uri: string) {
+    if (browserNo < BarkerSettings.getMaxBrowserViewsPerTab()) {
+        browserNo++;
+    }
+    BarkerSideBar.loadURLSidebar(browserNo, uri);
 }
 
 static openLinkInNextEmptySidebarWindow(browserNo: number, uri: string) {
+    const nextBrowserNo = BarkerSideBar.getNextEmptyBrowserNo(0);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): browserNo="+browserNo+", uri="+uri+", nextBrowserNo="+nextBrowserNo);
+    if ((nextBrowserNo > 0)&&(nextBrowserNo < BarkerSettings.getMaxBrowserViewsPerTab())) {
+        BarkerSideBar.loadURLSidebar(nextBrowserNo, uri);
+    } else {
+        BarkerSideBar.loadURLSidebar(1, uri);
+    }
 }
 
 static isZoomedSidebar(browserNo: number): boolean {
@@ -198,6 +212,60 @@ static updateRollingTextSidebar() {
     if (layout>1) rollingText += '-' + (BarkerData.getSidebarRollingWindowOffset() + layout);
     rollingText += '/' + BarkerSettings.getMaxBrowserViewsPerTab();
     BarkerSideBar.mainWindow.webContents.send('update-rolling-browsers-text-sidebar', rollingText);
+}
+
+static calculateBrowserWindowPosition_sidebar(browserNo: number) {
+    var maxWidth, maxHeight;
+    let _left = 10;
+    let _top = 100;
+    const currentBounds = BarkerBrowser.mainWindow.getBounds();
+    maxHeight = currentBounds.height - 100;  //probably menu and app border takes about 60px
+    maxWidth = currentBounds.width - 30;
+    browserNo -= BarkerData.getSidebarRollingWindowOffset();
+
+    const sidebar_browser_rows = BarkerData.getSidebarLayoutNo();
+    const sidebar_browser_width = BarkerData.getFrameSidebarWidth() - 10;
+    const sidebar_browser_height = Math.floor((maxHeight-BarkerData.getFrameTopBarHeight()-BarkerData.getFrameBottomBarHeight())/ sidebar_browser_rows);
+    let browserHeadersHeight = 0;
+    if (BarkerSettings.getShowBrowserHeaders()) browserHeadersHeight = BarkerSettings.getBrowserHeaderHeight();
+
+    BarkerSideBar.browserHeaderPosition.x = _left;
+    BarkerSideBar.browserHeaderPosition.y = _top + ((browserNo-1) * sidebar_browser_height);
+    BarkerSideBar.browserHeaderPosition.width = sidebar_browser_width;
+    BarkerSideBar.browserHeaderPosition.height = BarkerSettings.getBrowserHeaderHeight();
+
+    BarkerSideBar.browserWindowPosition.x = _left;
+    BarkerSideBar.browserWindowPosition.y = BarkerSideBar.browserHeaderPosition.y + browserHeadersHeight;
+    BarkerSideBar.browserWindowPosition.width = sidebar_browser_width;
+    BarkerSideBar.browserWindowPosition.height = sidebar_browser_height-BarkerSettings.getBrowserHeaderHeight();
+    
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): browserNo="+browserNo);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): header x="+BarkerSideBar.browserHeaderPosition.x+", y="+BarkerSideBar.browserHeaderPosition.y+", width="+BarkerSideBar.browserHeaderPosition.width+", height="+BarkerSideBar.browserHeaderPosition.height);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): window x="+BarkerSideBar.browserWindowPosition.x+", y="+BarkerSideBar.browserWindowPosition.y+", width="+BarkerSideBar.browserWindowPosition.width+", height="+BarkerSideBar.browserWindowPosition.height);
+}
+
+static showMatchedAddresses(uri: string, browserNo: number) {
+    const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
+    let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
+    let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
+    if (browser) {
+        //shift BrowserView top-border lower to see suggestion bar 
+        //(it is not possible to draw HTML element over BrowserView object in Electron)
+        BarkerSideBar.calculateBrowserWindowPosition_sidebar(browserNo);
+        BarkerSideBar.browserWindowPosition.y += 50;
+        BarkerSideBar.browserWindowPosition.height -= 50;
+        browser.setBounds({ x:BarkerSideBar.browserWindowPosition.x, y:BarkerSideBar.browserWindowPosition.y, width:BarkerSideBar.browserWindowPosition.width, height:BarkerSideBar.browserWindowPosition.height});
+
+        //draw suggestion box
+        BarkerSideBar.browserHeaderPosition.x += 220;
+        BarkerSideBar.browserHeaderPosition.y += BarkerSettings.getBrowserHeaderHeight();
+        BarkerSideBar.browserHeaderPosition.width = BarkerBrowser.browserHeaderPosition.width / 3;
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showMatchedAddresses(): x="+BarkerSideBar.browserHeaderPosition.x+", y="+BarkerSideBar.browserHeaderPosition.y+", width="+BarkerSideBar.browserHeaderPosition.width+", height="+BarkerSideBar.browserHeaderPosition.height);
+        BarkerSideBar.mainWindow.webContents.send('show-matched-addresses-sidebar', uri, BarkerSideBar.browserHeaderPosition.x, BarkerSideBar.browserHeaderPosition.y);
+
+        //store browserNo for time when address is clicked
+        BarkerSideBar.suggestionBoxBrowserNo = browserNo;
+    }
 }
 
 }
