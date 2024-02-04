@@ -200,26 +200,26 @@ static ipcClearSelection (event: IpcMainEvent) {
 static ipcGoBack (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.goBack();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.goBack();
 }
 
 static ipcGoForward (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.goForward();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.goForward();
 }
 
 static ipcReloadPage(event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.reloadIgnoringCache();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.reloadIgnoringCache();
 }
 
 static ipcReloadTab(event: IpcMainEvent, tabId: string) {
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabId);
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
     for (let i=1; i< BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
-        (<BrowserView>browserViews[firstBrowserNo+i-2]).webContents.reloadIgnoringCache();
+        (<BrowserView>browserViews[firstBrowserNo+i-1]).webContents.reloadIgnoringCache();
     }
 }
 
@@ -229,7 +229,7 @@ static ipcClearPage(event: IpcMainEvent, browserNo: number) {
         addresses.set(browserNo, null);
         const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
         let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-        (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.close();
+        (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.close();
     }
 }
 
@@ -292,26 +292,26 @@ static ipcMatchedAddressSelectedSidebar(event: IpcMainEvent, uri: string) {
 static ipcGoBackSidebar (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.goBack();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.goBack();
 }
 
 static ipcGoForwardSidebar (event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.goForward();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.goForward();
 }
 
 static ipcReloadPageSidebar(event: IpcMainEvent, browserNo: number) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.reloadIgnoringCache();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.reloadIgnoringCache();
 }
 
 static ipcReloadTabSidebar(event: IpcMainEvent, tabId: string) {
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
     for (let i=1; i< BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
-        (<BrowserView>browserViews[firstBrowserNo+i-2]).webContents.reloadIgnoringCache();
+        (<BrowserView>browserViews[firstBrowserNo+i-1]).webContents.reloadIgnoringCache();
     }
 }
 
@@ -319,7 +319,7 @@ static ipcClearPageSidebar(event: IpcMainEvent, browserNo: number) {
     BarkerData.setSidebarUrl(browserNo, '');
     const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
-    (<BrowserView>browserViews[firstBrowserNo+browserNo-2]).webContents.close();
+    (<BrowserView>browserViews[firstBrowserNo+browserNo-1]).webContents.close();
 }
 
 static ipcMainBodyLoaded(event: IpcMainEvent, height: number) {

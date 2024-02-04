@@ -95,7 +95,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //Back button click
     backButton.addEventListener('click', () => {
       console.log('Go back');
-      (window as any).electronAPI.goBack_sidebar(browserNo);
+      (windowLeft as any).electronAPI.goBack_sidebar(browserNo);
     });
 
     //create forward button
@@ -109,7 +109,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
 
     forwardButton.addEventListener('click', () => {
       console.log('Go forward');
-      (window as any).electronAPI.goForward_sidebar(browserNo);
+      (windowLeft as any).electronAPI.goForward_sidebar(browserNo);
     });
     
     //create refresh button
@@ -123,7 +123,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //Refresh button click
     refreshButton.addEventListener('click', () => {
       console.log('Refresh browser');
-      (window as any).electronAPI.reloadPage_sidebar(browserNo);
+      (windowLeft as any).electronAPI.reloadPage_sidebar(browserNo);
     });
 
     //create ClearPage button
@@ -137,7 +137,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //ClearPage button click
     clearPageButton.addEventListener('click', () => {
       console.log('Clear page');
-      (window as any).electronAPI.clearPage_sidebar(browserNo);
+      (windowLeft as any).electronAPI.clearPage_sidebar(browserNo);
     });
 
     //create input for 'URL address'

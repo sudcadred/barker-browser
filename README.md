@@ -42,6 +42,11 @@ HTML files creates fixed user interface elements but many elements are created
 dynamicaly by javascript/typescript(tabs, browser headers) or Electron framework 
 (browser windows) during runtime as needed.
 
+## Filenames naming convention
+* main processes start with prefix 'main_'
+* renderer processes start with parefix 'renderer_' (second part is usually identification of HTML frame)
+* images and HTML files are stored in separated folders
+
 ## Start of application looks like this
 * main.ts createMainWindow() loads HTML and starts renderer process
 * different HTML files are loaded as frames

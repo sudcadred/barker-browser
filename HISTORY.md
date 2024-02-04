@@ -30,19 +30,17 @@ development started from 1.1.2024
 ## NOW
 
 ## NEXT
-* check IPC reload methods, probably index is wrong
 * fix 'find in page'
-* add tooltips to browser header buttons
 * during change layout seems that page is loaded again
 * add tab context menu (rename tab, refresh whole tab, mute tab)
 
 ## LATER
+* think about down-arrow+Enter during suggestion box
 * think how to hide suggestion box when clicked elsewhere
 * muted browser window indication
 * scrape url
 * addons support
 * packager → exe (github release)
-* show page source code (maybe not necessary when F12 is working)
 * move tabs (change tab order)
 * add menu item to open all bookmarks from current menu in new tab
 
@@ -57,7 +55,6 @@ development started from 1.1.2024
 
 ## IDEAS (not sure if will be implemented)
 * barker console
-* share my views
+* share my likes
 * download video
 * loop video
-
