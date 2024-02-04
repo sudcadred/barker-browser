@@ -23,13 +23,14 @@ development started from 1.1.2024
 * 'more actions' button in browser header (mute, unmute, find in, save, print, bookmark)
 * suggestion box for previously typed addresses
 * show link on hover
-
+* 'show development console' added to more actions button
 
 # NEXT STEPS
 
 ## NOW
 
 ## NEXT
+* check IPC reload methods, probably index is wrong
 * fix 'find in page'
 * add tooltips to browser header buttons
 * during change layout seems that page is loaded again
@@ -40,12 +41,9 @@ development started from 1.1.2024
 * muted browser window indication
 * scrape url
 * addons support
-* display dev console (more actions)
 * packager → exe (github release)
 * show page source code (maybe not necessary when F12 is working)
 * move tabs (change tab order)
-* restore zoom browser window functionality
-* use right sidebar (for zoom and/or dev console)
 * add menu item to open all bookmarks from current menu in new tab
 
 ## KNOWN BUGS

@@ -38,6 +38,8 @@ static showBrowserHeader(browserNo: number, left: number, top: number, browserWi
 static showBrowserView(browserViewNo: number, _left: number, _top: number, _width: number, _height: number)
 static showBrowsers_showSidebar()
 static showBrowsers_showMainArea(windowsCnt: number, tabId: string, offset: number)
+static clearRightSidebar()
+static showRightSidebar()
 static showBrowsers (windowsCnt: number, tabId: string, offset: number)
 static loadURL (tabIdName: string, browserNo: number, uri: string)
 static getNextTabId ()
@@ -56,6 +58,8 @@ static matchedAddressesBrowerView: Electron.BrowserView = null;
 static browserHeaderPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
 static browserWindowPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
 static suggestionBoxBrowserNo = 0;
+static rightSideBarBrowser: Electron.BrowserView = null;
+static lastActiveDevToolsBrowserView: Electron.BrowserView = null;
 
 //ctor    
 constructor (mainWindow: Electron.BrowserWindow) {
@@ -70,6 +74,17 @@ constructor (mainWindow: Electron.BrowserWindow) {
     browser.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     BarkerBrowser.mainWindow.addBrowserView(browser);
     BarkerBrowser.matchedAddressesBrowerView = browser;
+
+    //create BrowserView for right sidebar
+    browser = new BrowserView({webPreferences: {
+        devTools: true, 
+        autoplayPolicy: 'document-user-activation-required',
+        sandbox: false
+        }});
+    browser.setBounds({ x: 0, y: 0, width: 0, height: 0 });
+    BarkerBrowser.mainWindow.addBrowserView(browser);
+    BarkerBrowser.rightSideBarBrowser = browser;
+    
 }
 
 static isBodyFullyLoaded() {
@@ -345,8 +360,7 @@ static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: nu
     const currentBounds = BarkerBrowser.mainWindow.getBounds();
     maxHeight = currentBounds.height - BarkerData.frameBottomBar_height;
     maxWidth = currentBounds.width - 30;
-    maxWidth -= BarkerData.getFrameSidebarWidth();
-    maxWidth -= BarkerData.getFrameRightBarWidth();
+    maxWidth -= (BarkerData.getFrameSidebarWidth() + BarkerData.getFrameRightBarWidth() + 10);
     _left = BarkerData.getFrameSidebarWidth() + 10;
     _top = BarkerData.getFrameTopBarHeight();
     var _leftHeader = 0;
@@ -412,10 +426,29 @@ static showBrowsers_showMainArea(windowsCnt: number, tabId: string, offset: numb
     }
 }
 
+static clearRightSidebar() {
+    if (BarkerBrowser.lastActiveDevToolsBrowserView) {
+        BarkerBrowser.lastActiveDevToolsBrowserView.webContents.closeDevTools();
+        BarkerBrowser.lastActiveDevToolsBrowserView = null;
+    }
+    BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});
+}
+
+static showRightSidebar() {
+    let bounds = BarkerBrowser.mainWindow.getBounds();
+    bounds.x = bounds.width - BarkerData.frameRightBar_width;
+    bounds.y += 10;
+    bounds.width = BarkerData.frameRightBar_width - 30;
+    bounds.height -= 100;
+    BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
+}
+
+
 static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): cnt=" + windowsCnt +", tabId="+tabId+", offset="+offset);
     BarkerBrowser.showBrowsers_showSidebar();
     BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabId, offset);
+    BarkerBrowser.showRightSidebar();
 
     //update URL in browser headers
     const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);

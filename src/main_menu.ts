@@ -90,11 +90,15 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
          click: () => {browser.webContents.print({});} },
         {label: "bookmark page",
          click: () => { BarkerBrowser.addToBookmarks(browser.webContents.getURL());} },
-        {type: "separator"},    // features below separator not implemented yet
-        {label: "like this page" },
-        {label: "copy page to next tab" },
-        {label: "zoom page to right sidebar" },
-        {label: "show developer console" },
+        {label: "show developer console",
+         click: () => { BarkerBrowser.clearRightSidebar();
+                        BarkerBrowser.lastActiveDevToolsBrowserView = browser;
+                        browser.webContents.setDevToolsWebContents(BarkerBrowser.rightSideBarBrowser.webContents);
+                        browser.webContents.openDevTools({'mode': "detach"});
+                        BarkerBrowser.showRightSidebar();
+                    } },
+        {label: "hide developer console",
+         click: () => { BarkerBrowser.clearRightSidebar(); } },
     ];
     const menu = Menu.buildFromTemplate(template);
     return menu;
