@@ -86,6 +86,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //create back button
     const backButton = document.createElement('button');
     backButton.textContent = 'Back';
+    backButton.title = 'Back';
     backButton.id = 'backButton_sidebar' + browserNo;
     backButton.className += 'tabButton';
     backButton.innerHTML = '<img src="../img/back1.png" width=20px height=20px />';
@@ -100,6 +101,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //create forward button
     const forwardButton = document.createElement('button');
     forwardButton.textContent = 'Forward';
+    forwardButton.title = 'Forward';
     forwardButton.id = 'forwardButton_sidebar' + browserNo;
     forwardButton.className += 'tabButton';
     forwardButton.innerHTML = '<img src="../img/forward1.png" width=20px height=20px />';
@@ -113,6 +115,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //create refresh button
     const refreshButton = document.createElement('button');
     refreshButton.id = 'refreshButton_sidebar' + browserNo;
+    refreshButton.title = 'Reload page';
     refreshButton.className += 'tabButton';
     refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
     divHeader.appendChild(refreshButton);
@@ -126,6 +129,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //create ClearPage button
     const clearPageButton = document.createElement('button');
     clearPageButton.id = 'clearPageButton_sidebar' + browserNo;
+    clearPageButton.title = 'Clear browser window';
     clearPageButton.className += 'tabButton';
     clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
     divHeader.appendChild(clearPageButton);
@@ -177,6 +181,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
     //create ... button
     const threeDotsButton_sidebar = document.createElement('button');
     threeDotsButton_sidebar.id = 'threeDotsButton_sidebar' + browserNo;
+    threeDotsButton_sidebar.title = 'More actions';
     threeDotsButton_sidebar.className += 'tabButton';
     threeDotsButton_sidebar.innerHTML = '<img src="../img/dots.png" width=20px height=20px />';
     divHeader.appendChild(threeDotsButton_sidebar);

@@ -80,6 +80,7 @@ function loadURL(browserNo: number, uri: string) {
     //create back button
     const backButton = document.createElement('button');
     backButton.textContent = 'Back';
+    backButton.title = 'Back';
     backButton.id = 'backButton' + browserNo;
     backButton.className += 'tabButton';
     backButton.innerHTML = '<img src="../img/back1.png" width=20px height=20px />';
@@ -99,6 +100,7 @@ function loadURL(browserNo: number, uri: string) {
     //create forward button
     const forwardButton = document.createElement('button');
     forwardButton.textContent = 'Forward';
+    forwardButton.title = 'Forward';
     forwardButton.id = 'forwardButton' + browserNo;
     forwardButton.className += 'tabButton';
     forwardButton.innerHTML = '<img src="../img/forward1.png" width=20px height=20px />';
@@ -118,6 +120,7 @@ function loadURL(browserNo: number, uri: string) {
     //create refresh button
     const refreshButton = document.createElement('button');
     refreshButton.id = 'refreshButton' + browserNo;
+    refreshButton.title = 'Reload page';
     refreshButton.className += 'tabButton';
     refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
     divHeader.appendChild(refreshButton);
@@ -137,6 +140,7 @@ function loadURL(browserNo: number, uri: string) {
     //create ClearPage button
     const clearPageButton = document.createElement('button');
     clearPageButton.id = 'clearPageButton' + browserNo;
+    clearPageButton.title = 'Clear browser window';
     clearPageButton.className += 'tabButton';
     clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
     divHeader.appendChild(clearPageButton);
@@ -188,6 +192,7 @@ function loadURL(browserNo: number, uri: string) {
     //create ... button
     const threeDotsButton = document.createElement('button');
     threeDotsButton.id = 'threeDotsButton' + browserNo;
+    threeDotsButton.title = 'More actions';
     threeDotsButton.className += 'tabButton';
     threeDotsButton.innerHTML = '<img src="../img/dots.png" width=20px height=20px />';
     divHeader.appendChild(threeDotsButton);
