@@ -198,7 +198,7 @@ function showThreeDotsMenu_sidebar(browserNo: number) {
     (windowLeft as any).electronAPI.showThreeDotsMenu_sidebar(browserNo);
 }
 
-(windowLeft as any).electronAPI.onDeleteAllBrowserHeaders(() => {
+(windowLeft as any).electronAPI.onDeleteAllBrowserHeadersSidebar(() => {
     for (let i=1; i<=108; i++) {
         const divHeader = document.getElementById('divBrowserHeader_sidebar'+i.toString());
         if (divHeader) divHeader.remove();

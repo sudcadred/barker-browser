@@ -36,18 +36,17 @@ development started from 1.1.2024
 # NEXT STEPS
 
 ## NOW
-* fix browser headers in sidebar
 * test address navigation on novinky.cz
-* what happens if BarkerBrowser.showBrowsersIfBodyFullyLoaded() is called more times?
+* test if onLoad is called more times (logs) - BarkerBrowser.showBrowsersIfBodyFullyLoaded()
 
 ## NEXT
 * add menu item to open all bookmarks from current menu in new tab
 * fix 'find in page'
-* add tab context menu (rename tab, refresh whole tab, mute tab)
+* add tab context menu (rename tab, refresh whole tab, mute tab) - possibly move renameDiv from topBar to main area
 
 ## LATER
 * scrape url
-* addons support
+* addons manager
 * packager → exe (github release)
 
 ## IDEAS (not sure if will be implemented)
@@ -56,12 +55,12 @@ development started from 1.1.2024
 * share my likes
 * download video
 * loop video
+* show timer how long spent in tab name
 
 ## ADDONS IDEAS
 * twitch overview
-* timer
 
-# Missing features
+## Missing features
 * move tabs (change tab order)
 * edit bookmarks
 * muted browser window indication
