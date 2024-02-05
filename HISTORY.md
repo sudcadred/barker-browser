@@ -30,17 +30,15 @@ development started from 1.1.2024
 * 'show development console' added to more actions button
 
 ## 2024 week6
-* 
+* open all bookmarks in new tab
 
 
 # NEXT STEPS
 
 ## NOW
-* test if onLoad is called more times (logs) - BarkerBrowser.showBrowsersIfBodyFullyLoaded()
 
 ## NEXT
-* add menu item to open all bookmarks from current menu in new tab
-* fix 'find in page'
+* fix 'find in page' (switch for find text in whole tab)
 * add tab context menu (rename tab, refresh whole tab, mute tab) - possibly move renameDiv from topBar to main area
 
 ## LATER

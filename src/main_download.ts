@@ -150,7 +150,7 @@ static updateDownloadProgress() {
 //1 browserview catcher is enough to catch download events from all browserviews
 static createDownloadEventCatcher() {
     //statusbar download progress
-    const firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo('NewTab1');
+    const firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(1);
     let browserViews = BarkerDownload.mainWindow.getBrowserViews();
     let browser = browserViews[0];
     if (browser) {

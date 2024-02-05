@@ -6,9 +6,26 @@ import { BarkerBrowser } from "./main_browser";
 import { BarkerStatusBar } from "./main_statusbar";
 const { dialog } = require('electron');
 
-//wrapper methods for menu items (I have not found other way to call cmethods from dynamic menu template )
+//wrapper methods for menu actions (I have not found other way to call class methods from dynamic menu template )
 function _showPreferences() { BarkerSettings.showPreferences();}
 function _openBookmark(uri: string) { BarkerBrowser.openLinkInFirstEmptyWindow(uri);}
+function _openAllBookmarks(openedCategory: string) { 
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "_openAllBookmarks(): openedCategory="+openedCategory);
+    let tabIdNo = BarkerBrowser.createTab(); 
+    let browserNo = 1;
+    for (let j=0; j< BarkerData.bookmarks.length; j++) {
+        const bookmarkItem = BarkerData.bookmarks[j]; 
+        const category = bookmarkItem['category'];
+        if (category == openedCategory) {
+            BarkerBrowser.loadURL(tabIdNo, browserNo, bookmarkItem['uri']);
+            browserNo++;
+            if (browserNo % BarkerSettings.getMaxBrowserViewsPerTab() == 0) {
+                tabIdNo = BarkerBrowser.createTab(); 
+                browserNo = 1;
+            }
+        }
+    }
+}
 
 /* This class creates main menu
 */
@@ -29,6 +46,9 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): bookmarkTopic="+BarkerData.bookmarkTopics[i]);
         template += '{label: \''+BarkerData.bookmarkTopics[i]+'\',';
         template += 'submenu: [';
+        template += '{label: \'Open all bookmarks in new tab\',';
+        template += 'click: () => {_openAllBookmarks(\''+ BarkerData.bookmarkTopics[i] +'\')}},';
+        template += '{type: \'separator\'},';
         for (let j=0; j< BarkerData.bookmarks.length; j++) {
             const bookmarkItem = BarkerData.bookmarks[j]; 
             category = bookmarkItem['category'];
@@ -53,7 +73,7 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
     if (sidebar) {
         firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
     } else {
-        firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+        firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
     }
     let browserViews = BarkerMenu.mainWindow.getBrowserViews();
     let browser = browserViews[firstBrowserNo + browserNo - 1];

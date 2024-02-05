@@ -97,9 +97,9 @@ static changeLayout(pressedNo: number) {
     }
     if (pressedNo <= activeLayouts.length) {
         const pressedLayout = activeLayouts[pressedNo-1];
-        const actualTabId = BarkerData.getActualTabId();
-        BarkerData.setTabLayoutNo(actualTabId, pressedLayout);
-        BarkerBrowser.showBrowsers(pressedLayout, actualTabId, BarkerData.getTabBrowserOffset(actualTabId));
+        const actualTabIdNo = BarkerData.getActualTabIdNo();
+        BarkerData.setTabLayoutNo(actualTabIdNo, pressedLayout);
+        BarkerBrowser.showBrowsers(pressedLayout, actualTabIdNo, BarkerData.getTabBrowserOffset(actualTabIdNo));
         BarkerKeyboardShortcuts.mainWindow.webContents.send('set-layout', pressedLayout);
     }
 }

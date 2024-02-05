@@ -252,7 +252,7 @@ function getLastNumber(s: string) {
 }
 
 //create tab started from main process
-(windowTop as any).electronAPI.onLoadTab((tabName: string) => {
+(windowTop as any).electronAPI.onCreateTab((tabName: string) => {
     //alert('onLoadTab()');
 
     //create tab button
@@ -270,8 +270,6 @@ function getLastNumber(s: string) {
     newButtonCloseTab.className += 'tabButton';
     tabDiv.appendChild(newButtonCloseTab);
 
-    nextTabNo++;
-    
     // "close tab" button
     newButtonCloseTab.addEventListener('click', () => {
         hideRenameTab();
@@ -305,9 +303,10 @@ function getLastNumber(s: string) {
       clearFocusedTabButton();
       newButtonTab.className = 'focusedTabButton';
       lastActiveTabId = newButtonTab.id;
-      (windowTop as any).electronAPI.changeTab(newButtonTab.id); 
+      (windowTop as any).electronAPI.changeTab(getLastNumber(newButtonTab.id)); 
     });
 
+    nextTabNo++;
 });
 
 //change tab started from main process
@@ -339,8 +338,6 @@ addNewTabButton.addEventListener('click', () => {
     newButtonCloseTab.className += 'tabButton';
     tabDiv.appendChild(newButtonCloseTab);
 
-    nextTabNo++;
-    
     // "close tab" button
     newButtonCloseTab.addEventListener('click', () => {
         hideRenameTab();
@@ -374,13 +371,13 @@ addNewTabButton.addEventListener('click', () => {
       clearFocusedTabButton();
       newButtonTab.className = 'focusedTabButton';
       lastActiveTabId = newButtonTab.id;
-      (windowTop as any).electronAPI.changeTab(newButtonTab.id); 
+      (windowTop as any).electronAPI.changeTab(getLastNumber(newButtonTab.id)); 
     });
     
+    nextTabNo++;
 });
 
 (windowTop as any).electronAPI.onSetNextTabName((tabName: string) => {
-    //alert('onSetNextTabName()');
     nextTabName = tabName;
 });
 
@@ -389,14 +386,13 @@ addNewTabButton.addEventListener('click', () => {
     clearFocusedTabButton();
     var nextTabButton = null;
     if (tabName == 'next') {
-        //alert(nextTabName);
         nextTabButton = document.getElementById(nextTabName);
     } else {
         nextTabButton = document.getElementById(tabName);
     }
     lastActiveTabId = nextTabButton.id;
     nextTabButton.className = 'focusedTabButton';
-    (windowTop as any).electronAPI.changeTab(nextTabButton.id); 
+    (windowTop as any).electronAPI.changeTab(getLastNumber(nextTabButton.id));
 });
 
 window.addEventListener('resize', function() {

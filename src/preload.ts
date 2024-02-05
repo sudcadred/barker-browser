@@ -30,10 +30,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     changeSidebarLayout: (cnt: number) => { ipcRenderer.send('change-sidebar-layout', cnt) },
 
     //tabs
-    createTab: (tabNo: number) => { ipcRenderer.send('create-tab', tabNo) },
-    changeTab: (tabName: string) => { ipcRenderer.send('change-tab', tabName) },
+    createTab: (tabIdNo: number) => { ipcRenderer.send('create-tab', tabIdNo) },
+    changeTab: (tabIdNo: number) => { ipcRenderer.send('change-tab', tabIdNo) },
     saveTabs: () => { ipcRenderer.send('save-tabs') },
     renameTab: (newTabName: string) => { ipcRenderer.send('rename-tab', newTabName) },
+    reloadTab: (tabIdNo: string) => { ipcRenderer.send('reload-tab', tabIdNo) },
 
     //roll browser windows
     showPreviousBrowser: () => { ipcRenderer.send('show-previous-browser') },
@@ -46,26 +47,27 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     //page navigation
     loadURL: (browserNo: number, address: string) => { ipcRenderer.send('load-url', browserNo, address) },
-    loadURL_sidebar: (browserNo: number, address: string) => { ipcRenderer.send('load-url-sidebar', browserNo, address) },
     findInPage: (text: string) => { ipcRenderer.send('find-in-page', text) },
     clearSelection: () => { ipcRenderer.send('clear-selection') },
     goBack: (browserNo: number) => { ipcRenderer.send('go-back', browserNo) },
     goForward: (browserNo: number) => { ipcRenderer.send('go-forward', browserNo) },
     reloadPage: (browserNo: number) => { ipcRenderer.send('reload-page', browserNo) },
-    reloadTab: (tabId: string) => { ipcRenderer.send('reload-tab', tabId) },
     clearPage: (browserNo: number) => { ipcRenderer.send('clear-page', browserNo) },
+    showThreeDotsMenu: (browserNo:number) => {ipcRenderer.send('show-three-dots-menu', browserNo) },
+    addressKeyPressed: (browserNo: number, inputUrlAddress: string) => {ipcRenderer.send('address-key-pressed', browserNo, inputUrlAddress) },
+    matchedAddressSelected: (uri:string) => {ipcRenderer.send('matched-address-selected', uri) },
+
+    //sidebar
+    loadURL_sidebar: (browserNo: number, address: string) => { ipcRenderer.send('load-url-sidebar', browserNo, address) },
     goBack_sidebar: (browserNo: number) => { ipcRenderer.send('go-back-sidebar', browserNo) },
     goForward_sidebar: (browserNo: number) => { ipcRenderer.send('go-forward-sidebar', browserNo) },
     reloadPage_sidebar: (browserNo: number) => { ipcRenderer.send('reload-page-sidebar', browserNo) },
     reloadTab_sidebar: (tabId: string) => { ipcRenderer.send('reload-tab-sidebar', tabId) },
     clearPage_sidebar: (browserNo: number) => { ipcRenderer.send('clear-page-sidebar', browserNo) },
-    showThreeDotsMenu: (browserNo:number) => {ipcRenderer.send('show-three-dots-menu', browserNo) },
     showThreeDotsMenu_sidebar: (browserNo:number) => {ipcRenderer.send('show-three-dots-menu-sidebar', browserNo) },
-    addressKeyPressed: (browserNo: number, inputUrlAddress: string) => {ipcRenderer.send('address-key-pressed', browserNo, inputUrlAddress) },
     ipcAddressKeyPressedSidebar: (browserNo: number, inputUrlAddress: string) => {ipcRenderer.send('address-key-pressed-sidebar', browserNo, inputUrlAddress) },
-    matchedAddressSelected: (uri:string) => {ipcRenderer.send('matched-address-selected', uri) },
     matchedAddressSelected_sidebar: (uri:string) => {ipcRenderer.send('matched-address-selected-sidebar', uri) },
-
+  
     //startup events
     topBodyLoaded: (height: number) => { ipcRenderer.send('top-body-loaded', height) },
     leftBodyLoaded: (width: number) => { ipcRenderer.send('left-body-loaded', width) },
@@ -86,7 +88,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onSetSidebarLayout: (callback: Function) => ipcRenderer.on('set-sidebar-layout', (_event, value) => callback(value)),
     onCtrlTab: (callback: Function) => ipcRenderer.on('switch-tab', (_event, value) => callback(value)),
     onSetNextTabName: (callback: Function) => ipcRenderer.on('set-next-tab-name', (_event, value) => callback(value)),
-    onLoadTab: (callback: Function) => ipcRenderer.on('load-tab', (_event, value) => callback(value)),
+    onCreateTab: (callback: Function) => ipcRenderer.on('create-tab', (_event, value) => callback(value)),
     onActivateTab: (callback: Function) => ipcRenderer.on('activate-tab', (_event, value) => callback(value)),
     onCreateBrowserHeader: (callback: Function) => ipcRenderer.on('create-browser-header', (_event, browserNo, left, top, browser_width) => callback(browserNo, left, top, browser_width)),
     onCreateSidebarBrowserHeader: (callback: Function) => ipcRenderer.on('create-sidebar-browser-header', (_event, browserNo, left, top) => callback(browserNo, left, top)),

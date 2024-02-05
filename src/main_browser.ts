@@ -53,7 +53,6 @@ static mainWindow: Electron.BrowserWindow = null;
 static activeBrowserView: Electron.BrowserView = null;
 static showBrowserHeaders = true;
 static browserHeaderButtonsString: string;
-static actualTabId = 'NewTab1';
 static matchedAddressesBrowerView: Electron.BrowserView = null;
 static browserHeaderPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
 static browserWindowPosition = {'x': 0, 'y': 0, 'width': 0, 'height': 0};
@@ -94,7 +93,7 @@ static isBodyFullyLoaded() {
 static showBrowsersIfBodyFullyLoaded() {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded()");
     if (BarkerBrowser.isBodyFullyLoaded()) {
-        const tabLayout = BarkerData.getTabLayoutNo(BarkerData.getActualTabId());
+        const tabLayout = BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo());
         const sidebarLayout = BarkerData.getSidebarLayoutNo();
     
         BarkerStatusBar.createStatusBar();
@@ -105,19 +104,19 @@ static showBrowsersIfBodyFullyLoaded() {
         BarkerDownload.createDownloadEventCatcher();
     
         BarkerBrowser.mainWindow.webContents.send('set-layout-buttons', BarkerData.getLayoutString());
-        const tabId = BarkerData.getOrderedTabIdName(0);
-        if (BarkerData.getOrderedTabIdsArray().length > 0) {
-            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainWindow(): tabId="+tabId+", tabLayout="+tabLayout);
+        const tabIdNo = BarkerData.getOrderedTabIdNo(0);
+        if (BarkerData.getOrderedTabIdNumbersArray().length > 0) {
+            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainWindow(): tabId="+tabIdNo+", tabLayout="+tabLayout);
             BarkerBrowser.mainWindow.webContents.send('set-layout', Number(tabLayout));
-            BarkerBrowser.mainWindow.webContents.send('activate-tab', tabId);
-            BarkerBrowser.mainWindow.webContents.send('set-next-tab-name', BarkerBrowser.getNextTabId());
+            BarkerBrowser.mainWindow.webContents.send('activate-tab', 'NewTab'+tabIdNo);
+            BarkerBrowser.mainWindow.webContents.send('set-next-tab-name', BarkerBrowser.getNextTabIdName());
             BarkerBrowser.mainWindow.webContents.send('set-sidebar-layout', Number(sidebarLayout));
-            BarkerData.setActualTabId(tabId);
+            BarkerData.setActualTabIdNo(tabIdNo);
         }
         BarkerSaveLoadState.loadAddressesFromFile();
-        BarkerData.setActualTabId(BarkerData.getOrderedTabIdName(0));
-        let actualTabId = BarkerData.getActualTabId();
-        BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(actualTabId), actualTabId, BarkerData.getTabBrowserOffset(actualTabId));
+        BarkerData.setActualTabIdNo(BarkerData.getOrderedTabIdNo(0));
+        let actualTabIdNo = BarkerData.getActualTabIdNo();
+        BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(actualTabIdNo), actualTabIdNo, BarkerData.getTabBrowserOffset(actualTabIdNo));
     
         //keyboard shortcuts valid for mainWindow level
         BarkerBrowser.mainWindow.webContents.on('before-input-event', (event, input) => {
@@ -140,7 +139,7 @@ static openLinkInNextWindow(browserNo: number, uri: string) {
 }
 
 static getNextEmptyBrowserNo(browserNo: number) {
-    const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);
+    const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());
     if (addresses) {
         for (let i=browserNo+1; i< BarkerSettings.getMaxBrowserViewsPerTab()-browserNo; i++) {
                 const address = addresses.get(i);
@@ -186,7 +185,7 @@ static addToBookmarks(uri: string) {
     BarkerMenu.createMainMenu(BarkerBrowser.mainWindow);
 }
 
-static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean) {
+static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolean) {
 
     //browser window
     let browser = new BrowserView({webPreferences: {
@@ -198,19 +197,19 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
     if (BarkerSettings.getUserAgent() != '') browser.webContents.setUserAgent(BarkerSettings.getUserAgent());
     browser.webContents.loadFile('../html/default_browser.html');
     BarkerBrowser.mainWindow.addBrowserView(browser);
-    const tabId = 'NewTab' + tabNo;
+    const tabIdName = 'NewTab' + tabIdNo;
 
     if (firstBrowser) {
         let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
         let firstBrowserNo = browserViews.length - 1;
-        BarkerData.setTabFirstBrowserViewNo(tabId, firstBrowserNo);
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserView(): _mapTabsToFirstBrowserViewNo sets tabId=" + tabId + ", firstBrowserViewNo="+firstBrowserNo);
+        BarkerData.setTabFirstBrowserViewNo(tabIdNo, firstBrowserNo);
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserView(): _mapTabsToFirstBrowserViewNo sets tabIdNo=" + tabIdNo + ", firstBrowserViewNo="+firstBrowserNo);
     }
 
     //BrowserView navigation events (for later get URL and write it somewhere so user can see actual URL)
     browser.webContents.on('will-navigate', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
-        const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);    //get map of addresses for current tab
+        const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
         if (addresses) {
             addresses.set(browserNo, url);
         }
@@ -218,7 +217,7 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
     });
     browser.webContents.on('did-navigate-in-page', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
-        const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);    //get map of addresses for current tab
+        const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
         if (addresses) {
             addresses.set(browserNo, url);
         }
@@ -302,7 +301,7 @@ removeBrowserViewsForOneTab(tabName: string) {
 
 static hideAllBrowserViews_mainArea() {
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
-    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
     for (let i=firstBrowserViewNo; i<=firstBrowserViewNo+BarkerSettings.getMaxBrowserViewsPerTab();i++) {
             if (browserViews[i]) {
                 browserViews[i].setBounds({ x: 0, y: 0, width: 0, height: 0 });
@@ -432,8 +431,8 @@ static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: nu
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): window x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
 }
 
-static showBrowsers_showMainArea(windowsCnt: number, tabId: string, offset: number) {
-    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabId);
+static showBrowsers_showMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
+    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
     if (!firstBrowserViewNo) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): no firstBrowserView found, not displaying any browser windows for this tab");
         return;
@@ -467,16 +466,16 @@ static showRightSidebar() {
     BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
 }
 
-static updateMainArea(windowsCnt: number, tabId: string, offset: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateMainArea(): cnt=" + windowsCnt +", tabId="+tabId+", offset="+offset);
+static updateMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateMainArea(): cnt=" + windowsCnt +", tabIdNo="+tabIdNo+", offset="+offset);
 
     BarkerBrowser.hideAllBrowserViews_mainArea();
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers');
     BarkerBrowser.updateRollingText();
-    BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabId, offset);
+    BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabIdNo, offset);
 
     //update URL in browser headers
-    const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);
+    const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());
     if (addresses) {
         for (let i=offset; i<=offset+windowsCnt; i++) {
             const address = addresses.get(i);
@@ -487,8 +486,8 @@ static updateMainArea(windowsCnt: number, tabId: string, offset: number) {
     }
 }
 
-static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): cnt=" + windowsCnt +", tabId="+tabId+", offset="+offset);
+static showBrowsers (windowsCnt: number, tabIdNo: number, offset: number) {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): cnt=" + windowsCnt +", tabIdNo="+tabIdNo+", offset="+offset);
 
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers');
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers-sidebar');
@@ -496,11 +495,11 @@ static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
     BarkerSideBar.updateRollingTextSidebar();
 
     BarkerBrowser.showBrowsers_showSidebar();
-    BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabId, offset);
+    BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabIdNo, offset);
     BarkerBrowser.showRightSidebar();
 
     //update URL in browser headers
-    const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);
+    const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());
     if (addresses) {
         for (let i=offset; i<=offset+windowsCnt; i++) {
             const address = addresses.get(i);
@@ -516,18 +515,18 @@ static showBrowsers (windowsCnt: number, tabId: string, offset: number) {
 }
 
 static loadUrlInActualTab(browserNo: number, uri: string) {
-    BarkerBrowser.loadURL(BarkerData.getActualTabId(), browserNo, uri);
+    BarkerBrowser.loadURL(BarkerData.getActualTabIdNo(), browserNo, uri);
 }
 
-static loadURL (tabIdName: string, browserNo: number, uri: string) {
+static loadURL (tabIdNo: number, browserNo: number, uri: string) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserNo="+browserNo+", uri="+uri);
     if (browserNo>BarkerSettings.getMaxBrowserViewsPerTab()) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL() ERROR - browserNo not valid! browserNo="+browserNo);
         return;
     }
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdName);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): BarkerBrowser.actualTabId="+BarkerBrowser.actualTabId+", firstBrowserNo="+firstBrowserNo);
+    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): actualTabId="+BarkerData.getActualTabIdNo()+", firstBrowserNo="+firstBrowserNo);
     
     var uriWithProtocol = uri;
     if (!/^https?:\/\//i.test(uri)) {
@@ -546,7 +545,7 @@ static loadURL (tabIdName: string, browserNo: number, uri: string) {
         browserViews[browserViewNo].webContents.loadURL('https://www.google.com/search?q='+uri);
     }
 
-    const addresses = BarkerData.getTabAddresses(tabIdName);    //get map of addresses for current tab
+    const addresses = BarkerData.getTabAddresses(tabIdNo);    //get map of addresses for current tab
     if (addresses) {
         //URL already loaded, just overwrite
         addresses.set(browserNo, uri);
@@ -554,44 +553,49 @@ static loadURL (tabIdName: string, browserNo: number, uri: string) {
         //first time load URL
         let map = new Map<number, string>;
         map.set(browserNo, uri);
-        BarkerData.setTabAddresses(tabIdName, map);
+        BarkerData.setTabAddresses(tabIdNo, map);
     }
 }
 
-static getNextTabId () {
+static getNextTabIdName() {
+    return 'NewTab' + BarkerBrowser.getNextTabIdNo();
+}
+
+static getNextTabIdNo () {
     //find current tab
     var i;
-    for (i=0; i<BarkerData.getOrderedTabIdsArray().length;i++) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabId(): i="+i+", _orderedTabIds[i]="+BarkerData.getOrderedTabIdName(i));
-        if (BarkerData.getOrderedTabIdName(i) == BarkerBrowser.actualTabId) break;
+    for (i=0; i<BarkerData.getOrderedTabIdNumbersArray().length;i++) {
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): i="+i+", _orderedTabIds[i]="+BarkerData.getOrderedTabIdName(i));
+        if (BarkerData.getOrderedTabIdNo(i) == BarkerData.getActualTabIdNo()) break;
     }
     
     //return next tab
-    if (i<BarkerData.getOrderedTabIdsArray().length-1) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabId(): Returning i="+i+", _orderedTabIds[i+1]="+BarkerData.getOrderedTabIdName(i+1));
-        return BarkerData.getOrderedTabIdName(i+1); 
+    if (i<BarkerData.getOrderedTabIdNumbersArray().length-1) {
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): Returning i="+i+", _orderedTabIds[i+1]="+BarkerData.getOrderedTabIdName(i+1));
+        return BarkerData.getOrderedTabIdNo(i+1); 
     } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabId(): Returning i="+i+", _orderedTabIds[0]="+BarkerData.getOrderedTabIdName(0));
-        return BarkerData.getOrderedTabIdName(0);
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): Returning i="+i+", _orderedTabIds[0]="+BarkerData.getOrderedTabIdName(0));
+        return BarkerData.getOrderedTabIdNo(0);
     }
 }
 
 static updateRollingText() {
-    var rollingText = (BarkerData.getTabBrowserOffset(BarkerBrowser.actualTabId)+1).toString();
-    const layout = BarkerData.getTabLayoutNo(BarkerBrowser.actualTabId);
-    if (layout>1) rollingText += '-' + (BarkerData.getTabBrowserOffset(BarkerBrowser.actualTabId) + layout);
+    const actualTabIdNo = BarkerData.getActualTabIdNo();
+    var rollingText = (BarkerData.getTabBrowserOffset(actualTabIdNo)+1).toString();
+    const layout = BarkerData.getTabLayoutNo(actualTabIdNo);
+    if (layout>1) rollingText += '-' + (BarkerData.getTabBrowserOffset(actualTabIdNo) + layout);
     rollingText += '/' + BarkerSettings.getMaxBrowserViewsPerTab();
     BarkerBrowser.mainWindow.webContents.send('update-rolling-browsers-text', rollingText);
 }
 
 static showMatchedAddresses(uri: string, browserNo: number) {
-    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabId());
+    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
     let browser =  <BrowserView>browserViews[firstBrowserNo+browserNo-1];
     if (browser) {
         //shift BrowserView top-border lower to see suggestion bar 
         //(it is not possible to draw HTML element over BrowserView object in Electron)
-        BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabId()), browserNo);
+        BarkerBrowser.calculateBrowserWindowPosition_mainArea(BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()), browserNo);
         BarkerBrowser.browserWindowPosition.y += 50;
         BarkerBrowser.browserWindowPosition.height -= 50;
         browser.setBounds({ x:BarkerBrowser.browserWindowPosition.x, y:BarkerBrowser.browserWindowPosition.y, width:BarkerBrowser.browserWindowPosition.width, height:BarkerBrowser.browserWindowPosition.height});
@@ -608,4 +612,26 @@ static showMatchedAddresses(uri: string, browserNo: number) {
     }
 }
 
+static createTab(paramTabIdNo = 0) {
+    let tabName: string;
+    let tabIdNo = paramTabIdNo;
+
+    if (tabIdNo == 0) {
+        tabIdNo = BarkerData.getHighestTabNo() + 1;
+        tabName = 'Bookmarks' + tabIdNo;
+    } else {
+        tabName = BarkerData.getTabName(tabIdNo);
+    }
+
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createTab(): tabIdNo="+tabIdNo);
+    BarkerData.setTabLayoutNo(tabIdNo, BarkerSettings.getDefautLayoutNo());
+    BarkerData.getOrderedTabIdNumbersArray().push(tabIdNo);
+    BarkerData.setTabName(tabIdNo, 'NewTab'+tabIdNo);
+    BarkerData.setTabBrowserOffset(tabIdNo, 0);
+    BarkerData.setTabCnt(BarkerData.getTabCnt() + 1);
+    BarkerBrowser.createBrowserViewsForOneTab(tabIdNo);
+    BarkerBrowser.mainWindow.webContents.send('create-tab', tabName);
+    BarkerBrowser.mainWindow.webContents.send('set-next-tab-name', BarkerBrowser.getNextTabIdName());
+    return tabIdNo;
+}
 }

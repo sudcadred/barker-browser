@@ -27,18 +27,18 @@ static getDefautLayoutNo()
 static setDefautLayoutNo(layoutNo: number)
 */
 
-//properties configurable via user interface
+//properties configurable via user interface (preferences)
 static maxBrowserViewsPerTab = 25;
 static userAgent: string;
+static appTitle = 'Barker Browser (2024 week 6 build)';
 
 //properties configurable only in the code below
-static appTitle = 'Barker Browser (month1 build)';
 static browserHeaderHeight = 80;
 static maxStatusBarTextLength = 200;
 static defaultLayout = 1;
 
 //other properties
-static showBrowserHeaders = true;       //runtime checkbox
+static showBrowserHeaders = true;
 static preferences: typeof ElectronPreferences = null;
 static mainWindow: Electron.BrowserWindow = null;
 static store: Object = null;

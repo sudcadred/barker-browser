@@ -8,13 +8,12 @@ import { BarkerSettings } from "./main_settings";
 */   
 export class BarkerData {
 
-static mapTabsToLayouts = new Map();
-static mapTabsToAddresses = new Map<string, Map<number, string>>;    //Map<'tabId', Map<browserViewNo, URL>>
-static mapTabsToZoomedBrowserView = new Map<string, Electron.BrowserView>; 
-static mapTabsToFirstBrowserViewNo = new Map<string, number>;
-static orderedTabIds: string[] = [];
-static mapTabsToTabNames = new Map<string, string>;   //tabId, tabName
-static mapTabsToBrowserOffset = new Map<string, number>;
+static mapTabIdNoToLayouts = new Map<number, number>;
+static mapTabIdNoToAddresses = new Map<number, Map<number, string>>;    //Map<'tabIdNo', Map<browserViewNo, URL>>
+static mapTabIdNoToFirstBrowserViewNo = new Map<number, number>;
+static orderedTabIdNumbers: number[] = [];
+static mapTabIdNoToTabNames = new Map<number, string>;   //tabId, tabName
+static mapTabIdNoToBrowserOffset = new Map<number, number>;
 static mapsDownloadItemsToProgress = new Map<string, number>;
 static bookmarkTopics: string[] = [];
 static bookmarks = [{'category': '', 'name': '', 'uri': ''}];
@@ -25,7 +24,7 @@ static sidebarLayoutNo: number;
 static sidebarRollingWindowOffset = 0;
 
 static firstBrowserViewNo_sidebar: number;
-static actualTabId: string;
+static actualTabIdNo: number;
 static downloadedItems = '';
 static downloadFailedItems = '';
 static activeBrowserView: Electron.BrowserView = null;
@@ -47,19 +46,15 @@ static layoutString: string;
 static browserHeaderButtonsString: string;
 
 //getters and setters
-static getActualTabId() { return BarkerData.actualTabId;}
-static setActualTabId(tabId: string) { BarkerData.actualTabId = tabId;}
-static getTabLayoutNo(tabIdName: string) { return BarkerData.mapTabsToLayouts.get(tabIdName) || BarkerSettings.defaultLayout;}
-static setTabLayoutNo(tabIdName: string, layout: number) { BarkerData.mapTabsToLayouts.set(tabIdName, layout);}
-static getZoomedBrowserMap() { return BarkerData.mapTabsToZoomedBrowserView;}
-static getZoomedBrowserView(tabIdName: string) { return BarkerData.mapTabsToZoomedBrowserView.get(tabIdName);}
-static setZoomedBrowserView(tabIdName: string, browserViewNo: Electron.BrowserView) { return BarkerData.mapTabsToZoomedBrowserView.set(tabIdName, browserViewNo);}
-static deleteZoomedBrowserView(tabIdName: string) {BarkerData.mapTabsToZoomedBrowserView.delete(tabIdName)};
-static getTabFirstBrowserMap() { return BarkerData.mapTabsToFirstBrowserViewNo;}
-static getTabFirstBrowserViewNo(tabIdName: string) { return BarkerData.mapTabsToFirstBrowserViewNo.get(tabIdName);}
-static setTabFirstBrowserViewNo(tabIdName: string, firstBrowserViewNo: number) { BarkerData.mapTabsToFirstBrowserViewNo.set(tabIdName, firstBrowserViewNo);}
-static getTabAddresses (tabIdName: string) {return BarkerData.mapTabsToAddresses.get(tabIdName);}
-static setTabAddresses (tabIdName: string, map: Map<number, string>) {BarkerData.mapTabsToAddresses.set(tabIdName, map);}
+static getActualTabIdNo() { return BarkerData.actualTabIdNo;}
+static setActualTabIdNo(tabIdNo: number) { BarkerData.actualTabIdNo = tabIdNo;}
+static getTabLayoutNo(tabIdNo: number) { return BarkerData.mapTabIdNoToLayouts.get(tabIdNo) || BarkerSettings.defaultLayout;}
+static setTabLayoutNo(tabIdNo: number, layout: number) { BarkerData.mapTabIdNoToLayouts.set(tabIdNo, layout);}
+static getTabFirstBrowserMap() { return BarkerData.mapTabIdNoToFirstBrowserViewNo;}
+static getTabFirstBrowserViewNo(tabIdNo: number) { return BarkerData.mapTabIdNoToFirstBrowserViewNo.get(tabIdNo);}
+static setTabFirstBrowserViewNo(tabIdNo: number, firstBrowserViewNo: number) { BarkerData.mapTabIdNoToFirstBrowserViewNo.set(tabIdNo, firstBrowserViewNo);}
+static getTabAddresses (tabIdNo: number) {return BarkerData.mapTabIdNoToAddresses.get(tabIdNo);}
+static setTabAddresses (tabIdNo: number, map: Map<number, string>) {BarkerData.mapTabIdNoToAddresses.set(tabIdNo, map);}
 static getFirstBrowserViewNo_sidebar() {return BarkerData.firstBrowserViewNo_sidebar;}
 static setFirstBrowserViewNo_sidebar(browserViewNo: number) {BarkerData.firstBrowserViewNo_sidebar = browserViewNo;}
 static setSidebarUrl(browserNo: number, url: string) {BarkerData.sidebarAddresses[browserNo] = url;}
@@ -87,11 +82,12 @@ static getFrameMainHeight() { return BarkerData.frameMainFrame_height;}
 static setFrameMainHeight(height: number) { BarkerData.frameMainFrame_height = height;}
 static getFrameBottomBarHeight() { return BarkerData.frameBottomBar_height;}
 static setFrameBottomBarHeight(height: number) { BarkerData.frameBottomBar_height = height;}
-static getOrderedTabIdsArray() { return BarkerData.orderedTabIds; };
-static getOrderedTabIdName(tabIdNo: number) { return BarkerData.orderedTabIds[tabIdNo]; };
-static setOrderedTabIdName(tabIdNo: number, tabIdName: string) { BarkerData.orderedTabIds[tabIdNo] = tabIdName;};
-static getTabBrowserOffset(tabIdName: string) {return BarkerData.mapTabsToBrowserOffset.get(tabIdName) || 0;};
-static setTabBrowserOffset(tabIdName: string, offset: number) {return BarkerData.mapTabsToBrowserOffset.set(tabIdName, offset);};
+static getOrderedTabIdNumbersArray() { return BarkerData.orderedTabIdNumbers; };
+static getOrderedTabIdNo(position: number) { return BarkerData.orderedTabIdNumbers[position];};
+static getOrderedTabIdName(position: number) { return BarkerData.getTabIdName(BarkerData.orderedTabIdNumbers[position]);};
+static setOrderedTabIdNumber(tabPosition: number, tabIdNo: number) { BarkerData.orderedTabIdNumbers[tabPosition] = tabIdNo;};
+static getTabBrowserOffset(tabIdNo: number) {return BarkerData.mapTabIdNoToBrowserOffset.get(tabIdNo) || 0;};
+static setTabBrowserOffset(tabIdNo: number, offset: number) {return BarkerData.mapTabIdNoToBrowserOffset.set(tabIdNo, offset);};
 static setTopBodyLoaded(loaded: boolean) {BarkerData.topBodyLoaded = loaded};
 static setLeftBodyLoaded(loaded: boolean) {BarkerData.leftBodyLoaded = loaded};
 static setMainBodyLoaded(loaded: boolean) {BarkerData.mainBodyLoaded = loaded};
@@ -102,8 +98,8 @@ static getLeftBodyLoaded() {return BarkerData.leftBodyLoaded;};
 static getMainBodyLoaded() {return BarkerData.mainBodyLoaded;};
 static getRightBodyLoaded() {return BarkerData.rightBodyLoaded;};
 static getBottomBodyLoaded() {return BarkerData.bottomBodyLoaded;};
-static getTabName(tabIdName: string) {return BarkerData.mapTabsToTabNames.get(tabIdName)};
-static setTabName(tabIdName: string, tabName: string) {BarkerData.mapTabsToTabNames.set(tabIdName, tabName)};
+static getTabName(tabIdNo: number) {return BarkerData.mapTabIdNoToTabNames.get(tabIdNo)};
+static setTabName(tabIdNo: number, tabName: string) {BarkerData.mapTabIdNoToTabNames.set(tabIdNo, tabName)};
 static getTabCnt() { return BarkerData.tabCount;}
 static setTabCnt(tabsCount: number) { BarkerData.tabCount = tabsCount;}
 static getLayoutString() { return BarkerData.layoutString;}
@@ -112,6 +108,7 @@ static getBrowserHeaderString() { return BarkerData.browserHeaderButtonsString;}
 static setBrowserHeaderString(s: string) { BarkerData.browserHeaderButtonsString = s;}
 static getTypedAddresses() {BarkerData.typedAddresses;}
 static getTypedAddress(i: number): string {return BarkerData.typedAddresses[i];}
+static getTabIdName(tabIdNo: number) {return 'NewTab' + tabIdNo;}
 
 //other methods
 static bookmarkTopicExists(category: string): boolean { 
@@ -146,6 +143,17 @@ static addTypedAddress(uri: string) {
    if (!BarkerData.uriAlreadyAdded(uri)) {
       BarkerData.typedAddresses.push(uri);
    }
+}
+
+static getHighestTabNo() {
+   let maxTabNo = 0;
+   for (let i=0; i< BarkerData.orderedTabIdNumbers.length; i++) {
+      const tabNo = BarkerData.orderedTabIdNumbers[i];
+      if (tabNo > maxTabNo) {
+         maxTabNo = tabNo;
+      }
+   }
+   return maxTabNo;
 }
 
 }

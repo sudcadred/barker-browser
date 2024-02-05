@@ -52,9 +52,9 @@ function createMainWindow () {
 
     _mainWindow.on('resize', function () {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "mainWindow resized");
-        const actualTabId = BarkerData.getActualTabId();
-        const cnt = BarkerData.getTabLayoutNo(actualTabId);
-        BarkerBrowser.showBrowsers(cnt, actualTabId, BarkerData.getTabBrowserOffset(actualTabId));
+        const actualTabIdNo = BarkerData.getActualTabIdNo();
+        const cnt = BarkerData.getTabLayoutNo(actualTabIdNo);
+        BarkerBrowser.showBrowsers(cnt, actualTabIdNo, BarkerData.getTabBrowserOffset(actualTabIdNo));
     });
 };
 
