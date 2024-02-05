@@ -70,6 +70,11 @@ function loadURL(browserNo: number, uri: string) {
     (windowMain as any).electronAPI.loadURL(browserNo, uri)
 };
 
+function hideMatchedAddresses() {
+    var divMatchedAddresses = document.getElementById("divMatchedAddresses");
+    divMatchedAddresses.style.display = 'none';
+}
+
 (windowMain as any).electronAPI.onCreateBrowserHeader((browserNo: number, left: number, top: number, browser_width: number) => {
 
     var divHeader = document.createElement('div');
@@ -147,8 +152,7 @@ function loadURL(browserNo: number, uri: string) {
 
     //ClearPage button click
     clearPageButton.addEventListener('click', () => {
-        var divMatchedAddresses = document.getElementById("divMatchedAddresses");
-        divMatchedAddresses.style.display = 'none';
+        hideMatchedAddresses();
         (inputUrlAddress as any).value = '';
         (windowMain as any).electronAPI.clearPage(browserNo);
     });
@@ -220,6 +224,7 @@ function showThreeDotsMenu(browserNo: number) {
     const urlInput = document.getElementById('inputUrlAddress' + browserNo);
     if (urlInput) {
         (urlInput as any).value= uri;
+        hideMatchedAddresses();
     }
 });
 
@@ -241,8 +246,7 @@ function showThreeDotsMenu(browserNo: number) {
 var matchedAddressesButton = document.getElementById("matchedAddressesButton");
 matchedAddressesButton.addEventListener("click",function() {
     (windowMain as any).electronAPI.matchedAddressSelected(matchedAddressesButton.innerText);
-    var divMatchedAddresses = document.getElementById("divMatchedAddresses");
-    divMatchedAddresses.style.display = 'none';
+    hideMatchedAddresses();
 });
 
 

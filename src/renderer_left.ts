@@ -75,6 +75,11 @@ function loadURLSidebar(browserNo: number, uri: string) {
     (windowLeft as any).electronAPI.loadURL_sidebar(browserNo, uri)
 };
 
+function hideMatchedAddressesSidebar() {
+    const divMatchedAddresses_sidebar = document.getElementById("divMatchedAddresses_sidebar");
+    divMatchedAddresses_sidebar.style.display = 'none';
+}
+
 (windowLeft as any).electronAPI.onCreateSidebarBrowserHeader((browserNo: number, left: number, top: number) => {
     //alert('onCreateSidebarBrowserHeader() browserNo=' + browserNo + ", left=" + left + ", top=" + top);
 
@@ -136,8 +141,7 @@ function loadURLSidebar(browserNo: number, uri: string) {
 
     //ClearPage button click
     clearPageButton.addEventListener('click', () => {
-        const divMatchedAddresses_sidebar = document.getElementById("divMatchedAddresses_sidebar");
-        divMatchedAddresses_sidebar.style.display = 'none';
+        hideMatchedAddressesSidebar();
         (inputUrlAddress as any).value = '';
         (windowLeft as any).electronAPI.clearPage_sidebar(browserNo);
     });
@@ -209,6 +213,7 @@ function showThreeDotsMenu_sidebar(browserNo: number) {
     const urlInput = document.getElementById('inputUrlAddress_sidebar' + browserNo);
     if (urlInput) {
         if (uri) (urlInput as any).value= uri;
+        hideMatchedAddressesSidebar();
     }
 });
 
@@ -228,8 +233,7 @@ window.addEventListener('resize', function() {
 var matchedAddressesButton_sidebar = document.getElementById("matchedAddressesButton_sidebar");
 matchedAddressesButton_sidebar.addEventListener("click",function() {
     (windowLeft as any).electronAPI.matchedAddressSelected_sidebar(matchedAddressesButton_sidebar.innerText);
-    const divMatchedAddresses_sidebar = document.getElementById("divMatchedAddresses_sidebar");
-    divMatchedAddresses_sidebar.style.display = 'none';
+    hideMatchedAddressesSidebar();
 });
 
 //------------------- BODY ONLOAD -----------------------

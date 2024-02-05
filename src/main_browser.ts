@@ -210,7 +210,14 @@ static createBrowserView(tabNo:number, browserNo: number, firstBrowser: boolean)
     //BrowserView navigation events (for later get URL and write it somewhere so user can see actual URL)
     browser.webContents.on('will-navigate', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
-        
+        const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);    //get map of addresses for current tab
+        if (addresses) {
+            addresses.set(browserNo, url);
+        }
+        BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
+    });
+    browser.webContents.on('did-navigate-in-page', function(event, url) {
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         const addresses = BarkerData.getTabAddresses(BarkerBrowser.actualTabId);    //get map of addresses for current tab
         if (addresses) {
             addresses.set(browserNo, url);

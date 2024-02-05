@@ -81,6 +81,11 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
         BarkerData.setSidebarUrl(browserNo, url);
         BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', browserNo, url);
     });
+    browser.webContents.on('did-navigate-in-page', function(event, url) {
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
+        BarkerData.setSidebarUrl(browserNo, url);
+        BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', browserNo, url);
+    });
 
     //event hover over link, display link in statusbar
     browser.webContents.on('update-target-url', function(event, url) {

@@ -36,7 +36,6 @@ development started from 1.1.2024
 # NEXT STEPS
 
 ## NOW
-* test address navigation on novinky.cz
 * test if onLoad is called more times (logs) - BarkerBrowser.showBrowsersIfBodyFullyLoaded()
 
 ## NEXT
@@ -64,6 +63,5 @@ development started from 1.1.2024
 * move tabs (change tab order)
 * edit bookmarks
 * muted browser window indication
-* think about down-arrow+Enter during suggestion box
-* think how to hide suggestion box when clicked elsewhere
 * history
+* set proxy server
