@@ -37,10 +37,9 @@ development started from 1.1.2024
 # NEXT STEPS
 
 ## NOW
-* bug: first tab - layout to 4, switch to news
+* try https://github.com/bpmn-io/drag-tabs
 
 ## NEXT
-* try https://github.com/bpmn-io/drag-tabs
 * tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
 * 'switch browser window to next position' (more actions)
 

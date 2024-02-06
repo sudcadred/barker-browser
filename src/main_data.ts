@@ -25,6 +25,7 @@ static sidebarRollingWindowOffset = 0;
 
 static firstBrowserViewNo_sidebar: number;
 static actualTabIdNo: number;
+static previousTabIdNo: number;
 static downloadedItems = '';
 static downloadFailedItems = '';
 static activeBrowserView: Electron.BrowserView = null;
@@ -47,7 +48,8 @@ static browserHeaderButtonsString: string;
 
 //getters and setters
 static getActualTabIdNo() { return BarkerData.actualTabIdNo;}
-static setActualTabIdNo(tabIdNo: number) { BarkerData.actualTabIdNo = tabIdNo;}
+static setActualTabIdNo(tabIdNo: number) { BarkerData.previousTabIdNo=BarkerData.actualTabIdNo; BarkerData.actualTabIdNo = tabIdNo;}
+static getPreviousTabIdNo() { return BarkerData.previousTabIdNo;}
 static getTabLayoutNo(tabIdNo: number) { return BarkerData.mapTabIdNoToLayouts.get(tabIdNo) || BarkerSettings.defaultLayout;}
 static setTabLayoutNo(tabIdNo: number, layout: number) { BarkerData.mapTabIdNoToLayouts.set(tabIdNo, layout);}
 static getTabFirstBrowserMap() { return BarkerData.mapTabIdNoToFirstBrowserViewNo;}

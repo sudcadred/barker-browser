@@ -290,7 +290,8 @@ removeBrowserViewsForOneTab(tabName: string) {
 
 static hideAllBrowserViews_mainArea() {
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
-    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
+    let tabIdNo = BarkerData.getPreviousTabIdNo();
+    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
     for (let i=firstBrowserViewNo; i<=firstBrowserViewNo+BarkerSettings.getMaxBrowserViewsPerTab();i++) {
             if (browserViews[i]) {
                 browserViews[i].setBounds({ x: 0, y: 0, width: 0, height: 0 });
