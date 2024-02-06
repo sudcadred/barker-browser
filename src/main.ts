@@ -56,6 +56,13 @@ function createMainWindow () {
         const cnt = BarkerData.getTabLayoutNo(actualTabIdNo);
         BarkerBrowser.showBrowsers(cnt, actualTabIdNo, BarkerData.getTabBrowserOffset(actualTabIdNo));
     });
+
+    _mainWindow.webContents.on('before-input-event', (event, input) => {
+        if (input.control && input.key.toLowerCase() === 'f') {             //ctrl+f
+            event.preventDefault();
+            BarkerBrowser.mainWindow.webContents.send('show-searchbar');
+        }
+    });
 };
 
 app.whenReady().then(() => {

@@ -6,6 +6,7 @@ import { BarkerSettings } from "./main_settings";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerMenu } from "./main_menu";
+import { BarkerStatusBar } from "./main_statusbar";
 
 /* this class handles IPC (inter-process communication) between renderer and main process 
    see method registerIpcMethods() at the end for complete list of methods
@@ -169,18 +170,41 @@ static ipcFindInPage (event: IpcMainEvent, text: string) {
         wordStart: false,
         medialCapitalAsWordStart: false
     }
-    const requestId = BarkerData.getActiveBrowserView().webContents.findInPage(text, options);    
-    BarkerData.getActiveBrowserView().webContents.on('found-in-page', (event, result) => {
-        console.log(result.requestId);
-        console.log(result.activeMatchOrdinal);
-        console.log(result.matches);
-        console.log(result.selectionArea);
-    });
+
+    //main area
+    let browserViews = BarkerIpc.mainWindow.getBrowserViews();
+    let firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
+    for (let i = firstBrowserViewNo; i< firstBrowserViewNo+BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()); i++) {
+        if (browserViews[i].webContents) {
+            (<BrowserView>browserViews[i]).webContents.findInPage(text, options);
+        }
+    }
+
+    //sidebar
+    firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
+    for (let i = firstBrowserViewNo; i< firstBrowserViewNo+BarkerData.getSidebarLayoutNo(); i++) {
+        if (browserViews[i].webContents) {
+            (<BrowserView>browserViews[i]).webContents.findInPage(text, options);
+        }
+    }
 }
 
 static ipcClearSelection (event: IpcMainEvent) {
 	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcClearSelection()");
-    BarkerData.getActiveBrowserView().webContents.stopFindInPage('clearSelection');
+    let browserViews = BarkerIpc.mainWindow.getBrowserViews();
+    let firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
+    for (let i = firstBrowserViewNo; i< firstBrowserViewNo+BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()); i++) {
+        if (browserViews[i].webContents) {
+            (<BrowserView>browserViews[i]).webContents.stopFindInPage('clearSelection');
+        }
+    }
+    firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
+    for (let i = firstBrowserViewNo; i< firstBrowserViewNo+BarkerData.getSidebarLayoutNo(); i++) {
+        if (browserViews[i].webContents) {
+            (<BrowserView>browserViews[i]).webContents.stopFindInPage('clearSelection');
+        }
+    }
+    BarkerStatusBar.updateStatusBarText('Selection cleared');
 }
 
 static ipcGoBack (event: IpcMainEvent, browserNo: number) {

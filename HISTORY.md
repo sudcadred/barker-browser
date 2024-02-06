@@ -31,19 +31,23 @@ development started from 1.1.2024
 
 ## 2024 week6
 * open all bookmarks in new tab
+* find text in whole tab + left sidebar (visible windows)
 
 
 # NEXT STEPS
 
 ## NOW
+* bug: first tab - layout to 4, switch to news
 
 ## NEXT
-* fix 'find in page' (switch for find text in whole tab)
-* add tab context menu (rename tab, refresh whole tab, mute tab) - possibly move renameDiv from topBar to main area
+* try https://github.com/bpmn-io/drag-tabs
+* tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
+* 'switch browser window to next position' (more actions)
 
 ## LATER
 * scrape url
 * addons manager
+* history
 * packager → exe (github release)
 
 ## IDEAS (not sure if will be implemented)
@@ -58,8 +62,6 @@ development started from 1.1.2024
 * twitch overview
 
 ## Missing features
-* move tabs (change tab order)
 * edit bookmarks
 * muted browser window indication
-* history
 * set proxy server

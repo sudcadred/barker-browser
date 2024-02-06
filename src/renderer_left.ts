@@ -236,6 +236,37 @@ matchedAddressesButton_sidebar.addEventListener("click",function() {
     hideMatchedAddressesSidebar();
 });
 
+// find text in page
+
+const searchDiv = document.getElementById('searchPanel');
+const searchInput = document.getElementById('searchPanelInput');
+const searchButton = document.getElementById('searchPanelSearch');
+const clearSearchButton = document.getElementById('searchPanelClearSearch');
+
+(windowLeft as any).electronAPI.onShowSearchbar(() => {
+    //searchDiv.style.display = "inline-block";
+    searchInput.focus();
+});
+
+searchButton.addEventListener('click', () => {
+    const text = (searchInput as any).value;
+    if (text) {
+        (windowLeft as any).electronAPI.findInPage(text);
+    }
+});
+
+clearSearchButton.addEventListener('click', () => {
+    (windowLeft as any).electronAPI.clearSelection();
+});
+
+searchInput.addEventListener('keydown', searchKeyDown, false);
+function searchKeyDown(event: Event ) {
+    if((event as any).key === 'Enter') {
+            const text = (searchInput as any).value;
+            (windowLeft as any).electronAPI.findInPage(text);
+    }
+}
+
 //------------------- BODY ONLOAD -----------------------
 
 // body onLoad()

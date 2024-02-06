@@ -269,17 +269,6 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
             },
             ]
     });
-
-    //keyboard shortcuts
-    browser.webContents.on('before-input-event', (event, input) => {
-        if (input.control && input.key.toLowerCase() === 'f') {             //ctrl+f
-            event.preventDefault();
-            BarkerData.setActiveBrowserView(browser);
-            BarkerBrowser.mainWindow.webContents.send('show-searchbar');
-        } else if ((input.control && input.key.toLowerCase() === 'r') || (input.key === 'F5')) {    //ctrl+r/F5
-            browser.webContents.reloadIgnoringCache();
-        }
-    })
 }
 
 static createBrowserViewsForOneTab(tabNo: number) {

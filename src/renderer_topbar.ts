@@ -124,27 +124,6 @@ showHeadersCheckbox.addEventListener('change', () => {
     else if (layoutNo == 49) layout49Button.style.background='lightblue'
 });
 
-const searchDiv = document.getElementById('searchPanel');
-const searchInput = document.getElementById('searchPanelInput');
-const searchButton = document.getElementById('searchPanelSearch');
-const clearSearchButton = document.getElementById('searchPanelClearSearch');
-
-(windowTop as any).electronAPI.onShowSearchbar(() => {
-    searchDiv.style.display = "block";
-    searchInput.focus();
-});
-
-searchButton.addEventListener('click', () => {
-    const text = (searchInput as any).value;
-    if (text) {
-        (windowTop as any).electronAPI.findInPage(text);
-    }
-});
-
-clearSearchButton.addEventListener('click', () => {
-    (windowTop as any).electronAPI.clearSelection();
-});
-
 (windowTop as any).electronAPI.onSetLayoutButtons((value: string) => {
     //alert(value);
     const layoutButtons = value.split(',');
