@@ -119,10 +119,6 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                     } },
         {label: "hide developer console",
          click: () => { BarkerBrowser.clearRightSidebar(); } },
-         {label: "find text in this window",
-         click: () => { BarkerBrowser.activeBrowserView = browser;
-                        BarkerMenu.mainWindow.webContents.send('show-searchbar');
-                      } },
     ];
     const menu = Menu.buildFromTemplate(template);
     return menu;
