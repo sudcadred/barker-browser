@@ -230,9 +230,10 @@ function getLastNumber(s: string) {
     return lastNumber;
 }
 
-//create tab started from main process
-(windowTop as any).electronAPI.onCreateTab((tabName: string) => {
-    //alert('onLoadTab()');
+let _draggedButtonId: string;
+
+function createTab(tabName: string) {
+    hideRenameTab();
 
     //create tab button
     const tabDiv = document.getElementById('tabDiv')
@@ -240,7 +241,28 @@ function getLastNumber(s: string) {
     newButtonTab.textContent = tabName;
     newButtonTab.id = 'NewTab' + nextTabNo;
     newButtonTab.className += 'tabButton';
+    newButtonTab.draggable = true;
     tabDiv.appendChild(newButtonTab);
+    
+    //To turn an element into a valid drop target, you can override the default behavior of both dragenter and dragover 
+    //events by calling the event.preventDefault() method in their corresponding event handlers
+    newButtonTab.addEventListener("dragenter", (e: MouseEvent) => {e.preventDefault();});
+    newButtonTab.addEventListener("dragover", (e: MouseEvent) => {e.preventDefault();});
+
+    //drag listener
+    newButtonTab.addEventListener("dragstart", (e: MouseEvent) => {
+        _draggedButtonId = newButtonTab.id;
+    });
+    newButtonTab.addEventListener("drop", (e: MouseEvent) => {
+        const draggedTab = document.getElementById(_draggedButtonId);
+        const sourceTabNo = getLastNumber(_draggedButtonId);
+        const sourceCloseButton = document.getElementById('CloseTab' + sourceTabNo);
+        const targetTabNo = getLastNumber((e.target as any).id);
+        const targetCloseButton = document.getElementById('CloseTab' + targetTabNo);
+        targetCloseButton.after(draggedTab);
+        draggedTab.after(sourceCloseButton);
+    });
+
     
     //create X button
     const newButtonCloseTab = document.createElement('button');
@@ -286,6 +308,11 @@ function getLastNumber(s: string) {
     });
 
     nextTabNo++;
+}
+
+//create tab started from main process
+(windowTop as any).electronAPI.onCreateTab((tabName: string) => {
+    createTab(tabName);
 });
 
 //change tab started from main process
@@ -299,61 +326,7 @@ function getLastNumber(s: string) {
 
 // create tab
 addNewTabButton.addEventListener('click', () => {
-    hideRenameTab();
-
-    //create tab button
-    const tabDiv = document.getElementById('tabDiv')
-    const newButtonTab = document.createElement('button');
-    newButtonTab.textContent = 'New tab' + nextTabNo;
-    newButtonTab.id = 'NewTab' + nextTabNo
-    newButtonTab.className += 'tabButton';
-    tabDiv.appendChild(newButtonTab);
-    (windowTop as any).electronAPI.createTab(nextTabNo); 
-    
-    //create X button
-    const newButtonCloseTab = document.createElement('button');
-    newButtonCloseTab.textContent = 'X';
-    newButtonCloseTab.id = 'CloseTab' + nextTabNo
-    newButtonCloseTab.className += 'tabButton';
-    tabDiv.appendChild(newButtonCloseTab);
-
-    // "close tab" button
-    newButtonCloseTab.addEventListener('click', () => {
-        hideRenameTab();
-        console.log('newButtonCloseTab.id = '+newButtonCloseTab.id)
-        var closingTabNo =  newButtonCloseTab.id.match(/\d+$/);
-        console.log('closingTabNo = '+closingTabNo)
-        const tabDiv = document.getElementById('tabDiv')
-        const closingTabButton = document.getElementById('NewTab' + closingTabNo)
-        tabDiv.removeChild(newButtonCloseTab);
-        tabDiv.removeChild(closingTabButton);
-    });
-    
-    //rename tab
-    newButtonTab.addEventListener('dblclick', (e) => {
-        //save rename tab id
-        savedRenamedTabId = newButtonTab.id;
-
-        //create Rename button
-        const renameTabDiv = document.getElementById('renameTabDiv');
-        renameTabDiv.style.display = 'block';
-        renameTabDiv.style.position = 'fixed';
-        renameTabDiv.style.left = e.pageX + "px";
-        renameTabDiv.style.top = e.pageY + "px";
-        const renameTabInput = document.getElementById('renameTabInput');
-        renameTabInput.focus();                
-    });
-
-    //switch tab
-    newButtonTab.addEventListener('click', () => {
-      console.log('switch tab');
-      clearFocusedTabButton();
-      newButtonTab.className = 'focusedTabButton';
-      lastActiveTabId = newButtonTab.id;
-      (windowTop as any).electronAPI.changeTab(getLastNumber(newButtonTab.id)); 
-    });
-    
-    nextTabNo++;
+    createTab('New tab' + nextTabNo);
 });
 
 (windowTop as any).electronAPI.onSetNextTabName((tabName: string) => {
@@ -378,6 +351,13 @@ window.addEventListener('resize', function() {
     _topBarHeight = window.innerHeight;
     (windowTop as any).electronAPI.topBarResized(_topBarHeight);
 }, true);
+
+//------------------- DRAG TABS -----------------------
+
+function tabButtonDrag(e: MouseEvent, buttonId: string) {
+    const btn = document.getElementById(buttonId);
+    btn.style.transform = `translate(${e.pageX - 20}px, ${e.pageY - 20}px)`;
+}
 
 //------------------- BODY ONLOAD -----------------------
 

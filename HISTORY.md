@@ -32,12 +32,12 @@ development started from 1.1.2024
 ## 2024 week6
 * open all bookmarks in new tab
 * find text in whole tab + left sidebar (visible windows)
-
+* change tab order
 
 # NEXT STEPS
 
 ## NOW
-* try https://github.com/bpmn-io/drag-tabs
+* relax:)
 
 ## NEXT
 * tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
