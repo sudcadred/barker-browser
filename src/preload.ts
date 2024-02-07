@@ -57,6 +57,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     addressKeyPressed: (browserNo: number, inputUrlAddress: string) => {ipcRenderer.send('address-key-pressed', browserNo, inputUrlAddress) },
     matchedAddressSelected: (uri:string) => {ipcRenderer.send('matched-address-selected', uri) },
 
+    //move browser window
+    moveWindowRight: (browserNo:number) => {ipcRenderer.send('move-window-right', browserNo) },
+    moveWindowLeft: (browserNo:number) => {ipcRenderer.send('move-window-left', browserNo) },
+    moveWindowUp: (browserNo:number) => {ipcRenderer.send('move-window-up', browserNo) },
+    moveWindowDown: (browserNo:number) => {ipcRenderer.send('move-window-down', browserNo) },
+    moveWindowUp_sidebar: (browserNo:number) => {ipcRenderer.send('move-window-up-sidebar', browserNo) },
+    moveWindowDown_sidebar: (browserNo:number) => {ipcRenderer.send('move-window-down-sidebar', browserNo) },
+
     //sidebar
     loadURL_sidebar: (browserNo: number, address: string) => { ipcRenderer.send('load-url-sidebar', browserNo, address) },
     goBack_sidebar: (browserNo: number) => { ipcRenderer.send('go-back-sidebar', browserNo) },

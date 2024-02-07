@@ -131,21 +131,6 @@ function hideMatchedAddressesSidebar() {
       (windowLeft as any).electronAPI.reloadPage_sidebar(browserNo);
     });
 
-    //create ClearPage button
-    const clearPageButton = document.createElement('button');
-    clearPageButton.id = 'clearPageButton_sidebar' + browserNo;
-    clearPageButton.title = 'Clear browser window';
-    clearPageButton.className += 'tabButton';
-    clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
-    divHeader.appendChild(clearPageButton);
-
-    //ClearPage button click
-    clearPageButton.addEventListener('click', () => {
-        hideMatchedAddressesSidebar();
-        (inputUrlAddress as any).value = '';
-        (windowLeft as any).electronAPI.clearPage_sidebar(browserNo);
-    });
-
     //create input for 'URL address'
     var inputUrlAddress = document.createElement('input');
     inputUrlAddress.id = 'inputUrlAddress_sidebar' + browserNo;
@@ -182,6 +167,32 @@ function hideMatchedAddressesSidebar() {
       console.log('Go to address');
       const address = inputUrlAddress.value;
       loadURLSidebar(browserNo, address);
+    });
+
+    var divUpDownButtons_sidebar = document.createElement('span');
+    divUpDownButtons_sidebar.id =  'divUpDownButtons_sidebar' + browserNo;
+    divUpDownButtons_sidebar.style.cssText = 'display:inline-block;float: left;width: 25px; height:50px;white-space:wrap';
+    divHeader.appendChild(divUpDownButtons_sidebar);
+
+    // create 'Move up' button
+    const moveUpButton_sidebar = document.createElement('button');
+    moveUpButton_sidebar.id = 'moveUpButton_sidebar' + browserNo;
+    moveUpButton_sidebar.title = 'Move window up';
+    moveUpButton_sidebar.innerHTML = '<img src="../img/up.png" width=10px height=10px />';
+    divUpDownButtons_sidebar.appendChild(moveUpButton_sidebar);
+    moveUpButton_sidebar.addEventListener('click', () => {
+        (windowLeft as any).electronAPI.moveWindowUp_sidebar(browserNo);
+    });
+
+    // create 'Move down' button
+    const moveDownButton_sidebar = document.createElement('button');
+    moveDownButton_sidebar.id = 'moveDownButton_sidebar' + browserNo;
+    moveDownButton_sidebar.title = 'Move window down';
+    moveDownButton_sidebar.style.cssText = 'padding 20px 0px';
+    moveDownButton_sidebar.innerHTML = '<img src="../img/down.png" width=10px height=10px />';
+    divUpDownButtons_sidebar.appendChild(moveDownButton_sidebar);
+    moveDownButton_sidebar.addEventListener('click', () => {
+        (windowLeft as any).electronAPI.moveWindowDown_sidebar(browserNo);
     });
 
     //create ... button

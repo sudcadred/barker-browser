@@ -16,19 +16,16 @@ const _maxLayoutNo_main = 49;
 var browserHeader_back = false;
 var browserHeader_forward = false;
 var browserHeader_refresh = false;
-var browserHeader_clear = false;
 (windowMain as any).electronAPI.onSetBrowserHeaderButtons((value: string) => {
     //alert(value);
     browserHeader_back = false;
     browserHeader_forward = false;
     browserHeader_refresh = false;
-    browserHeader_clear = false;
     
     const headerButtons = value.split(',');
     if (headerButtons[0] == '1') browserHeader_back = true;
     if (headerButtons[1] == '1') browserHeader_forward = true;
     if (headerButtons[2] == '1') browserHeader_refresh = true;
-    if (headerButtons[3] == '1') browserHeader_clear = true;
 
     for (let i=1; i<=_maxLayoutNo_main; i++) {
         const backButton = document.getElementById('backButton' + i);
@@ -53,14 +50,6 @@ var browserHeader_clear = false;
                 refreshButton.style.display = 'inline-block';
             } else {
                 refreshButton.style.display = 'none';
-            }
-        }
-        const clearPageButton = document.getElementById('clearPageButton' + i);
-        if (clearPageButton) {
-            if (browserHeader_clear) {
-                clearPageButton.style.display = 'inline-block';
-            } else {
-                clearPageButton.style.display = 'none';
             }
         }
     }
@@ -142,27 +131,6 @@ function hideMatchedAddresses() {
         refreshButton.style.display = 'none';
     }
 
-    //create ClearPage button
-    const clearPageButton = document.createElement('button');
-    clearPageButton.id = 'clearPageButton' + browserNo;
-    clearPageButton.title = 'Clear browser window';
-    clearPageButton.className += 'tabButton';
-    clearPageButton.innerHTML = '<img src="../img/clear.png" width=20px height=20px />';
-    divHeader.appendChild(clearPageButton);
-
-    //ClearPage button click
-    clearPageButton.addEventListener('click', () => {
-        hideMatchedAddresses();
-        (inputUrlAddress as any).value = '';
-        (windowMain as any).electronAPI.clearPage(browserNo);
-    });
-
-    if (browserHeader_clear) {
-        clearPageButton.style.display = 'inline-block';
-    } else {
-        clearPageButton.style.display = 'none';
-    }
-
     //create input for 'URL address'
     var inputUrlAddress = document.createElement('input');
     inputUrlAddress.id = 'inputUrlAddress' + browserNo;
@@ -195,23 +163,68 @@ function hideMatchedAddresses() {
       loadURL(browserNo, address);
     });
 
+    // create 'Move left' button
+    const moveLeftButton = document.createElement('button');
+    moveLeftButton.id = 'moveLeftButton' + browserNo;
+    moveLeftButton.title = 'Move window left';
+    moveLeftButton.className += 'moveButton';
+    moveLeftButton.style.cssText = 'display:inline-block;float: left;line-height: 36px;';
+    moveLeftButton.innerHTML = '<img src="../img/left.png" width=10px height=10px />';
+    divHeader.appendChild(moveLeftButton);
+    moveLeftButton.addEventListener('click', () => {
+        (windowMain as any).electronAPI.moveWindowLeft(browserNo);
+    });
+
+    var divUpDownButtons = document.createElement('span');
+    divUpDownButtons.id =  'divUpDownButtons' + browserNo;
+    divUpDownButtons.style.cssText = 'display:inline-block;float: left;width: 25px; height:50px;white-space:wrap';
+    divHeader.appendChild(divUpDownButtons);
+
+    // create 'Move up' button
+    const moveUpButton = document.createElement('button');
+    moveUpButton.id = 'moveUpButton' + browserNo;
+    moveUpButton.title = 'Move window up';
+    moveUpButton.innerHTML = '<img src="../img/up.png" width=10px height=10px />';
+    divUpDownButtons.appendChild(moveUpButton);
+    moveUpButton.addEventListener('click', () => {
+        (windowMain as any).electronAPI.moveWindowUp(browserNo);
+    });
+
+    // create 'Move down' button
+    const moveDownButton = document.createElement('button');
+    moveDownButton.id = 'moveDownButton' + browserNo;
+    moveDownButton.title = 'Move window down';
+    moveDownButton.style.cssText = 'padding 20px 0px';
+    moveDownButton.innerHTML = '<img src="../img/down.png" width=10px height=10px />';
+    divUpDownButtons.appendChild(moveDownButton);
+    moveDownButton.addEventListener('click', () => {
+        (windowMain as any).electronAPI.moveWindowDown(browserNo);
+    });
+
+    // create 'Move right' button
+    const moveRightButton = document.createElement('button');
+    moveRightButton.id = 'moveRightButton' + browserNo;
+    moveRightButton.title = 'Move window right';
+    moveRightButton.className += 'moveButton';
+    moveRightButton.style.cssText = 'display:inline-block;float: left;line-height: 36px;';
+    moveRightButton.innerHTML = '<img src="../img/right.png" width=10px height=10px />';
+    divHeader.appendChild(moveRightButton);
+    moveRightButton.addEventListener('click', () => {
+        (windowMain as any).electronAPI.moveWindowRight(browserNo);
+    });
+
     //create ... button
     const threeDotsButton = document.createElement('button');
     threeDotsButton.id = 'threeDotsButton' + browserNo;
     threeDotsButton.title = 'More actions';
     threeDotsButton.className += 'tabButton';
+    threeDotsButton.style.cssText = 'display:block;float: left;';
     threeDotsButton.innerHTML = '<img src="../img/dots.png" width=20px height=20px />';
     divHeader.appendChild(threeDotsButton);
-
-    //... dots button click
     threeDotsButton.addEventListener('click', () => {
-        showThreeDotsMenu(browserNo);
-      });
+        (windowMain as any).electronAPI.showThreeDotsMenu(browserNo);
+    });
 });
-
-function showThreeDotsMenu(browserNo: number) {
-    (windowMain as any).electronAPI.showThreeDotsMenu(browserNo)
-}
 
 (windowMain as any).electronAPI.onDeleteAllBrowserHeaders(() => {
     for (let i=1; i<=108; i++) {

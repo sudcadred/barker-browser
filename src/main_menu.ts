@@ -1,4 +1,5 @@
-import { Menu, MenuItem  } from "electron";
+import { BrowserView } from "electron";
+import { Menu } from "electron";
 import { BarkerUtils } from './main_utils';
 import { BarkerData } from "./main_data";
 import { BarkerSettings } from "./main_settings";
@@ -79,6 +80,29 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
     let browser = browserViews[firstBrowserNo + browserNo - 1];
 
     const template: Electron.MenuItemConstructorOptions[]  = [
+        {label: "clear window",
+         click: () => {
+            if (sidebar) {
+                BarkerData.setSidebarUrl(browserNo, '');
+                const firstBrowserNo = BarkerData.getFirstBrowserViewNo_sidebar();
+                let browserViews = BarkerMenu.mainWindow.getBrowserViews();
+                const browserViewNo = firstBrowserNo+browserNo-1;
+                if (browserViews[browserViewNo].webContents) {
+                    (<BrowserView>browserViews[browserViewNo]).webContents.close();
+                }
+            } else {
+                const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());
+                if (addresses) {
+                    addresses.set(browserNo, null);
+                    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
+                    let browserViews = BarkerMenu.mainWindow.getBrowserViews();
+                    const browserViewNo = firstBrowserNo+browserNo-1;
+                    if (browserViews[browserViewNo].webContents) {
+                        (<BrowserView>browserViews[browserViewNo]).webContents.close();
+                    }
+                }
+            }
+         }},
         {label: "mute page",
          click: () => { browser.webContents.setAudioMuted(true);
                         BarkerStatusBar.updateStatusBarText('Browser window '+browserNo + ' muted'); }},

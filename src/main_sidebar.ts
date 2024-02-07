@@ -67,6 +67,7 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
     if (BarkerSettings.getUserAgent() != '') browser.webContents.setUserAgent(BarkerSettings.getUserAgent());
     browser.webContents.loadFile('../html/default_browser.html');
     BarkerSideBar.mainWindow.addBrowserView(browser);
+    BarkerData.addBrowserViewNo(BarkerBrowser.mainWindow.getBrowserViews().length - 1);
 
     if (firstBrowser) {
         let browserViews = BarkerSideBar.mainWindow.getBrowserViews();

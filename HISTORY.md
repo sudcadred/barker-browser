@@ -37,13 +37,13 @@ development started from 1.1.2024
 # NEXT STEPS
 
 ## NOW
-* relax:)
+* solve bug with navigation events from other not visible tabs
 
 ## NEXT
 * tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
-* 'switch browser window to next position' (more actions)
 
 ## LATER
+* check cookies isolation https://stackoverflow.com/questions/55061908/having-two-isolated-in-terms-of-history-cookies-localstorage-browserviews-in-t
 * scrape url
 * addons manager
 * history

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserView, ipcMain, IpcMainEvent, dialog, Menu, MenuItem  } from "electron";
+import { BrowserView } from "electron";
 import { BarkerUtils } from './main_utils';
 import { BarkerSettings } from "./main_settings";
 
@@ -18,6 +18,7 @@ static mapsDownloadItemsToProgress = new Map<string, number>;
 static bookmarkTopics: string[] = [];
 static bookmarks = [{'category': '', 'name': '', 'uri': ''}];
 static typedAddresses: string[] = [];
+static internalBrowserViewNumbers = new Map<number, number>;
 
 static sidebarAddresses: string[] = [];
 static sidebarLayoutNo: number;
@@ -111,6 +112,10 @@ static setBrowserHeaderString(s: string) { BarkerData.browserHeaderButtonsString
 static getTypedAddresses() {BarkerData.typedAddresses;}
 static getTypedAddress(i: number): string {return BarkerData.typedAddresses[i];}
 static getTabIdName(tabIdNo: number) {return 'NewTab' + tabIdNo;}
+static getBrowserViews() { return BarkerData.internalBrowserViewNumbers;}
+static getBrowserViewNo(internalNo: number) {return BarkerData.internalBrowserViewNumbers.get(internalNo);}
+static setBrowserViewNo(internalNo: number, browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(internalNo, browserViewNo);}
+static addBrowserViewNo(browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(browserViewNo, browserViewNo);}
 
 //other methods
 static bookmarkTopicExists(category: string): boolean { 
