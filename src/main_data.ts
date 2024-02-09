@@ -46,6 +46,8 @@ static bottomBodyLoaded = false;
 static tabCount = 0;
 static layoutString: string;
 static browserHeaderButtonsString: string;
+static devConsoleOpened = false;
+static historyPanelOpened = false;
 
 //getters and setters
 static getActualTabIdNo() { return BarkerData.actualTabIdNo;}
@@ -116,6 +118,10 @@ static getBrowserViews() { return BarkerData.internalBrowserViewNumbers;}
 static getBrowserViewNo(internalNo: number) {return BarkerData.internalBrowserViewNumbers.get(internalNo);}
 static setBrowserViewNo(internalNo: number, browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(internalNo, browserViewNo);}
 static addBrowserViewNo(browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(browserViewNo, browserViewNo);}
+static setDevConsoleActive() {BarkerData.devConsoleOpened = true;}
+static getDevConsoleActive() {return BarkerData.devConsoleOpened;}
+static historyPanelActive() {return BarkerData.historyPanelOpened;}
+static toggleHistoryPanel() {BarkerData.historyPanelOpened = !BarkerData.historyPanelOpened;}
 
 //other methods
 static bookmarkTopicExists(category: string): boolean { 

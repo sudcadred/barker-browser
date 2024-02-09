@@ -9,6 +9,7 @@ import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerKeyboardShortcuts } from "./main_keyboardShortcuts";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerStatusBar } from "./main_statusbar";
+import { BarkerDb } from "./main_db";
 const path = require('node:path')
 const Store = require('electron-store');
 const store = new Store();
@@ -42,6 +43,7 @@ function createMainWindow () {
     //BarkerMenu.createMainMenu();    //now called from BarkerSaveLoadState.loadTabsFromFile() after bookmarks are loaded
     BarkerSettings.createPreferences(_mainWindow, store);
     BarkerSettings.setAppAccordingToSavedPreferences();
+    new BarkerDb();
 
     //display HTML and start renderers
     _mainWindow.webContents.loadFile(_mainIndexFile);

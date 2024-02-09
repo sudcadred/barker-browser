@@ -184,4 +184,19 @@ static getMostSimilarTypedAddress(input: string) {
     return mostSimilarString;
 }
 
+//get second-level domain
+static getDomain(uri: string) {
+  let uriParts = uri.split('/');
+  let domainPart = '';
+  if (uriParts[0] == 'https:' || uriParts[0] == 'http:' || uriParts[0] == 'file:') {
+    domainPart = uriParts[2];
+  } else {
+    domainPart = uriParts[0];
+  }
+  
+  let domainParts = domainPart.split('.');
+  let domain = domainParts[domainParts.length-2] + '.' +domainParts[domainParts.length-1];
+  return domain;
+}
+
 }

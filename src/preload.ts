@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const { contextBridge, ipcRenderer } = require('electron/renderer')
+import { contextBridge, ipcRenderer } from 'electron/renderer';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // IPC - renderer to main.ts
@@ -89,6 +89,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     topBarResized: (height: number) => { ipcRenderer.send('topbar-resized', height) },
     bottomBarResized: (height: number) => { ipcRenderer.send('bottombar-resized', height) },
 
+    //history manager
+    getAllDomains: (date: string) => { ipcRenderer.send('get-all-domains', date) },
     
     // IPC - main.ts to renderer
     onCtrlL: (callback: Function) => ipcRenderer.on('focus-addressbar', (_event, value) => callback(value)),
@@ -111,4 +113,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onSetBrowserHeaderButtons: (callback: Function) => ipcRenderer.on('set-browser-header-buttons', (_event, value) => callback(value)), 
     onShowMatchedAddresses: (callback: Function) => ipcRenderer.on('show-matched-addresses', (_event, uri, left, top) => callback(uri, left, top)), 
     onShowMatchedAddresses_sidebar: (callback: Function) => ipcRenderer.on('show-matched-addresses-sidebar', (_event, uri, left, top) => callback(uri, left, top)), 
-  })
+    onHistoryDomainsSet: (callback: Function) => ipcRenderer.on('history-domains-list-set', (_event, date, datesList, todayDomainsList, todayUriList) => callback(date, datesList, todayDomainsList, todayUriList)), 
+    onClearHistoryPanel: (callback: Function) => ipcRenderer.on('clear-history-panel', (_event) => callback()),     
+  });

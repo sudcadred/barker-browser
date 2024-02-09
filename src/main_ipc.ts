@@ -7,6 +7,7 @@ import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerMenu } from "./main_menu";
 import { BarkerStatusBar } from "./main_statusbar";
+import { BarkerDb } from "./main_db";
 
 /* this class handles IPC (inter-process communication) between renderer and main process 
    see method registerIpcMethods() at the end for complete list of methods
@@ -519,6 +520,10 @@ static ipcMoveWindowDownSidebar(event: IpcMainEvent, browserNo: number) {
     }
 }
 
+static ipcGetAllDomains(event: IpcMainEvent, date: string) {
+    BarkerDb.getAllDomains(date);
+}
+
 static registerIpcMethods() {
     //listen to IPC processes coming from HTML renderer
     ipcMain.on('create-tab', BarkerIpc.ipcCreateTab);
@@ -572,6 +577,8 @@ static registerIpcMethods() {
     ipcMain.on('move-window-down', BarkerIpc.ipcMoveWindowDown);
     ipcMain.on('move-window-up-sidebar', BarkerIpc.ipcMoveWindowUpSidebar);
     ipcMain.on('move-window-down-sidebar', BarkerIpc.ipcMoveWindowDownSidebar);
+
+    ipcMain.on('get-all-domains', BarkerIpc.ipcGetAllDomains);
 }
 
 }

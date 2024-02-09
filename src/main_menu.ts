@@ -5,6 +5,7 @@ import { BarkerData } from "./main_data";
 import { BarkerSettings } from "./main_settings";
 import { BarkerBrowser } from "./main_browser";
 import { BarkerStatusBar } from "./main_statusbar";
+import { BarkerDb } from "./main_db";
 const { dialog } = require('electron');
 
 //wrapper methods for menu actions (I have not found other way to call class methods from dynamic menu template )
@@ -27,6 +28,13 @@ function _openAllBookmarks(openedCategory: string) {
         }
     }
 }
+function _getHistory() { 
+    BarkerData.toggleHistoryPanel(); 
+    if (BarkerData.historyPanelActive()) 
+        BarkerDb.getAllDomains('');
+    else
+        BarkerMenu.mainWindow.webContents.send('clear-history-panel');
+}
 
 /* This class creates main menu
 */
@@ -37,7 +45,9 @@ static menu: Menu = null;
 static mainWindow: Electron.BrowserWindow = null;
 
 static createMainMenu(mainWindow: Electron.BrowserWindow) {
-    const templateFirstPart = '[{label: \'File\',submenu: [{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
+    const templateFirstPart = '[{label: \'File\',submenu: [' +
+                              '{label: \'Show /Hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
+                              '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
     let category: string;
 
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu()");
@@ -140,6 +150,7 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                         browser.webContents.setDevToolsWebContents(BarkerBrowser.rightSideBarBrowser.webContents);
                         browser.webContents.openDevTools({'mode': "detach"});
                         BarkerBrowser.showRightSidebar();
+                        BarkerData.setDevConsoleActive();
                     } },
         {label: "hide developer console",
          click: () => { BarkerBrowser.clearRightSidebar(); } },

@@ -10,7 +10,7 @@ import { BarkerKeyboardShortcuts } from "./main_keyboardShortcuts";
 import isUrlHttp from 'is-url-http';
 import contextMenu from "electron-context-menu";
 import { BarkerMenu } from "./main_menu";
-const path = require('node:path')
+import { BarkerDb } from "./main_db";
 
 /* This class handles browser windows operations 
    like BrowserView creation, setting its bounds, loadURL
@@ -83,7 +83,6 @@ constructor (mainWindow: Electron.BrowserWindow) {
     browser.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     BarkerBrowser.mainWindow.addBrowserView(browser);
     BarkerBrowser.rightSideBarBrowser = browser;
-    
 }
 
 static isBodyFullyLoaded() {
@@ -207,14 +206,30 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
     }
 
     //BrowserView navigation events (for later get URL and write it somewhere so user can see actual URL)
-    browser.webContents.on('will-navigate', function(event, url) {
+    browser.webContents.on('did-navigate', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
         if (addresses) {
             addresses.set(browserNo, url);
         }
         BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
+        browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
+            BarkerDb.addHistoryEntry(url, result);
+        });
     });
+    /* FRAME NAVIGATION COMMENTED AS IT GIVES TOO MANY FALSE DB ENTRIES WITH THE SAME CONTENT
+    browser.webContents.on('did-frame-navigate', function(event, url) {
+        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
+        const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
+        if (addresses) {
+            addresses.set(browserNo, url);
+        }
+        BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
+        browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
+            BarkerDb.addHistoryEntry(url, result);
+        });
+    });
+    */
     browser.webContents.on('did-navigate-in-page', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
@@ -222,6 +237,9 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
             addresses.set(browserNo, url);
         }
         BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
+        browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
+            BarkerDb.addHistoryEntry(url, result);
+        });
     });
 
     //event hover over link, display link in statusbar
@@ -447,12 +465,16 @@ static clearRightSidebar() {
 }
 
 static showRightSidebar() {
-    let bounds = BarkerBrowser.mainWindow.getBounds();
-    bounds.x = bounds.width - BarkerData.frameRightBar_width;
-    bounds.y += 10;
-    bounds.width = BarkerData.frameRightBar_width - 30;
-    bounds.height -= 100;
-    BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
+    if (BarkerData.getDevConsoleActive()) {
+        let bounds = BarkerBrowser.mainWindow.getBounds();
+        bounds.x = bounds.width - BarkerData.frameRightBar_width;
+        bounds.y += 10;
+        bounds.width = BarkerData.frameRightBar_width - 30;
+        bounds.height -= 100;
+        BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
+    } else {
+        BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});
+    }
 }
 
 static updateMainArea(windowsCnt: number, tabIdNo: number, offset: number) {

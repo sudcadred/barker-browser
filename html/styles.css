@@ -248,3 +248,25 @@ label[for^=big_window] {
   font-size: 17px;
   width: auto;
 }
+
+.collapsible {
+  background-color: #eee;
+  border: none;
+  color: #444;
+  padding: 18px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.collapsed-content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
