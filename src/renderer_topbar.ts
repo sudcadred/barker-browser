@@ -196,6 +196,20 @@ var savedRenamedTabId: string;
 var lastActiveTabId: string;
 var nextTabName: string;
 
+(windowTop as any).electronAPI.onShowRenamePanel((tabIdNo: number) => {
+    //save rename tab id
+    savedRenamedTabId = 'NewTab' + tabIdNo;
+
+    //create Rename button
+    const renameTabDiv = document.getElementById('renameTabDiv');
+    renameTabDiv.style.display = 'block';
+    renameTabDiv.style.position = 'fixed';
+    renameTabDiv.style.left = '300px';
+    renameTabDiv.style.top = '50px';
+    const renameTabInput = document.getElementById('renameTabInput');
+    renameTabInput.focus();                
+});
+
 function hideRenameTab() {
     const renameTabDiv = document.getElementById('renameTabDiv');
     renameTabDiv.style.display = 'none';
@@ -225,8 +239,37 @@ function getLastNumber(s: string) {
     return lastNumber;
 }
 
-let _draggedButtonId: string;
+let protectedTabs = new Map<number, boolean>;
+(windowTop as any).electronAPI.onProtectTab((tabIdNo: number) => {
+    protectedTabs.set(tabIdNo, true);
+    const tabButton = document.getElementById('NewTab' + tabIdNo);
+    (windowTop as any).electronAPI.showStatusMessage('Tab \"' + tabButton.textContent + '\" is now protected from deletion');
 
+    //add indication to tab name
+    if (tabButton.textContent[0] != '*') {
+        tabButton.textContent = '*' + tabButton.textContent;
+    }
+});
+
+(windowTop as any).electronAPI.onUnprotectTab((tabIdNo: number) => {
+    protectedTabs.delete(tabIdNo);
+
+    //remove indication from tab name
+    const tabButton = document.getElementById('NewTab' + tabIdNo);
+    if (tabButton.textContent[0] == '*') {
+        tabButton.textContent = tabButton.textContent.substring(1, tabButton.textContent.length);
+    }
+    (windowTop as any).electronAPI.showStatusMessage('Tab \"' + tabButton.textContent + '\" is now unprotected from deletion');
+});
+
+function isTabProtected(tabIdNo: number) {
+    let isProtected = false;
+    let result = protectedTabs.get(tabIdNo);
+    if (result) isProtected = true;
+    return isProtected;
+}
+
+let _draggedButtonId: string;
 function createTab(tabName: string) {
     hideRenameTab();
 
@@ -238,6 +281,11 @@ function createTab(tabName: string) {
     newButtonTab.className += 'tabButton';
     newButtonTab.draggable = true;
     tabDiv.appendChild(newButtonTab);
+
+    newButtonTab.addEventListener("contextmenu", (e: MouseEvent) => {
+        e.preventDefault();
+        (windowTop as any).electronAPI.tabRightClicked(getLastNumber(newButtonTab.id)); 
+    });
     
     //To turn an element into a valid drop target, you can override the default behavior of both dragenter and dragover 
     //events by calling the event.preventDefault() method in their corresponding event handlers
@@ -271,28 +319,18 @@ function createTab(tabName: string) {
         hideRenameTab();
         console.log('newButtonCloseTab.id = '+newButtonCloseTab.id)
         var closingTabNo =  newButtonCloseTab.id.match(/\d+$/);
-        console.log('closingTabNo = '+closingTabNo)
-        const tabDiv = document.getElementById('tabDiv')
-        const closingTabButton = document.getElementById('NewTab' + closingTabNo)
-        tabDiv.removeChild(newButtonCloseTab);
-        tabDiv.removeChild(closingTabButton);
+        console.log('closingTabNo = '+closingTabNo);
+        const tabDiv = document.getElementById('tabDiv');
+        const closingTabButton = document.getElementById('NewTab' + closingTabNo);
+        if (!isTabProtected(Number(closingTabNo))) {
+            tabDiv.removeChild(newButtonCloseTab);
+            tabDiv.removeChild(closingTabButton);
+            (windowTop as any).electronAPI.showStatusMessage('Tab \"' + closingTabButton.textContent + '\" deleted');
+        } else {
+            (windowTop as any).electronAPI.showStatusMessage('Attempt to delete protected tab \"' + closingTabButton.textContent + '\" blocked');
+        }
     });
     
-    //rename tab
-    newButtonTab.addEventListener('dblclick', (e) => {
-        //save rename tab id
-        savedRenamedTabId = newButtonTab.id;
-
-        //create Rename button
-        const renameTabDiv = document.getElementById('renameTabDiv');
-        renameTabDiv.style.display = 'block';
-        renameTabDiv.style.position = 'fixed';
-        renameTabDiv.style.left = e.pageX + "px";
-        renameTabDiv.style.top = e.pageY + "px";
-        const renameTabInput = document.getElementById('renameTabInput');
-        renameTabInput.focus();                
-    });
-
     //switch tab
     newButtonTab.addEventListener('click', () => {
       console.log('switch tab');

@@ -48,6 +48,7 @@ static saveCurrentTabs() {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "saveCurrentTabs(): tabIdNo="+tabIdNo+", tabName="+tabName);
         BarkerSaveLoadState.store.set('tabs.'+tabIdNo+'.tabname', tabName);
         BarkerSaveLoadState.store.set('tabs.'+tabIdNo+'.layout', BarkerData.getTabLayoutNo(tabIdNo) );
+        BarkerSaveLoadState.store.set('tabs.'+tabIdNo+'.protected', BarkerData.isTabProtected(tabIdNo) );
         const addresses = BarkerData.getTabAddresses(tabIdNo);
         if (addresses) {
             //save addresses in specific tab
@@ -81,9 +82,14 @@ static loadAddressesFromFile() {
         const tabIdNo = i;
         const tabName = BarkerSaveLoadState.store.get('tabs.'+i+'.tabname');
         const tabLayout = BarkerSaveLoadState.store.get('tabs.'+i+'.layout');
+        const isTabProtected = BarkerSaveLoadState.store.get('tabs.'+i+'.protected');
         BarkerData.setTabBrowserOffset(tabIdNo, 0);
         BarkerData.setTabLayoutNo(tabIdNo, tabLayout);
         BarkerData.setTabAddresses(tabIdNo, new Map<number, string>);
+        if (isTabProtected) { 
+            BarkerData.addProtectedTab(tabIdNo);
+            BarkerSaveLoadState.mainWindow.webContents.send('protect-tab', tabIdNo);
+        }
         if (i ==1) BarkerData.setActualTabIdNo(tabIdNo);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): tabname="+tabName+", tabLayout="+tabLayout);
 

@@ -39,3 +39,6 @@ development started from 1.1.2024
 * drag'n'drop for tabs (change tabs order)
 * move browser window to another position (arrows in header)
 * browsing history (including text content of the page)
+* tab context menu
+* protect tab from deletion
+

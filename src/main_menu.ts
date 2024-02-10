@@ -183,4 +183,52 @@ static createUriSimilarityMenu(browserNo: number, uri: string) {
     return menu;
 }
 
+static createTabRightClickMenu(tabIdNo: number) {
+    var firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
+    let browserViews = BarkerMenu.mainWindow.getBrowserViews();
+
+    const template: Electron.MenuItemConstructorOptions[]  = [
+        {label: "protect tab from deletion",
+        click: () => { 
+            BarkerData.addProtectedTab(tabIdNo);
+            BarkerMenu.mainWindow.webContents.send('protect-tab', tabIdNo);
+        } },
+        {label: "unprotect tab",
+        click: () => { 
+            BarkerData.removeProtectedTab(tabIdNo);
+            BarkerMenu.mainWindow.webContents.send('unprotect-tab', tabIdNo);
+        } },
+        {label: "rename tab",
+        click: () => {    
+            BarkerMenu.mainWindow.webContents.send('show-rename-panel', tabIdNo);
+        } },
+        {label: "mute all windows in this tab",
+        click: () => { 
+            for (let i=0; i < BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
+                let browser = browserViews[firstBrowserNo + i];
+                browser.webContents.setAudioMuted(true);
+            }
+            BarkerStatusBar.updateStatusBarText('All browser windows in tab '+ BarkerData.getTabName(tabIdNo) + ' were muted');
+        } },
+        {label: "unmute all windows in this tab",
+        click: () => { 
+            for (let i=0; i < BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
+                let browser = browserViews[firstBrowserNo + i];
+                browser.webContents.setAudioMuted(false);
+            }
+            BarkerStatusBar.updateStatusBarText('All browser windows in tab '+ BarkerData.getTabName(tabIdNo) + ' were unmuted');
+        } },
+        {label: "reload all windows in this tab",
+        click: () => { 
+            for (let i=0; i < BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
+                let browser = browserViews[firstBrowserNo + i];
+                browser.webContents.reloadIgnoringCache();
+            }
+            BarkerStatusBar.updateStatusBarText('All browser windows in tab '+ BarkerData.getTabName(tabIdNo) + ' were reloaded');
+        } },
+    ];
+    const menu = Menu.buildFromTemplate(template);
+    return menu;
+}
+
 }

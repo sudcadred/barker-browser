@@ -32,8 +32,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     //tabs
     createTab: (tabIdNo: number) => { ipcRenderer.send('create-tab', tabIdNo) },
     changeTab: (tabIdNo: number) => { ipcRenderer.send('change-tab', tabIdNo) },
+    reloadTab: (tabIdNo: number) => { ipcRenderer.send('reload-tab', tabIdNo) },
     renameTab: (newTabName: string) => { ipcRenderer.send('rename-tab', newTabName) },
-    reloadTab: (tabIdNo: string) => { ipcRenderer.send('reload-tab', tabIdNo) },
+    tabRightClicked: (tabIdNo: number) => { ipcRenderer.send('tab-right-clicked', tabIdNo) },
 
     //roll browser windows
     showPreviousBrowser: () => { ipcRenderer.send('show-previous-browser') },
@@ -91,6 +92,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     //history manager
     getAllDomains: (date: string) => { ipcRenderer.send('get-all-domains', date) },
     searchAllHistory: (searchedString: string) => { ipcRenderer.send('search-all-history', searchedString) },
+
+    //status message
+    showStatusMessage: (msg: string) => { ipcRenderer.send('show-status-message', msg)},
     
     // IPC - main.ts to renderer
     onCtrlL: (callback: Function) => ipcRenderer.on('focus-addressbar', (_event, value) => callback(value)),
@@ -114,5 +118,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onShowMatchedAddresses: (callback: Function) => ipcRenderer.on('show-matched-addresses', (_event, uri, left, top) => callback(uri, left, top)), 
     onShowMatchedAddresses_sidebar: (callback: Function) => ipcRenderer.on('show-matched-addresses-sidebar', (_event, uri, left, top) => callback(uri, left, top)), 
     onHistoryDomainsSet: (callback: Function) => ipcRenderer.on('history-domains-list-set', (_event, date, datesList, todayDomainsList, todayUriList) => callback(date, datesList, todayDomainsList, todayUriList)), 
-    onClearHistoryPanel: (callback: Function) => ipcRenderer.on('clear-history-panel', (_event) => callback()),     
+    onClearHistoryPanel: (callback: Function) => ipcRenderer.on('clear-history-panel', (_event) => callback()),
+    onShowRenamePanel: (callback: Function) => ipcRenderer.on('show-rename-panel', (_event, tabIdNo: number) => callback(tabIdNo)),
+    onProtectTab: (callback: Function) => ipcRenderer.on('protect-tab', (_event, tabIdNo: number) => callback(tabIdNo)),
+    onUnprotectTab: (callback: Function) => ipcRenderer.on('unprotect-tab', (_event, tabIdNo: number) => callback(tabIdNo)),
   });

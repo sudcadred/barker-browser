@@ -19,6 +19,7 @@ static bookmarkTopics: string[] = [];
 static bookmarks = [{'category': '', 'name': '', 'uri': ''}];
 static typedAddresses: string[] = [];
 static internalBrowserViewNumbers = new Map<number, number>;
+static protectedTabs = new Map<number, boolean>;
 
 static sidebarAddresses: string[] = [];
 static sidebarLayoutNo: number;
@@ -124,6 +125,8 @@ static setDevConsoleActive() {BarkerData.devConsoleOpened = true;}
 static getDevConsoleActive() {return BarkerData.devConsoleOpened;}
 static historyPanelActive() {return BarkerData.historyPanelOpened;}
 static toggleHistoryPanel() {BarkerData.historyPanelOpened = !BarkerData.historyPanelOpened;}
+static addProtectedTab(tabIdNo: number) { BarkerData.protectedTabs.set(tabIdNo, true);}
+static removeProtectedTab(tabIdNo: number) { BarkerData.protectedTabs.delete(tabIdNo);}
 
 //other methods
 static bookmarkTopicExists(category: string): boolean { 
@@ -169,6 +172,13 @@ static getHighestTabNo() {
       }
    }
    return maxTabNo;
+}
+
+static isTabProtected(tabIdNo: number): boolean { 
+   let isProtected = false;
+   let result = BarkerData.protectedTabs.get(tabIdNo);
+   if (result) isProtected = true;
+   return isProtected;
 }
 
 }

@@ -78,6 +78,11 @@ static ipcRenameTab (event: IpcMainEvent, newTabName: string) {
     BarkerData.setTabName(BarkerData.getActualTabIdNo(), newTabName);
 }
 
+static ipcTabRightClicked (event: IpcMainEvent, tabIdNo: number) {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcTabRightClicked()");
+    BarkerMenu.createTabRightClickMenu(tabIdNo).popup();
+}
+
 static updateRollingText() {
     var rollingText = (BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo())+1).toString();
     const layout = BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo());
@@ -526,11 +531,17 @@ static ipcSearchAllHistory(event: IpcMainEvent, searchedString: string) {
     BarkerDb.searchAllHistory(searchedString);
 }
 
+static showStatusMessage(event: IpcMainEvent, msg: string) {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showStatusMessage(): msg="+msg);
+    BarkerStatusBar.updateStatusBarText(msg);
+}
+
 static registerIpcMethods() {
     //listen to IPC processes coming from HTML renderer
     ipcMain.on('create-tab', BarkerIpc.ipcCreateTab);
     ipcMain.on('change-tab', BarkerIpc.ipcChangeTab);
     ipcMain.on('rename-tab', BarkerIpc.ipcRenameTab);
+    ipcMain.on('tab-right-clicked', BarkerIpc.ipcTabRightClicked);
 
     ipcMain.on('change-layout', BarkerIpc.ipcChangeLayout);
     ipcMain.on('change-sidebar-layout', BarkerIpc.ipcChangeSidebarLayout);
@@ -581,6 +592,8 @@ static registerIpcMethods() {
 
     ipcMain.on('get-all-domains', BarkerIpc.ipcGetAllDomains);
     ipcMain.on('search-all-history', BarkerIpc.ipcSearchAllHistory);
+
+    ipcMain.on('show-status-message', BarkerIpc.showStatusMessage)
 }
 
 }
