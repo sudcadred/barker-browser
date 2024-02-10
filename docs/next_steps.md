@@ -1,11 +1,9 @@
 # NEXT STEPS
 
 ## NOW
-* add F12 shortcut (add to main menu)
-* disable history panel when F12
+* beautify Show headers checkbox
 
 ## NEXT
-* remove Save tabs button and put it into Menu -> File
 * solve bug with navigation events from other not visible tabs
 * tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
 

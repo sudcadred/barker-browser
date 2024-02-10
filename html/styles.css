@@ -270,3 +270,8 @@ label[for^=big_window] {
 .active, .collapsible:hover {
   background-color: #ccc;
 }
+
+#showHeadersLabel {
+  display: inline-block; 
+  padding-top: 18px;
+}
