@@ -6,6 +6,7 @@ import { BarkerSettings } from "./main_settings";
 import { BarkerBrowser } from "./main_browser";
 import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
+import { BarkerSaveLoadState } from "./main_saveLoadState";
 const { dialog } = require('electron');
 
 //wrapper methods for menu actions (I have not found other way to call class methods from dynamic menu template )
@@ -47,6 +48,9 @@ function _toggleDevConsole() {
         BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});
     }
 }
+function _saveTabs() {
+    BarkerSaveLoadState.saveCurrentTabs();
+}
 
 /* This class creates main menu
 */
@@ -60,6 +64,7 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
     const templateFirstPart = '[{label: \'File\',submenu: [' +
                               '{label: \'Show /Hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
                               '{label: \'Show /Hide General developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}}, ' +
+                              '{label: \'Save tabs and opened windows\',accelerator: \'CmdOrCtrl+S\', click: () => {_saveTabs();}}, ' +
                               '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
     let category: string;
 

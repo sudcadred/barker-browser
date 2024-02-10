@@ -73,10 +73,6 @@ static ipcDeleteTab(tabIdNo: number) {
     BarkerData.getTabFirstBrowserMap().delete(tabIdNo);
 }
 
-static ipcSaveTabs (event: IpcMainEvent) {
-    BarkerSaveLoadState.saveCurrentTabs();
-}
-
 static ipcRenameTab (event: IpcMainEvent, newTabName: string) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcRenameTab(): BarkerData.getActualTabIdNo()="+BarkerData.getActualTabIdNo()+", newTabName="+newTabName);
     BarkerData.setTabName(BarkerData.getActualTabIdNo(), newTabName);
@@ -529,7 +525,6 @@ static registerIpcMethods() {
     ipcMain.on('create-tab', BarkerIpc.ipcCreateTab);
     ipcMain.on('change-tab', BarkerIpc.ipcChangeTab);
     ipcMain.on('rename-tab', BarkerIpc.ipcRenameTab);
-    ipcMain.on('save-tabs', BarkerIpc.ipcSaveTabs);
 
     ipcMain.on('change-layout', BarkerIpc.ipcChangeLayout);
     ipcMain.on('change-sidebar-layout', BarkerIpc.ipcChangeSidebarLayout);

@@ -87,11 +87,6 @@ layout49Button.addEventListener('click', () => {
     activeLayoutNo=49;
 });
 
-const buttonSaveTabs = document.getElementById('saveTabsButton')
-buttonSaveTabs.addEventListener('click', () => {
-    (windowTop as any).electronAPI.saveTabs();
-});
-
 const previousBrowserButton = document.getElementById('previousBrowserButton');
 previousBrowserButton.addEventListener('click', () => {
     (windowTop as any).electronAPI.showPreviousBrowser();

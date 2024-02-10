@@ -32,7 +32,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     //tabs
     createTab: (tabIdNo: number) => { ipcRenderer.send('create-tab', tabIdNo) },
     changeTab: (tabIdNo: number) => { ipcRenderer.send('change-tab', tabIdNo) },
-    saveTabs: () => { ipcRenderer.send('save-tabs') },
     renameTab: (newTabName: string) => { ipcRenderer.send('rename-tab', newTabName) },
     reloadTab: (tabIdNo: string) => { ipcRenderer.send('reload-tab', tabIdNo) },
 
