@@ -35,6 +35,18 @@ function _getHistory() {
     else
         BarkerMenu.mainWindow.webContents.send('clear-history-panel');
 }
+function _toggleDevConsole() {
+    BarkerData.toggleDevConsoleActive();
+    if (BarkerData.getDevConsoleActive()) {
+        BarkerBrowser.clearRightSidebar();
+        BarkerMenu.mainWindow.webContents.setDevToolsWebContents(BarkerBrowser.rightSideBarBrowser.webContents);
+        BarkerMenu.mainWindow.webContents.openDevTools({'mode': "detach"});
+        BarkerData.setDevConsoleActive();
+        BarkerBrowser.showRightSidebar();
+    } else {
+        BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});
+    }
+}
 
 /* This class creates main menu
 */
@@ -47,6 +59,7 @@ static mainWindow: Electron.BrowserWindow = null;
 static createMainMenu(mainWindow: Electron.BrowserWindow) {
     const templateFirstPart = '[{label: \'File\',submenu: [' +
                               '{label: \'Show /Hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
+                              '{label: \'Show /Hide General developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}}, ' +
                               '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
     let category: string;
 
@@ -149,8 +162,8 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                         BarkerBrowser.lastActiveDevToolsBrowserView = browser;
                         browser.webContents.setDevToolsWebContents(BarkerBrowser.rightSideBarBrowser.webContents);
                         browser.webContents.openDevTools({'mode': "detach"});
-                        BarkerBrowser.showRightSidebar();
                         BarkerData.setDevConsoleActive();
+                        BarkerBrowser.showRightSidebar();
                     } },
         {label: "hide developer console",
          click: () => { BarkerBrowser.clearRightSidebar(); } },

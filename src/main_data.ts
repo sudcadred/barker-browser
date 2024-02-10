@@ -118,6 +118,7 @@ static getBrowserViews() { return BarkerData.internalBrowserViewNumbers;}
 static getBrowserViewNo(internalNo: number) {return BarkerData.internalBrowserViewNumbers.get(internalNo);}
 static setBrowserViewNo(internalNo: number, browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(internalNo, browserViewNo);}
 static addBrowserViewNo(browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(browserViewNo, browserViewNo);}
+static toggleDevConsoleActive() {BarkerData.devConsoleOpened = !BarkerData.devConsoleOpened;}
 static setDevConsoleActive() {BarkerData.devConsoleOpened = true;}
 static getDevConsoleActive() {return BarkerData.devConsoleOpened;}
 static historyPanelActive() {return BarkerData.historyPanelOpened;}
