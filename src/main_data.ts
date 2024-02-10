@@ -60,6 +60,7 @@ static getTabFirstBrowserViewNo(tabIdNo: number) { return BarkerData.mapTabIdNoT
 static setTabFirstBrowserViewNo(tabIdNo: number, firstBrowserViewNo: number) { BarkerData.mapTabIdNoToFirstBrowserViewNo.set(tabIdNo, firstBrowserViewNo);}
 static getTabAddresses (tabIdNo: number) {return BarkerData.mapTabIdNoToAddresses.get(tabIdNo);}
 static setTabAddresses (tabIdNo: number, map: Map<number, string>) {BarkerData.mapTabIdNoToAddresses.set(tabIdNo, map);}
+static setTabAddress (tabIdNo: number, browserNo: number, address: string) {BarkerData.mapTabIdNoToAddresses.get(tabIdNo).set(browserNo, address);}
 static getFirstBrowserViewNo_sidebar() {return BarkerData.firstBrowserViewNo_sidebar;}
 static setFirstBrowserViewNo_sidebar(browserViewNo: number) {BarkerData.firstBrowserViewNo_sidebar = browserViewNo;}
 static setSidebarUrl(browserNo: number, url: string) {BarkerData.sidebarAddresses[browserNo] = url;}

@@ -208,11 +208,10 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
     //BrowserView navigation events (for later get URL and write it somewhere so user can see actual URL)
     browser.webContents.on('did-navigate', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
-        const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
-        if (addresses) {
-            addresses.set(browserNo, url);
+        BarkerData.setTabAddress(tabIdNo, browserNo, url);
+        if (tabIdNo == BarkerData.getActualTabIdNo()) {
+            BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
         }
-        BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
         browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
             BarkerDb.addHistoryEntry(url, result);
         });
@@ -232,10 +231,7 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
     */
     browser.webContents.on('did-navigate-in-page', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
-        const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
-        if (addresses) {
-            addresses.set(browserNo, url);
-        }
+        BarkerData.setTabAddress(tabIdNo, browserNo, url);
         BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
         browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
             BarkerDb.addHistoryEntry(url, result);
@@ -559,7 +555,7 @@ static loadURL (tabIdNo: number, browserNo: number, uri: string) {
     }
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): actualTabId="+BarkerData.getActualTabIdNo()+", firstBrowserNo="+firstBrowserNo);
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): tabId="+tabIdNo+", firstBrowserNo="+firstBrowserNo);
     
     var uriWithProtocol = uri;
     if (!/^https?:\/\//i.test(uri)) {
@@ -578,16 +574,7 @@ static loadURL (tabIdNo: number, browserNo: number, uri: string) {
         browserViews[browserViewNo].webContents.loadURL('https://www.google.com/search?q='+uri);
     }
 
-    const addresses = BarkerData.getTabAddresses(tabIdNo);    //get map of addresses for current tab
-    if (addresses) {
-        //URL already loaded, just overwrite
-        addresses.set(browserNo, uri);
-    }else{
-        //first time load URL
-        let map = new Map<number, string>;
-        map.set(browserNo, uri);
-        BarkerData.setTabAddresses(tabIdNo, map);
-    }
+    BarkerData.setTabAddress(tabIdNo, browserNo, uri);
 }
 
 static getNextTabIdName() {

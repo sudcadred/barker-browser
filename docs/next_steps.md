@@ -3,14 +3,12 @@
 ## NOW
 
 ## NEXT
-* solve bug with saving of first tab
-* solve bug with navigation events from other not visible tabs
 * tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
-
-## LATER
+* think where should I put browser window moficications indication (muted state, applied addon, cookie isolation)
 * if DB does not exist in user folder, copy empty DB there
 * check cookies isolation https://stackoverflow.com/questions/55061908/having-two-isolated-in-terms-of-history-cookies-localstorage-browserviews-in-t
 * scrape url
+* destroy new memoty structures when closing app
 * addons manager
 * packager → exe (github release)
 

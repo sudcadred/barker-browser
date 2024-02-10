@@ -119,15 +119,12 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                     (<BrowserView>browserViews[browserViewNo]).webContents.close();
                 }
             } else {
-                const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());
-                if (addresses) {
-                    addresses.set(browserNo, null);
-                    const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
-                    let browserViews = BarkerMenu.mainWindow.getBrowserViews();
-                    const browserViewNo = firstBrowserNo+browserNo-1;
-                    if (browserViews[browserViewNo].webContents) {
-                        (<BrowserView>browserViews[browserViewNo]).webContents.close();
-                    }
+                BarkerData.setTabAddress(BarkerData.getActualTabIdNo(), browserNo, null);
+                const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
+                let browserViews = BarkerMenu.mainWindow.getBrowserViews();
+                const browserViewNo = firstBrowserNo+browserNo-1;
+                if (browserViews[browserViewNo].webContents) {
+                    (<BrowserView>browserViews[browserViewNo]).webContents.close();
                 }
             }
          }},

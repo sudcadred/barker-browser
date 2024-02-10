@@ -30,15 +30,17 @@ constructor (mainWindow: Electron.BrowserWindow) {
 }
 
 static saveCurrentTabs() {
-    BarkerSaveLoadState.store.set('sidebar.addresses_count', BarkerData.getSidebarAddresses().length);
+    //save sidebar
+    BarkerSaveLoadState.store.set('sidebar.addresses_count', BarkerData.getSidebarAddresses().length-1);
     BarkerSaveLoadState.store.set('sidebar.layout', BarkerData.getSidebarLayoutNo());
-    for (let j=1; j<=BarkerSettings.getMaxBrowserViewsPerTab();j++) {
-        let url = BarkerData.getSidebarUrl(j-1);
+    for (let j=1; j<=BarkerData.getSidebarAddresses().length;j++) {
+        let url = BarkerData.getSidebarUrl(j);
         if (url) {
             BarkerSaveLoadState.store.set('sidebar.addresses.'+j, url);
         }
     }
 
+    //save tabs
     BarkerSaveLoadState.store.set('tabcount', BarkerData.getOrderedTabIdNumbersArray().length);
     for (let i=0; i<BarkerData.getOrderedTabIdNumbersArray().length;i++) {
         const tabIdNo = i+1;
@@ -48,9 +50,10 @@ static saveCurrentTabs() {
         BarkerSaveLoadState.store.set('tabs.'+tabIdNo+'.layout', BarkerData.getTabLayoutNo(tabIdNo) );
         const addresses = BarkerData.getTabAddresses(tabIdNo);
         if (addresses) {
-            for (let j=0; j<BarkerSettings.getMaxBrowserViewsPerTab();j++) {
+            //save addresses in specific tab
+            for (let j=1; j<=BarkerSettings.getMaxBrowserViewsPerTab();j++) {
                 const url = addresses.get(j);
-                if (url) {
+                if (url && url.substring(0, 4)!='file') {
                     BarkerSaveLoadState.store.set('tabs.'+tabIdNo+'.addresses.'+j, url);
                 }
             }
@@ -80,6 +83,7 @@ static loadAddressesFromFile() {
         const tabLayout = BarkerSaveLoadState.store.get('tabs.'+i+'.layout');
         BarkerData.setTabBrowserOffset(tabIdNo, 0);
         BarkerData.setTabLayoutNo(tabIdNo, tabLayout);
+        BarkerData.setTabAddresses(tabIdNo, new Map<number, string>);
         if (i ==1) BarkerData.setActualTabIdNo(tabIdNo);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): tabname="+tabName+", tabLayout="+tabLayout);
 
