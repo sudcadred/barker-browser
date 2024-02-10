@@ -17,7 +17,7 @@
 }
 
 #tabDiv {
-   max-height: 100px;    
+   max-height: 100px;
 }
 
 #layoutDiv {
@@ -39,6 +39,19 @@
 
 #main_frame {
     position: absolute;  
+}
+
+.headerButton {
+  background-color: #555;
+  color: white;
+  float: left;
+  bottom: 5px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  width: auto;
+  height: 50px;
+  vertical-align: top;
 }
 
 /* Style the tab buttons */

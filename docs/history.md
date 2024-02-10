@@ -41,4 +41,4 @@ development started from 1.1.2024
 * browsing history (including text content of the page)
 * tab context menu
 * protect tab from deletion
-
+* muted state browser window indication

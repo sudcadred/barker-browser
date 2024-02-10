@@ -122,4 +122,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onShowRenamePanel: (callback: Function) => ipcRenderer.on('show-rename-panel', (_event, tabIdNo: number) => callback(tabIdNo)),
     onProtectTab: (callback: Function) => ipcRenderer.on('protect-tab', (_event, tabIdNo: number) => callback(tabIdNo)),
     onUnprotectTab: (callback: Function) => ipcRenderer.on('unprotect-tab', (_event, tabIdNo: number) => callback(tabIdNo)),
+    onBrowserWindowIndication: (callback: Function) => ipcRenderer.on('browser-window-indication', (_event, browserNo: number, tooltip: string) => callback(browserNo, tooltip)),
+    onClearBrowserWindowIndication: (callback: Function) => ipcRenderer.on('clear-browser-window-indication', (_event, browserNo: number) => callback(browserNo)),
+    onBrowserWindowIndication_sidebar: (callback: Function) => ipcRenderer.on('browser-window-indication-sidebar', (_event, browserNo: number, tooltip: string) => callback(browserNo, tooltip)),
+    onClearBrowserWindowIndication_sidebar: (callback: Function) => ipcRenderer.on('clear-browser-window-indication-sidebar', (_event, browserNo: number) => callback(browserNo)),
   });

@@ -88,12 +88,23 @@ function hideMatchedAddressesSidebar() {
     divHeader.style.cssText = ' white-space:nowrap;width:'+_leftSidebarWidth+'px; overflow-x: scroll;position:absolute;left:' + left + 'px;top:' + top + 'px;opacity:0.3;z-index:100;background:#000';
     document.body.appendChild(divHeader);
 
+    //create indication button
+    const indicationButton_sidebar = document.createElement('button');
+    indicationButton_sidebar.textContent = '!';
+    indicationButton_sidebar.id = 'browserIndicationButton_sidebar' + browserNo;
+    indicationButton_sidebar.className += 'headerButton';
+    indicationButton_sidebar.style.backgroundColor = 'yellow';
+    indicationButton_sidebar.style.color = 'black';
+    indicationButton_sidebar.style.width = '15px';
+    indicationButton_sidebar.style.display = 'none';
+    divHeader.appendChild(indicationButton_sidebar);
+
     //create back button
     const backButton = document.createElement('button');
     backButton.textContent = 'Back';
     backButton.title = 'Back';
     backButton.id = 'backButton_sidebar' + browserNo;
-    backButton.className += 'tabButton';
+    backButton.className += 'headerButton';
     backButton.innerHTML = '<img src="../img/back1.png" width=20px height=20px />';
     divHeader.appendChild(backButton);
 
@@ -108,7 +119,7 @@ function hideMatchedAddressesSidebar() {
     forwardButton.textContent = 'Forward';
     forwardButton.title = 'Forward';
     forwardButton.id = 'forwardButton_sidebar' + browserNo;
-    forwardButton.className += 'tabButton';
+    forwardButton.className += 'headerButton';
     forwardButton.innerHTML = '<img src="../img/forward1.png" width=20px height=20px />';
     divHeader.appendChild(forwardButton);
 
@@ -121,7 +132,7 @@ function hideMatchedAddressesSidebar() {
     const refreshButton = document.createElement('button');
     refreshButton.id = 'refreshButton_sidebar' + browserNo;
     refreshButton.title = 'Reload page';
-    refreshButton.className += 'tabButton';
+    refreshButton.className += 'headerButton';
     refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
     divHeader.appendChild(refreshButton);
 
@@ -146,7 +157,7 @@ function hideMatchedAddressesSidebar() {
     const goButton = document.createElement('button');
     goButton.textContent = 'Go';
     goButton.id = 'goButton_sidebar' + browserNo;
-    goButton.className += 'tabButton';
+    goButton.className += 'headerButton';
     divHeader.appendChild(goButton);
 
     //----------------------------
@@ -179,6 +190,7 @@ function hideMatchedAddressesSidebar() {
     moveUpButton_sidebar.id = 'moveUpButton_sidebar' + browserNo;
     moveUpButton_sidebar.title = 'Move window up';
     moveUpButton_sidebar.innerHTML = '<img src="../img/up.png" width=10px height=10px />';
+    moveUpButton_sidebar.style.height = '25px';
     divUpDownButtons_sidebar.appendChild(moveUpButton_sidebar);
     moveUpButton_sidebar.addEventListener('click', () => {
         (windowLeft as any).electronAPI.moveWindowUp_sidebar(browserNo);
@@ -190,6 +202,7 @@ function hideMatchedAddressesSidebar() {
     moveDownButton_sidebar.title = 'Move window down';
     moveDownButton_sidebar.style.cssText = 'padding 20px 0px';
     moveDownButton_sidebar.innerHTML = '<img src="../img/down.png" width=10px height=10px />';
+    moveDownButton_sidebar.style.height = '25px';
     divUpDownButtons_sidebar.appendChild(moveDownButton_sidebar);
     moveDownButton_sidebar.addEventListener('click', () => {
         (windowLeft as any).electronAPI.moveWindowDown_sidebar(browserNo);
@@ -277,6 +290,17 @@ function searchKeyDown(event: Event ) {
             (windowLeft as any).electronAPI.findInPage(text);
     }
 }
+
+(windowLeft as any).electronAPI.onBrowserWindowIndication_sidebar((browserNo: number, tooltip: string) => {
+    var browserIndicationButton = document.getElementById("browserIndicationButton_sidebar"+browserNo);
+    browserIndicationButton.style.display = 'inline-block';
+    browserIndicationButton.title = tooltip;
+});
+
+(windowLeft as any).electronAPI.onClearBrowserWindowIndication_sidebar((browserNo: number) => {
+    var browserIndicationButton = document.getElementById("browserIndicationButton_sidebar"+browserNo);
+    browserIndicationButton.style.display = 'none';
+});
 
 //------------------- BODY ONLOAD -----------------------
 

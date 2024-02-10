@@ -71,12 +71,23 @@ function hideMatchedAddresses() {
     divHeader.style.cssText = 'display:inline-block;width:'+browser_width+'px;white-space:nowrap; overflow-x: scroll;position:absolute;left:' + left + 'px;top:' + top + 'px;opacity:0.3;z-index:100;background:#000; border: 1px solid black; cursor:pointer;';
     document.body.appendChild(divHeader);
 
+    //create indication button
+    const indicationButton = document.createElement('button');
+    indicationButton.textContent = '!';
+    indicationButton.id = 'browserIndicationButton' + browserNo;
+    indicationButton.className += 'headerButton';
+    indicationButton.style.backgroundColor = 'yellow';
+    indicationButton.style.color = 'black';
+    indicationButton.style.width = '15px';
+    indicationButton.style.display = 'none';
+    divHeader.appendChild(indicationButton);
+
     //create back button
     const backButton = document.createElement('button');
     backButton.textContent = 'Back';
     backButton.title = 'Back';
     backButton.id = 'backButton' + browserNo;
-    backButton.className += 'tabButton';
+    backButton.className += 'headerButton';
     backButton.innerHTML = '<img src="../img/back1.png" width=20px height=20px />';
     divHeader.appendChild(backButton);
 
@@ -96,7 +107,7 @@ function hideMatchedAddresses() {
     forwardButton.textContent = 'Forward';
     forwardButton.title = 'Forward';
     forwardButton.id = 'forwardButton' + browserNo;
-    forwardButton.className += 'tabButton';
+    forwardButton.className += 'headerButton';
     forwardButton.innerHTML = '<img src="../img/forward1.png" width=20px height=20px />';
     divHeader.appendChild(forwardButton);
 
@@ -115,7 +126,7 @@ function hideMatchedAddresses() {
     const refreshButton = document.createElement('button');
     refreshButton.id = 'refreshButton' + browserNo;
     refreshButton.title = 'Reload page';
-    refreshButton.className += 'tabButton';
+    refreshButton.className += 'headerButton';
     refreshButton.innerHTML = '<img src="../img/refresh.png" width=20px height=20px />';
     divHeader.appendChild(refreshButton);
 
@@ -145,7 +156,7 @@ function hideMatchedAddresses() {
     const goButton = document.createElement('button');
     goButton.textContent = 'Go ('+browserNo+')';
     goButton.id = 'goButton' + browserNo;
-    goButton.className += 'tabButton';
+    goButton.className += 'headerButton';
     divHeader.appendChild(goButton);
 
     function setUrl(event:KeyboardEvent) {
@@ -170,6 +181,7 @@ function hideMatchedAddresses() {
     moveLeftButton.className += 'moveButton';
     moveLeftButton.style.cssText = 'display:inline-block;float: left;line-height: 36px;';
     moveLeftButton.innerHTML = '<img src="../img/left.png" width=10px height=10px />';
+    moveLeftButton.style.height = '50px';
     divHeader.appendChild(moveLeftButton);
     moveLeftButton.addEventListener('click', () => {
         (windowMain as any).electronAPI.moveWindowLeft(browserNo);
@@ -185,6 +197,7 @@ function hideMatchedAddresses() {
     moveUpButton.id = 'moveUpButton' + browserNo;
     moveUpButton.title = 'Move window up';
     moveUpButton.innerHTML = '<img src="../img/up.png" width=10px height=10px />';
+    moveUpButton.style.height = '25px';
     divUpDownButtons.appendChild(moveUpButton);
     moveUpButton.addEventListener('click', () => {
         (windowMain as any).electronAPI.moveWindowUp(browserNo);
@@ -196,6 +209,7 @@ function hideMatchedAddresses() {
     moveDownButton.title = 'Move window down';
     moveDownButton.style.cssText = 'padding 20px 0px';
     moveDownButton.innerHTML = '<img src="../img/down.png" width=10px height=10px />';
+    moveDownButton.style.height = '25px';
     divUpDownButtons.appendChild(moveDownButton);
     moveDownButton.addEventListener('click', () => {
         (windowMain as any).electronAPI.moveWindowDown(browserNo);
@@ -208,6 +222,7 @@ function hideMatchedAddresses() {
     moveRightButton.className += 'moveButton';
     moveRightButton.style.cssText = 'display:inline-block;float: left;line-height: 36px;';
     moveRightButton.innerHTML = '<img src="../img/right.png" width=10px height=10px />';
+    moveRightButton.style.height = '50px';
     divHeader.appendChild(moveRightButton);
     moveRightButton.addEventListener('click', () => {
         (windowMain as any).electronAPI.moveWindowRight(browserNo);
@@ -217,7 +232,7 @@ function hideMatchedAddresses() {
     const threeDotsButton = document.createElement('button');
     threeDotsButton.id = 'threeDotsButton' + browserNo;
     threeDotsButton.title = 'More actions';
-    threeDotsButton.className += 'tabButton';
+    threeDotsButton.className += 'headerButton';
     threeDotsButton.style.cssText = 'display:block;float: left;';
     threeDotsButton.innerHTML = '<img src="../img/dots.png" width=20px height=20px />';
     divHeader.appendChild(threeDotsButton);
@@ -262,6 +277,16 @@ matchedAddressesButton.addEventListener("click",function() {
     hideMatchedAddresses();
 });
 
+(windowMain as any).electronAPI.onBrowserWindowIndication((browserNo: number, tooltip: string) => {
+    var browserIndicationButton = document.getElementById("browserIndicationButton"+browserNo);
+    browserIndicationButton.style.display = 'inline-block';
+    browserIndicationButton.title = tooltip;
+});
+
+(windowMain as any).electronAPI.onClearBrowserWindowIndication((browserNo: number) => {
+    var browserIndicationButton = document.getElementById("browserIndicationButton"+browserNo);
+    browserIndicationButton.style.display = 'none';
+});
 
 //------------------- BODY ONLOAD -----------------------
 

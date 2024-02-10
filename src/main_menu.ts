@@ -130,9 +130,19 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
          }},
         {label: "mute page",
          click: () => { browser.webContents.setAudioMuted(true);
+                        if (sidebar) {
+                            BarkerBrowser.mainWindow.webContents.send('browser-window-indication-sidebar', browserNo, 'browser window is muted');
+                        } else {
+                            BarkerBrowser.mainWindow.webContents.send('browser-window-indication', browserNo, 'browser window is muted');
+                        }
                         BarkerStatusBar.updateStatusBarText('Browser window '+browserNo + ' muted'); }},
          {label: "unmute page",
          click: () => { browser.webContents.setAudioMuted(false);
+                        if (sidebar) {
+                            BarkerBrowser.mainWindow.webContents.send('clear-browser-window-indication-sidebar', browserNo);
+                        } else {
+                            BarkerBrowser.mainWindow.webContents.send('clear-browser-window-indication', browserNo);
+                        }
                         BarkerStatusBar.updateStatusBarText('Browser window '+browserNo + ' unmuted'); }},
          {label: "find in page", 
          click: () => { BarkerData.setActiveBrowserView(browser);
@@ -207,6 +217,9 @@ static createTabRightClickMenu(tabIdNo: number) {
             for (let i=0; i < BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
                 let browser = browserViews[firstBrowserNo + i];
                 browser.webContents.setAudioMuted(true);
+                if (i < BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo())) {
+                    BarkerMenu.mainWindow.webContents.send('browser-window-indication', i+1, 'browser window is muted');
+                }
             }
             BarkerStatusBar.updateStatusBarText('All browser windows in tab '+ BarkerData.getTabName(tabIdNo) + ' were muted');
         } },
@@ -215,6 +228,9 @@ static createTabRightClickMenu(tabIdNo: number) {
             for (let i=0; i < BarkerSettings.getMaxBrowserViewsPerTab(); i++) {
                 let browser = browserViews[firstBrowserNo + i];
                 browser.webContents.setAudioMuted(false);
+                if (i < BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo())) {
+                    BarkerMenu.mainWindow.webContents.send('clear-browser-window-indication', i+1);
+                }
             }
             BarkerStatusBar.updateStatusBarText('All browser windows in tab '+ BarkerData.getTabName(tabIdNo) + ' were unmuted');
         } },
