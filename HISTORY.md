@@ -1,3 +1,7 @@
+layout: page
+title: "History and next steps"
+permalink: /history
+
 # HISTORY
 development started from 1.1.2024 
 (first concepts were done a month or two before that time but real work started in 2024)
@@ -39,10 +43,11 @@ development started from 1.1.2024
 # NEXT STEPS
 
 ## NOW
+* add F12 shortcut (add to main menu)
+* disable history panel when F12
 
 ## NEXT
 * remove Save tabs button and put it into Menu -> File
-* add F12 shortcut (add to main menu)
 * solve bug with navigation events from other not visible tabs
 * tab context menu (rename tab, refresh whole tab, mute tab, move tab left/right) - possibly move renameDiv from topBar to main area
 
