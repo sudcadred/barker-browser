@@ -90,6 +90,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     //history manager
     getAllDomains: (date: string) => { ipcRenderer.send('get-all-domains', date) },
+    searchAllHistory: (searchedString: string) => { ipcRenderer.send('search-all-history', searchedString) },
     
     // IPC - main.ts to renderer
     onCtrlL: (callback: Function) => ipcRenderer.on('focus-addressbar', (_event, value) => callback(value)),

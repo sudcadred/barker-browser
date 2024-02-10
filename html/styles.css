@@ -275,3 +275,7 @@ label[for^=big_window] {
   display: inline-block; 
   padding-top: 18px;
 }
+
+.highlight {
+  background-color: yellow;
+}

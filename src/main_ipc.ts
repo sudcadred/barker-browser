@@ -517,7 +517,13 @@ static ipcMoveWindowDownSidebar(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcGetAllDomains(event: IpcMainEvent, date: string) {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcGetAllDomains(): date="+date);
     BarkerDb.getAllDomains(date);
+}
+
+static ipcSearchAllHistory(event: IpcMainEvent, searchedString: string) {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcSearchAllHistory(): searchedString="+searchedString);
+    BarkerDb.searchAllHistory(searchedString);
 }
 
 static registerIpcMethods() {
@@ -574,6 +580,7 @@ static registerIpcMethods() {
     ipcMain.on('move-window-down-sidebar', BarkerIpc.ipcMoveWindowDownSidebar);
 
     ipcMain.on('get-all-domains', BarkerIpc.ipcGetAllDomains);
+    ipcMain.on('search-all-history', BarkerIpc.ipcSearchAllHistory);
 }
 
 }

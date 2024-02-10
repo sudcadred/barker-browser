@@ -8,6 +8,7 @@
 
 var windowRight = window.parent.parent;
 var _rightSidebarWidth: number;
+var _searchedWord = '';
 
 (windowRight as any).electronAPI.onHistoryDomainsSet( (date: string, datesList: string, todayDomainsList: string, todayUriList: string) => {
     const divHistoryPanel = document.getElementById('divHistoryPanel');
@@ -21,6 +22,17 @@ var _rightSidebarWidth: number;
     let textNode = document.createTextNode("History of visited websites");
     h1.appendChild(textNode);
     divHistoryPanel.append(h1);
+
+    let inputSearchContent = document.createElement("input");
+    inputSearchContent.textContent = 'Search in pages content';
+    divHistoryPanel.append(inputSearchContent);
+    let searchButton = document.createElement('button');
+    searchButton.textContent = 'Find';
+    divHistoryPanel.append(searchButton);
+    searchButton.addEventListener('click', (e) => {
+        _searchedWord = inputSearchContent.value;
+        (windowRight as any).electronAPI.searchAllHistory(_searchedWord);
+    });
     
     let h2 = document.createElement("h2");
     textNode = document.createTextNode(date);
@@ -34,7 +46,7 @@ var _rightSidebarWidth: number;
     for (let i=0; i< historyDomains.length; i++) {
 
         //create Domain button
-        let  btn = document.createElement('button');
+        let btn = document.createElement('button');
         btn.id = 'buttonHistoryDomain' + i;
         btn.textContent = historyDomains[i].domain;
         btn.className += 'collapsible';
@@ -81,6 +93,13 @@ var _rightSidebarWidth: number;
                 divPageText.textContent = historyUris[j].innerText;
                 divUris.appendChild(divPageText);
 
+                //highlight all occurences of search word
+                if (date == 'Found pages') {
+                    var text = divPageText.textContent;
+                    var regex = new RegExp('('+_searchedWord+')', 'ig');
+                    text = text.replace(regex, '<span class="highlight">$1</span>');
+                    divPageText.innerHTML = text;
+                }
             }
         }
     }
@@ -107,7 +126,6 @@ var _rightSidebarWidth: number;
             (windowRight as any).electronAPI.getAllDomains(btn.textContent);
         });
     }
-
 });
 
 (windowRight as any).electronAPI.onClearHistoryPanel( () => {
