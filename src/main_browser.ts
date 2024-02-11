@@ -210,11 +210,14 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         BarkerData.setTabAddress(tabIdNo, browserNo, url);
         if (tabIdNo == BarkerData.getActualTabIdNo()) {
-            BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
+            if (BarkerBrowser.mainWindow && BarkerBrowser.mainWindow.webContents)
+                BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
         }
-        browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
-            BarkerDb.addHistoryEntry(url, result);
-        });
+        if (browser && browser.webContents) {
+            browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
+                BarkerDb.addHistoryEntry(url, result);
+            });
+        }
     });
     /* FRAME NAVIGATION COMMENTED AS IT GIVES TOO MANY FALSE DB ENTRIES WITH THE SAME CONTENT
     browser.webContents.on('did-frame-navigate', function(event, url) {
@@ -232,10 +235,12 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
     browser.webContents.on('did-navigate-in-page', function(event, url) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         BarkerData.setTabAddress(tabIdNo, browserNo, url);
-        BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
-        browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
-            BarkerDb.addHistoryEntry(url, result);
-        });
+        if (BarkerBrowser.mainWindow && BarkerBrowser.mainWindow.webContents && browser && browser.webContents) {
+            BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
+            browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
+                BarkerDb.addHistoryEntry(url, result);
+            });
+        }
     });
 
     //event hover over link, display link in statusbar

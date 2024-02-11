@@ -4,6 +4,7 @@ import { BarkerBrowser } from "./main_browser";
 const Database = require("better-sqlite3");
 const path = require('node:path')
 const dbPath = path.join(app.getPath("userData"), 'barker_browser.db');
+const fs = require('fs');
 
 export class BarkerDb {
 
@@ -11,6 +12,21 @@ export class BarkerDb {
 
 //ctor    
 constructor () {
+    //check if DB physically exists in user folder, otherwise create empty DB file
+    const sourcePath = path.join(app.getAppPath(), '../db/barker_browser.db');
+    const destPath = path.join(app.getPath("userData"), 'barker_browser.db');
+    fs.access(destPath, fs.constants.F_OK, (error: Error) => {
+        console.log({ error });
+        if (error) {
+            console.log('DB does not exist, copying empty DB to user folder');
+            console.log(error);
+            fs.copyFile(sourcePath, destPath, (err: Error) => {
+                console.log('Empty DB was copied to user folder');
+            });
+        }
+    })
+
+    //open DB
     const db = new Database(dbPath);
     db.pragma("journal_mode = WAL");
     BarkerDb.db = db;
