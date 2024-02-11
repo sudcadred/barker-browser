@@ -110,6 +110,7 @@ static ipcShowPreviousBrowser (event: IpcMainEvent) {
         browserOffset = 0;
     }
     BarkerData.setTabBrowserOffset(BarkerData.getActualTabIdNo(), browserOffset);
+    BarkerData.setPreviousTabIdNoToActual();
     BarkerBrowser.showBrowsers(layout, BarkerData.getActualTabIdNo(), browserOffset);
 }
 
@@ -125,6 +126,7 @@ static ipcShowNextBrowser (event: IpcMainEvent) {
         browserOffset = BarkerSettings.getMaxBrowserViewsPerTab()-layout;
     }
     BarkerData.setTabBrowserOffset(BarkerData.getActualTabIdNo(), browserOffset);
+    BarkerData.setPreviousTabIdNoToActual();
     BarkerBrowser.showBrowsers(layout, BarkerData.getActualTabIdNo(), browserOffset);
 }
 

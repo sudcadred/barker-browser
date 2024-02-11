@@ -303,6 +303,7 @@ removeBrowserViewsForOneTab(tabName: string) {
 }
 
 static hideAllBrowserViews_mainArea() {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_mainArea()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
     let tabIdNo = BarkerData.getPreviousTabIdNo();
     var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
@@ -315,6 +316,7 @@ static hideAllBrowserViews_mainArea() {
 
 
 static hideAllBrowserViews_sidebar() {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_sidebar()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
     var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
     for (let i=firstBrowserViewNo; i<=firstBrowserViewNo+BarkerSettings.getMaxBrowserViewsPerTab();i++) {
@@ -325,6 +327,7 @@ static hideAllBrowserViews_sidebar() {
 }
 
 static hideAllBrowserViews() {
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
     for (let i=0; i<browserViews.length;i++) {
         browserViews[i].setBounds({ x: 0, y: 0, width: 0, height: 0 });
@@ -374,6 +377,14 @@ static showBrowsers_showSidebar() {
         }
         BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', i, BarkerData.getSidebarUrl(i));
         _top+= sidebar_browser_height;
+
+        //set muted window indication
+        let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
+        var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
+        var browser = browserViews[firstBrowserViewNo+i];
+        if (browser.webContents.isAudioMuted()) {
+            BarkerMenu.mainWindow.webContents.send('browser-window-indication-sidebar', i+1, 'browser window is muted');
+        }
     }
 }
 
@@ -488,6 +499,14 @@ static updateMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
             const address = addresses.get(i);
             if (address) {
                 BarkerBrowser.mainWindow.webContents.send('update-url', i, address);
+
+                //set muted window indication
+                let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
+                var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
+                var browser = browserViews[firstBrowserViewNo+i];
+                if (browser.webContents.isAudioMuted()) {
+                    BarkerMenu.mainWindow.webContents.send('browser-window-indication', i+1, 'browser window is muted');
+                }
             }
         }
     }
@@ -509,6 +528,14 @@ static updateSidebarArea() {
             const address = addresses[i];
             if (address) {
                 BarkerBrowser.mainWindow.webContents.send('update-url-sidebar', i, address);
+
+                //set muted window indication
+                let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
+                var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
+                var browser = browserViews[firstBrowserViewNo+i];
+                if (browser.webContents.isAudioMuted()) {
+                    BarkerMenu.mainWindow.webContents.send('browser-window-indication-sidebar', i+1, 'browser window is muted');
+                }
             }
         }
     }
@@ -534,6 +561,14 @@ static showBrowsers (windowsCnt: number, tabIdNo: number, offset: number) {
             if (address) {
                 BarkerBrowser.mainWindow.webContents.send('update-url', i, address);
                 BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): browser header no " +i+" updated URL to "+address);
+
+                //set muted window indication
+                let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
+                var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
+                var browser = browserViews[firstBrowserViewNo+i];
+                if (browser.webContents.isAudioMuted()) {
+                    BarkerMenu.mainWindow.webContents.send('browser-window-indication', i+1, 'browser window is muted');
+                }
             }
         }
     }

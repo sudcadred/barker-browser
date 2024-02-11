@@ -2,28 +2,21 @@
 # NEXT STEPS
 
 ## NOW
+* if DB does not exist in user folder, copy empty DB there
 
 ## NEXT
-* if DB does not exist in user folder, copy empty DB there
-* check cookies isolation https://stackoverflow.com/questions/55061908/having-two-isolated-in-terms-of-history-cookies-localstorage-browserviews-in-t
 * scrape url
 * show scraped webs (right sidebar)
 * destroy memory structures created by new when closing app
 * addons manager
-* packager → exe (github release)
 * add menu Tutorial with links to text description and video (prepare HTML description)
 
-## IDEAS (not sure if will be implemented)
-* like page
-* share my likes
+## LATER
+* make addons (yt dislike, yt replay, twitch overview)
+* indicate that addon is applied to browser window
+* check cookies isolation https://stackoverflow.com/questions/55061908/having-two-isolated-in-terms-of-history-cookies-localstorage-browserviews-in-t
+* packager → exe (github release)
 * download video
-* loop video
-* show timer how long spent in tab name
-
-## ADDONS IDEAS
-* twitch overview
-* yt dislike
-* yt replay
 
 ## Missing features
 * edit bookmarks

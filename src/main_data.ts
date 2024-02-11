@@ -54,6 +54,7 @@ static historyPanelOpened = false;
 static getActualTabIdNo() { return BarkerData.actualTabIdNo;}
 static setActualTabIdNo(tabIdNo: number) { BarkerData.previousTabIdNo=BarkerData.actualTabIdNo; BarkerData.actualTabIdNo = tabIdNo;}
 static getPreviousTabIdNo() { return BarkerData.previousTabIdNo;}
+static setPreviousTabIdNoToActual() { BarkerData.previousTabIdNo = BarkerData.actualTabIdNo;}
 static getTabLayoutNo(tabIdNo: number) { return BarkerData.mapTabIdNoToLayouts.get(tabIdNo) || BarkerSettings.defaultLayout;}
 static setTabLayoutNo(tabIdNo: number, layout: number) { BarkerData.mapTabIdNoToLayouts.set(tabIdNo, layout);}
 static getTabFirstBrowserMap() { return BarkerData.mapTabIdNoToFirstBrowserViewNo;}
