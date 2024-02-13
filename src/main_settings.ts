@@ -53,15 +53,16 @@ static createPreferences(mainWindow: Electron.BrowserWindow, store: Object) {
         },
         css: 'preference-styles.css',
         dataStore: path.join(app.getPath("userData"), 'barker_browser_preferences.json'),
-        defaults: { 
+        defaults: {
             mainSection: { appTitle: BarkerSettings.appTitle,
                            maxBrowsersPerTab: '25' ,
-                           userAgent: 'Barker Browser'
+                           userAgent: 'Barker Browser',
+                           maxScrappedFiles: '100'
             },
             layoutSection: { layout: [ 'layout1', 'layout2', 'layout4', 'layout9' ]},
             shortcutsSection: { shortcutTabsFirstPart: 'keyboardTabsPrefixCtrl', shortcutTabsSecondPart: 'keyboardTabsPostfixNumbers',
                                 shortcutLayoutFirstPart: 'keyboardLayoutPrefixCtrl', shortcutLayoutSecondPart: 'keyboardLayoutPostFixFkeys'},
-            headerSection: {headerButtons: ['btnBack', 'btnForward', 'btnRefresh', 'btnClear'] },
+            headerSection: {headerButtons: ['btnBack', 'btnForward', 'btnRefresh'] },
          },
 
         sections: [
@@ -94,6 +95,15 @@ static createPreferences(mainWindow: Electron.BrowserWindow, store: Object) {
                                 {
                                     label: 'User agent',
                                     key: 'userAgent',
+                                    type: 'text'
+                                },
+                            ]
+                        },
+                        {
+                            fields: [
+                                {
+                                    label: 'Web scraping - Maximum downloaded files',
+                                    key: 'maxScrappedFiles',
                                     type: 'text'
                                 },
                             ]
@@ -211,7 +221,6 @@ static createPreferences(mainWindow: Electron.BrowserWindow, store: Object) {
                                       { label: 'Back', value: 'btnBack' },
                                       { label: 'Forward', value: 'btnForward' },
                                       { label: 'Refresh', value: 'btnRefresh' },
-                                      { label: 'Clear page', value: 'btnClear' },
                                     ],
                                 },
                             ]

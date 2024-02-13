@@ -126,7 +126,20 @@ static showBrowsersIfBodyFullyLoaded() {
             BarkerKeyboardShortcuts.evaluateKeyboardShortcutsForSwitchTab(input);
             BarkerKeyboardShortcuts.evaluateKeyboardShortcutsForSwitchLayout(input);
         })
-    
+
+        //handle right sidebar events
+        BarkerBrowser.rightSideBarBrowser.webContents.on('will-navigate', () => {
+            BarkerStatusBar.updateStatusBarText('Loading page, please wait ...');
+        });
+        BarkerBrowser.rightSideBarBrowser.webContents.on('did-fail-load', (errorCode, errorDescription, validatedURL) => {
+            BarkerStatusBar.updateStatusBarText('Failed to load URL, errorCode='+errorCode+", errorDescription="+errorDescription+", validatedURL="+validatedURL);
+            BarkerBrowser.rightSideBarBrowser.webContents.goBack(); //try to go back
+        });
+        BarkerBrowser.rightSideBarBrowser.webContents.on('update-target-url', (event, url) => {
+            BarkerStatusBar.updateStatusBarText(url);
+        });
+
+
     }
 }
 
@@ -179,7 +192,7 @@ static addToBookmarks(uri: string) {
     if (BarkerData.bookmarkTopics.length == 0) {
         BarkerData.bookmarkTopics.push('Bookmarks');
     }
-    BarkerData.addBookmark('Bookmarks', BarkerUtils.getNameFromUrl(uri), uri);
+    BarkerData.addBookmark('Bookmarks', BarkerUtils.getFileNameFromUrl(uri), uri);
     BarkerSaveLoadState.saveBookmark('Bookmarks', uri);
     BarkerMenu.createMainMenu(BarkerBrowser.mainWindow);
 }

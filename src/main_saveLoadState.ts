@@ -142,7 +142,7 @@ static saveBookmark(topic: string, uri: string) {
     const new_bookmarks_count = Number(bookmarks_count)+1;
     BarkerSaveLoadState.store.set('bookmarks.bookmarks_count', new_bookmarks_count);
     BarkerSaveLoadState.store.set('bookmarks.addresses.'+new_bookmarks_count+'.category', topic);
-    BarkerSaveLoadState.store.set('bookmarks.addresses.'+new_bookmarks_count+'.name', BarkerUtils.getNameFromUrl(uri));
+    BarkerSaveLoadState.store.set('bookmarks.addresses.'+new_bookmarks_count+'.name', BarkerUtils.getFileNameFromUrl(uri));
     BarkerSaveLoadState.store.set('bookmarks.addresses.'+new_bookmarks_count+'.uri', uri);
 }
 

@@ -2,14 +2,22 @@
 # NEXT STEPS
 
 ## NOW
-* if DB does not exist in user folder, copy empty DB there
+
 
 ## NEXT
-* scrape url
-* show scraped webs (right sidebar)
-* destroy memory structures created by new when closing app
-* addons manager
+* lazy loading during startup
+* destroy memory structures created by new when closing app (event before-quit)
 * add menu Tutorial with links to text description and video (prepare HTML description)
+* sidebar layout after startup
+* create logfile
+* cancel existing download
+* cancel existing scrape
+* addons manager
+* browser header in layout 4 looks bad
+* daily statistics of transfer data amount
+* lower statusbar text (1-2 pixels)
+* log of previous status messages
+* make CSS for preferences dialog
 
 ## LATER
 * make addons (yt dislike, yt replay, twitch overview)
@@ -17,6 +25,9 @@
 * check cookies isolation https://stackoverflow.com/questions/55061908/having-two-isolated-in-terms-of-history-cookies-localstorage-browserviews-in-t
 * packager → exe (github release)
 * download video
+* google PDF preview
+* scraping (back/fwd buttons, set download folder, missing body tag in some pages causes wrong parsing of links)
+
 
 ## Missing features
 * edit bookmarks

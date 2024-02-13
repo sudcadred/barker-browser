@@ -42,3 +42,7 @@ development started from 1.1.2024
 * tab context menu
 * protect tab from deletion
 * muted state browser window indication
+
+## 2024 week7
+* scrape web
+

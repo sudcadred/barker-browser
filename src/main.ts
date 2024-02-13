@@ -10,6 +10,7 @@ import { BarkerKeyboardShortcuts } from "./main_keyboardShortcuts";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
+import { BarkerScraper } from "./main_scraper";
 const path = require('node:path')
 const Store = require('electron-store');
 const store = new Store();
@@ -44,6 +45,7 @@ function createMainWindow () {
     BarkerSettings.createPreferences(_mainWindow, store);
     BarkerSettings.setAppAccordingToSavedPreferences();
     new BarkerDb();
+    new BarkerScraper(mainWindow);
 
     //display HTML and start renderers
     _mainWindow.webContents.loadFile(_mainIndexFile);

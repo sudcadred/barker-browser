@@ -10,6 +10,8 @@ var windowRight = window.parent.parent;
 var _rightSidebarWidth: number;
 var _searchedWord = '';
 
+//---------------- BROWSING HISTORY -----------------------
+
 (windowRight as any).electronAPI.onHistoryDomainsSet( (date: string, datesList: string, todayDomainsList: string, todayUriList: string) => {
     const divHistoryPanel = document.getElementById('divHistoryPanel');
     let historyDomains = JSON.parse(todayDomainsList);
@@ -137,6 +139,54 @@ window.addEventListener('resize', function() {
     _rightSidebarWidth = window.innerWidth;
     (windowRight as any).electronAPI.rightSidebarResized(_rightSidebarWidth);
 }, true);
+
+//------------------- SCRAPED WEBS -----------------------
+
+(windowRight as any).electronAPI.onShowScrapedWebs( (directoriesList: string) => {
+    const divHistoryPanel = document.getElementById('divHistoryPanel');
+    let directories = JSON.parse(directoriesList);
+
+    //clear previous content
+    divHistoryPanel.innerHTML = "";
+    let h1 = document.createElement("h1");
+    let textNode = document.createTextNode("Downloaded websites");
+    h1.appendChild(textNode);
+    divHistoryPanel.append(h1);
+
+    let h2 = document.createElement("h2");
+    let textNode2 = document.createTextNode("Please be aware that some downloaded pages could take a few seconds to load because of different web technologies");
+    h2.appendChild(textNode2);
+    divHistoryPanel.append(h2);
+
+    let hr = document.createElement("hr");
+    divHistoryPanel.append(hr);
+
+    //list of directories
+    for (let i=0; i< directories.length; i++) {
+
+        //create web button
+        let btn = document.createElement('button');
+        btn.id = 'buttonScraper' + i;
+        btn.textContent = directories[i];
+        divHistoryPanel.appendChild(btn);
+
+        //add click listener to load web content
+        btn.addEventListener('click', (e) => {
+            (windowRight as any).electronAPI.loadScrapedWeb(btn.textContent);
+            divHistoryPanel.innerHTML = "";
+        });
+
+        let hr = document.createElement("hr");
+        divHistoryPanel.append(hr);
+
+    }
+});
+
+(windowRight as any).electronAPI.onHideScrapedWebs( () => {
+    const divHistoryPanel = document.getElementById('divHistoryPanel');
+    divHistoryPanel.innerHTML = "";
+});
+
 
 //------------------- BODY ONLOAD -----------------------
 

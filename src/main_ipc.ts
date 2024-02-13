@@ -3,11 +3,11 @@ import { BarkerUtils } from './main_utils';
 import { BarkerBrowser } from './main_browser';
 import { BarkerData } from "./main_data";
 import { BarkerSettings } from "./main_settings";
-import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerSideBar } from "./main_sidebar";
 import { BarkerMenu } from "./main_menu";
 import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
+const path = require("path");
 
 /* this class handles IPC (inter-process communication) between renderer and main process 
    see method registerIpcMethods() at the end for complete list of methods
@@ -533,6 +533,23 @@ static ipcSearchAllHistory(event: IpcMainEvent, searchedString: string) {
     BarkerDb.searchAllHistory(searchedString);
 }
 
+static ipcLoadScrapedWeb(event: IpcMainEvent, webName: string) {
+    const fileName = path.join(app.getPath("userData"), 'barker-scraper')+'\\'+webName+'\\index.html';
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadScrapedWeb(): webName="+webName+", fileName="+fileName);
+
+    let bounds = BarkerBrowser.mainWindow.getBounds();
+    bounds.x = bounds.width - BarkerData.frameRightBar_width;
+    bounds.y += 10;
+    bounds.width = BarkerData.frameRightBar_width - 30;
+    bounds.height -= 100;
+    BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
+    BarkerBrowser.rightSideBarBrowser.webContents.loadURL('file:///'+fileName);
+}
+
+static ipcHideScrapedWeb(event: IpcMainEvent) {
+    BarkerBrowser.clearRightSidebar();
+}
+
 static showStatusMessage(event: IpcMainEvent, msg: string) {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showStatusMessage(): msg="+msg);
     BarkerStatusBar.updateStatusBarText(msg);
@@ -594,6 +611,7 @@ static registerIpcMethods() {
 
     ipcMain.on('get-all-domains', BarkerIpc.ipcGetAllDomains);
     ipcMain.on('search-all-history', BarkerIpc.ipcSearchAllHistory);
+    ipcMain.on('load-scraped-web', BarkerIpc.ipcLoadScrapedWeb);
 
     ipcMain.on('show-status-message', BarkerIpc.showStatusMessage)
 }

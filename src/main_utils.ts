@@ -4,6 +4,8 @@
 */
 
 import { BarkerData } from "./main_data";
+var url = require('url');
+var fs = require('fs');
 
 export class BarkerUtils {
 
@@ -103,15 +105,36 @@ static getLayout(pos: number): number {
     if (pos == 8) return 49;
 }
 
-static getNameFromUrl(uri: string): string {
-    const parts = uri.split('/')
-    var lastPart = parts[parts.length-1];
-    if (lastPart) {
-        lastPart = lastPart.replace(/-/g, ' ');        //replace dashes by space
-        return lastPart;
-    } else {
-        return uri;
-    }
+static getFileNameFromUrl(uri: string): string {
+  if (uri==undefined || uri ==null || uri=='') return 'undefinedUri';
+  
+  let filePath = BarkerUtils.getPathFromUrl(uri);
+  if (filePath=='' || filePath=='/') return 'index';
+  if (filePath==undefined || filePath==null) return 'undefinedPath';
+
+  var filePathParts = filePath.split('/');
+  if (filePathParts==undefined || filePathParts==null) return 'undefinedParts';
+
+  var fileName = filePathParts[filePathParts.length-1];
+  //fileName = fileName.replace(' ', '').replace(':','').replace('/','').replace('\'', '').replace('\"', '').replace('%','').replace('?','').replace('=','').replace('&','');  
+  fileName = fileName.replace(/ /g, '');  //remove all spaces
+  fileName = fileName.replace(/:/g, '');
+  fileName = fileName.replace(/\//g, '');
+  fileName = fileName.replace(/\'/g, '');
+  fileName = fileName.replace(/\"/g, '');
+  fileName = fileName.replace(/\%/g, '');
+  fileName = fileName.replace(/\?/g, '');
+  fileName = fileName.replace(/\=/g, '');
+  fileName = fileName.replace(/\&/g, '');
+  return fileName;
+}
+
+static getHostNameFromUrl(uri: string): string {
+  return url.parse(uri).hostname;
+}
+
+static getPathFromUrl(uri: string): string {
+  return url.parse(uri).path;
 }
 
 static editDistance(s1: string, s2: string) {
@@ -197,6 +220,12 @@ static getDomain(uri: string) {
   let domainParts = domainPart.split('.');
   let domain = domainParts[domainParts.length-2] + '.' +domainParts[domainParts.length-1];
   return domain;
+}
+
+static createFolderIfDoesNotExist(path: string) {
+  if (!fs.existsSync(path)){
+      fs.mkdirSync(path);
+  }  
 }
 
 }

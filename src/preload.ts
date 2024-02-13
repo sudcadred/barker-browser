@@ -21,6 +21,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 import { contextBridge, ipcRenderer } from 'electron/renderer';
+import { Callbacks } from 'jquery';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // IPC - renderer to main.ts
@@ -95,6 +96,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     //status message
     showStatusMessage: (msg: string) => { ipcRenderer.send('show-status-message', msg)},
+
+    //scraping
+    loadScrapedWeb: (webName: string) => { ipcRenderer.send('load-scraped-web', webName)},
     
     // IPC - main.ts to renderer
     onCtrlL: (callback: Function) => ipcRenderer.on('focus-addressbar', (_event, value) => callback(value)),
@@ -126,4 +130,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onClearBrowserWindowIndication: (callback: Function) => ipcRenderer.on('clear-browser-window-indication', (_event, browserNo: number) => callback(browserNo)),
     onBrowserWindowIndication_sidebar: (callback: Function) => ipcRenderer.on('browser-window-indication-sidebar', (_event, browserNo: number, tooltip: string) => callback(browserNo, tooltip)),
     onClearBrowserWindowIndication_sidebar: (callback: Function) => ipcRenderer.on('clear-browser-window-indication-sidebar', (_event, browserNo: number) => callback(browserNo)),
+    onShowScrapedWebs: (callback: Function) => ipcRenderer.on('show-scraped-webs', (_event, directoriesList: string) => callback(directoriesList)),
+    onHideScrapedWebs: (callback: Function) => ipcRenderer.on('hide-scraped-webs', (_event) => callback()),
   });

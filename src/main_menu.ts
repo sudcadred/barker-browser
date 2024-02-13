@@ -1,3 +1,4 @@
+import { app } from "electron";
 import { BrowserView } from "electron";
 import { Menu } from "electron";
 import { BarkerUtils } from './main_utils';
@@ -7,7 +8,9 @@ import { BarkerBrowser } from "./main_browser";
 import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
+import { BarkerScraper } from "./main_scraper";
 const { dialog } = require('electron');
+const path = require("path");
 
 //wrapper methods for menu actions (I have not found other way to call class methods from dynamic menu template )
 function _showPreferences() { BarkerSettings.showPreferences();}
@@ -45,11 +48,16 @@ function _toggleDevConsole() {
         BarkerData.setDevConsoleActive();
         BarkerBrowser.showRightSidebar();
     } else {
+        BarkerBrowser.clearRightSidebar();
         BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});
     }
 }
 function _saveTabs() {
     BarkerSaveLoadState.saveCurrentTabs();
+}
+function _showScrapedWebs() {
+    BarkerBrowser.clearRightSidebar();
+    BarkerScraper.showScrapedWebs(path.join(app.getPath("userData"), 'barker-scraper/'));
 }
 
 /* This class creates main menu
@@ -62,10 +70,11 @@ static mainWindow: Electron.BrowserWindow = null;
 
 static createMainMenu(mainWindow: Electron.BrowserWindow) {
     const templateFirstPart = '[{label: \'File\',submenu: [' +
-                              '{label: \'Show /Hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
-                              '{label: \'Show /Hide General developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}}, ' +
-                              '{label: \'Save tabs and opened windows\',accelerator: \'CmdOrCtrl+S\', click: () => {_saveTabs();}}, ' +
-                              '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
+        '{label: \'Show /Hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
+        '{label: \'Show /Hide General developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}}, ' +
+        '{label: \'Save tabs and opened windows\',accelerator: \'CmdOrCtrl+S\', click: () => {_saveTabs();}}, ' +
+        '{label: \'Show downloaded webs\',accelerator: \'F11\', click: () => {_showScrapedWebs();}}, ' +
+        '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
     let category: string;
 
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu()");
@@ -108,6 +117,7 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
     let browser = browserViews[firstBrowserNo + browserNo - 1];
 
     const template: Electron.MenuItemConstructorOptions[]  = [
+        
         {label: "clear window",
          click: () => {
             if (sidebar) {
@@ -128,6 +138,7 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                 }
             }
          }},
+
         {label: "mute page",
          click: () => { browser.webContents.setAudioMuted(true);
                         if (sidebar) {
@@ -144,9 +155,11 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                             BarkerBrowser.mainWindow.webContents.send('clear-browser-window-indication', browserNo);
                         }
                         BarkerStatusBar.updateStatusBarText('Browser window '+browserNo + ' unmuted'); }},
-         {label: "find in page", 
+        
+        {label: "find in page", 
          click: () => { BarkerData.setActiveBrowserView(browser);
                         BarkerBrowser.mainWindow.webContents.send('show-searchbar'); }},
+
         {label: "save page (HTML only)",
          click: () => { const url = browser.webContents.getURL();
                         var filenameFromUrl = url.substring(url.lastIndexOf('/')+1);
@@ -156,6 +169,7 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                                               }).then(result => {
                                                 browser.webContents.savePage(result.filePath, "HTMLOnly");
                                             }); }},
+
         {label: "save page (HTML complete)",
          click: () => { const url = browser.webContents.getURL();
                         var filenameFromUrl = url.substring(url.lastIndexOf('/')+1);
@@ -165,11 +179,14 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                                               }).then(result => {
                                                 browser.webContents.savePage(result.filePath, "HTMLComplete");
                                             }); }},
+        
         {label: "print page",
          click: () => {browser.webContents.print({});} },
-        {label: "bookmark page",
+        
+         {label: "bookmark page",
          click: () => { BarkerBrowser.addToBookmarks(browser.webContents.getURL());} },
-        {label: "show developer console",
+        
+         {label: "show developer console",
          click: () => { BarkerBrowser.clearRightSidebar();
                         BarkerBrowser.lastActiveDevToolsBrowserView = browser;
                         browser.webContents.setDevToolsWebContents(BarkerBrowser.rightSideBarBrowser.webContents);
@@ -179,6 +196,23 @@ static createThreeDotsMenu(browserNo: number, sidebar=false): Menu {
                     } },
         {label: "hide developer console",
          click: () => { BarkerBrowser.clearRightSidebar(); } },
+        
+         {label: "scrape URL", submenu: [
+            {label: "scrape within domain", submenu: [
+                {label: "depth 1", click: () => { BarkerScraper.scrapeUrl(browser.webContents.getURL(), 1);}},
+                {label: "depth 2", click: () => { BarkerScraper.scrapeUrl(browser.webContents.getURL(), 2);}},
+                {label: "depth 3", click: () => { BarkerScraper.scrapeUrl(browser.webContents.getURL(), 3);}},
+                {label: "depth 5", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 5);}},
+                {label: "depth 10", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 10);}},
+                {label: "depth unlimited", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 0);}},
+            ]},
+            {label: "scrape also other domains", submenu: [
+                {label: "depth 1", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 1, false);}},
+                {label: "depth 5", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 5, false);}},
+                {label: "depth 10", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 10, false);}},
+                {label: "depth unlimited", click: () => {BarkerScraper.scrapeUrl(browser.webContents.getURL(), 0, false);}},
+            ]},
+         ]},
     ];
     const menu = Menu.buildFromTemplate(template);
     return menu;
