@@ -153,11 +153,6 @@ window.addEventListener('resize', function() {
     h1.appendChild(textNode);
     divHistoryPanel.append(h1);
 
-    let h2 = document.createElement("h2");
-    let textNode2 = document.createTextNode("Please be aware that some downloaded pages could take a few seconds to load because of different web technologies");
-    h2.appendChild(textNode2);
-    divHistoryPanel.append(h2);
-
     let hr = document.createElement("hr");
     divHistoryPanel.append(hr);
 

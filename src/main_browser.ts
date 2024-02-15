@@ -487,10 +487,20 @@ static clearRightSidebar() {
         BarkerBrowser.lastActiveDevToolsBrowserView = null;
     }
     BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});
+    BarkerMenu.mainWindow.webContents.send('clear-history-panel');
 }
 
 static showRightSidebar() {
-    if (BarkerData.getDevConsoleActive()) {
+    let role = BarkerData.getRightSidebarRole();
+
+    if (role == BarkerData.panelRoles.developerConsole) {
+        let bounds = BarkerBrowser.mainWindow.getBounds();
+        bounds.x = bounds.width - BarkerData.frameRightBar_width;
+        bounds.y += 10;
+        bounds.width = BarkerData.frameRightBar_width - 30;
+        bounds.height -= 100;
+        BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
+    } else if (role == BarkerData.panelRoles.scrapedWebs) {
         let bounds = BarkerBrowser.mainWindow.getBounds();
         bounds.x = bounds.width - BarkerData.frameRightBar_width;
         bounds.y += 10;
@@ -569,6 +579,7 @@ static showBrowsers (windowsCnt: number, tabIdNo: number, offset: number) {
 
     BarkerBrowser.showBrowsers_showSidebar();
     BarkerBrowser.showBrowsers_showMainArea(windowsCnt, tabIdNo, offset);
+    BarkerBrowser.clearRightSidebar();
     BarkerBrowser.showRightSidebar();
 
     //update URL in browser headers

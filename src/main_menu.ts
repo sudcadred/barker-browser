@@ -34,10 +34,12 @@ function _openAllBookmarks(openedCategory: string) {
 }
 function _getHistory() { 
     BarkerData.toggleHistoryPanel(); 
-    if (BarkerData.historyPanelActive()) 
+    if (BarkerData.historyPanelActive()) {
+        BarkerBrowser.clearRightSidebar();
         BarkerDb.getAllDomains('');
-    else
+    } else {
         BarkerMenu.mainWindow.webContents.send('clear-history-panel');
+    }
 }
 function _toggleDevConsole() {
     BarkerData.toggleDevConsoleActive();
@@ -57,6 +59,7 @@ function _saveTabs() {
 }
 function _showScrapedWebs() {
     BarkerBrowser.clearRightSidebar();
+    BarkerData.setScrapedWebsActive();
     BarkerScraper.showScrapedWebs(path.join(app.getPath("userData"), 'barker-scraper/'));
 }
 

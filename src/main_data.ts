@@ -47,10 +47,16 @@ static bottomBodyLoaded = false;
 static tabCount = 0;
 static layoutString: string;
 static browserHeaderButtonsString: string;
-static devConsoleOpened = false;
-static historyPanelOpened = false;
 
-//getters and setters
+static panelRoles = {
+   empty: 0,
+   developerConsole: 1,
+   browsingHistory: 2,
+   scrapedWebs: 3,
+ }
+ static rightSidebarRole = BarkerData.panelRoles.empty;
+
+ //getters and setters
 static getActualTabIdNo() { return BarkerData.actualTabIdNo;}
 static setActualTabIdNo(tabIdNo: number) { BarkerData.previousTabIdNo=BarkerData.actualTabIdNo; BarkerData.actualTabIdNo = tabIdNo;}
 static getPreviousTabIdNo() { return BarkerData.previousTabIdNo;}
@@ -121,15 +127,30 @@ static getBrowserViews() { return BarkerData.internalBrowserViewNumbers;}
 static getBrowserViewNo(internalNo: number) {return BarkerData.internalBrowserViewNumbers.get(internalNo);}
 static setBrowserViewNo(internalNo: number, browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(internalNo, browserViewNo);}
 static addBrowserViewNo(browserViewNo: number) {BarkerData.internalBrowserViewNumbers.set(browserViewNo, browserViewNo);}
-static toggleDevConsoleActive() {BarkerData.devConsoleOpened = !BarkerData.devConsoleOpened;}
-static setDevConsoleActive(active = true) {BarkerData.devConsoleOpened = active;}
-static getDevConsoleActive() {return BarkerData.devConsoleOpened;}
-static historyPanelActive() {return BarkerData.historyPanelOpened;}
-static toggleHistoryPanel() {BarkerData.historyPanelOpened = !BarkerData.historyPanelOpened;}
+static setDevConsoleActive(active = true) {if (active) BarkerData.rightSidebarRole = BarkerData.panelRoles.developerConsole; else BarkerData.rightSidebarRole = BarkerData.panelRoles.empty;}
+static getDevConsoleActive() {return (BarkerData.rightSidebarRole == BarkerData.panelRoles.developerConsole)}
+static historyPanelActive() {return (BarkerData.rightSidebarRole == BarkerData.panelRoles.browsingHistory)}
 static addProtectedTab(tabIdNo: number) { BarkerData.protectedTabs.set(tabIdNo, true);}
 static removeProtectedTab(tabIdNo: number) { BarkerData.protectedTabs.delete(tabIdNo);}
+static setScrapedWebsActive() {BarkerData.rightSidebarRole = BarkerData.panelRoles.scrapedWebs;}
+static getRightSidebarRole() {return BarkerData.rightSidebarRole;}
 
 //other methods
+static toggleDevConsoleActive() { 
+   if (BarkerData.rightSidebarRole == BarkerData.panelRoles.developerConsole)
+      BarkerData.rightSidebarRole = BarkerData.panelRoles.empty;
+   else
+      BarkerData.rightSidebarRole = BarkerData.panelRoles.developerConsole;
+}
+
+static toggleHistoryPanel() {
+   if (BarkerData.rightSidebarRole == BarkerData.panelRoles.browsingHistory)
+      BarkerData.rightSidebarRole = BarkerData.panelRoles.empty;
+   else
+      BarkerData.rightSidebarRole = BarkerData.panelRoles.browsingHistory;
+}
+
+
 static bookmarkTopicExists(category: string): boolean { 
    for (let i=0; i< BarkerData.bookmarkTopics.length; i++) {
       if (category == BarkerData.bookmarkTopics[i]) return true;
