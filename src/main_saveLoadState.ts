@@ -86,6 +86,7 @@ static loadAddressesFromFile() {
         BarkerData.setTabBrowserOffset(tabIdNo, 0);
         BarkerData.setTabLayoutNo(tabIdNo, tabLayout);
         BarkerData.setTabAddresses(tabIdNo, new Map<number, string>);
+        BarkerData.setLazyAddresses(tabIdNo, new Map<number, string>);
         if (isTabProtected) { 
             BarkerData.addProtectedTab(tabIdNo);
             BarkerSaveLoadState.mainWindow.webContents.send('protect-tab', tabIdNo);
@@ -97,11 +98,22 @@ static loadAddressesFromFile() {
         const addresses = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses');
         if (addresses) {
             for (let j=1; j<=tabLayout;j++) {
-                const address = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses.'+j);
-                if (address) {
-                    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): i="+i+", address="+address);
-                    BarkerBrowser.loadURL(tabIdNo, j, address);
-                }
+                /*
+                if (j == 1) {   //load first tab immediately
+                    const address = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses.'+j);
+                    if (address) {
+                        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): i="+i+", address="+address);
+                        BarkerBrowser.loadURL(tabIdNo, j, address);
+                    }
+                } else {    
+                    */
+                   //put all tabs to lazy loading (load them when needed - see BarkerBrowser.showLazyAddressesIfExist())
+                    const address = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses.'+j);
+                    if (address) {
+                        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): lazy loading i="+i+", address="+address);
+                        BarkerData.setLazyAddress(tabIdNo, j, address);
+                    }
+                //}
             }
         }
     }

@@ -463,6 +463,29 @@ static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: nu
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): window x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
 }
 
+static showLazyAddressesIfExist(windowsCnt: number, tabIdNo: number, offset: number) {
+    //check if lazy loading exist for this tab
+    let lazyAddresses = BarkerData.getLazyAddresses(tabIdNo);
+    if (lazyAddresses) {
+        for (let i=offset; i<=offset+windowsCnt; i++) {
+            const address = lazyAddresses.get(i);
+            if (address) {
+                BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showLazyAddressesIfExist(): tabIdNo="+tabIdNo+", address="+address+", i="+i);
+
+                //load URL
+                let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
+                var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
+                var browser = browserViews[firstBrowserViewNo+i-1];
+                browser.webContents.loadURL(address);
+                BarkerBrowser.mainWindow.webContents.send('update-url', i, address);
+
+                //remove address from future lazy loading
+                BarkerData.removeLazyAddress(tabIdNo, i);
+            }
+        }
+    }
+}
+
 static showBrowsers_showMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
     var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
     if (!firstBrowserViewNo) {
@@ -479,6 +502,7 @@ static showBrowsers_showMainArea(windowsCnt: number, tabIdNo: number, offset: nu
         const browserViewNo = BarkerData.getBrowserViewNo(offset+firstBrowserViewNo+i-1);
         BarkerBrowser.showBrowserView(browserViewNo, BarkerBrowser.browserWindowPosition.x, BarkerBrowser.browserWindowPosition.y, BarkerBrowser.browserWindowPosition.width, BarkerBrowser.browserWindowPosition.height);
     }
+    BarkerBrowser.showLazyAddressesIfExist(windowsCnt, tabIdNo, offset);
 }
 
 static clearRightSidebar() {

@@ -2,13 +2,11 @@
 # NEXT STEPS
 
 ## NOW
-
+* fix sidebar layout after startup
 
 ## NEXT
-* lazy loading during startup
 * destroy memory structures created by new when closing app (event before-quit)
 * add menu Tutorial with links to text description and video (prepare HTML description)
-* sidebar layout after startup
 * create logfile
 * cancel existing download
 * cancel existing scrape

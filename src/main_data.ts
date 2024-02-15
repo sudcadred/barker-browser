@@ -20,6 +20,7 @@ static bookmarks = [{'category': '', 'name': '', 'uri': ''}];
 static typedAddresses: string[] = [];
 static internalBrowserViewNumbers = new Map<number, number>;
 static protectedTabs = new Map<number, boolean>;
+static lazyLoadingAddresses = new Map<number, Map<number, string>>;    //Map<'tabIdNo', Map<browserViewNo, URL>>
 
 static sidebarAddresses: string[] = [];
 static sidebarLayoutNo: number;
@@ -67,8 +68,12 @@ static getTabFirstBrowserMap() { return BarkerData.mapTabIdNoToFirstBrowserViewN
 static getTabFirstBrowserViewNo(tabIdNo: number) { return BarkerData.mapTabIdNoToFirstBrowserViewNo.get(tabIdNo);}
 static setTabFirstBrowserViewNo(tabIdNo: number, firstBrowserViewNo: number) { BarkerData.mapTabIdNoToFirstBrowserViewNo.set(tabIdNo, firstBrowserViewNo);}
 static getTabAddresses (tabIdNo: number) {return BarkerData.mapTabIdNoToAddresses.get(tabIdNo);}
+static getLazyAddresses (tabIdNo: number) {return BarkerData.lazyLoadingAddresses.get(tabIdNo);}
 static setTabAddresses (tabIdNo: number, map: Map<number, string>) {BarkerData.mapTabIdNoToAddresses.set(tabIdNo, map);}
+static setLazyAddresses (tabIdNo: number, map: Map<number, string>) {BarkerData.lazyLoadingAddresses.set(tabIdNo, map);}
 static setTabAddress (tabIdNo: number, browserNo: number, address: string) {BarkerData.mapTabIdNoToAddresses.get(tabIdNo).set(browserNo, address);}
+static setLazyAddress (tabIdNo: number, browserNo: number, address: string) {BarkerData.lazyLoadingAddresses.get(tabIdNo).set(browserNo, address);}
+static removeLazyAddress (tabIdNo: number, browserNo: number) {BarkerData.lazyLoadingAddresses.get(tabIdNo).delete(browserNo);}
 static getFirstBrowserViewNo_sidebar() {return BarkerData.firstBrowserViewNo_sidebar;}
 static setFirstBrowserViewNo_sidebar(browserViewNo: number) {BarkerData.firstBrowserViewNo_sidebar = browserViewNo;}
 static setSidebarUrl(browserNo: number, url: string) {BarkerData.sidebarAddresses[browserNo] = url;}
