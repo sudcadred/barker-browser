@@ -105,11 +105,11 @@ static showBrowsersIfBodyFullyLoaded() {
         BarkerBrowser.mainWindow.webContents.send('set-layout-buttons', BarkerData.getLayoutString());
         const tabIdNo = BarkerData.getOrderedTabIdNo(0);
         if (BarkerData.getOrderedTabIdNumbersArray().length > 0) {
-            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainWindow(): tabId="+tabIdNo+", tabLayout="+tabLayout);
+            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded(): tabId="+tabIdNo+", tabLayout="+tabLayout+", sidebarLayout="+sidebarLayout);
             BarkerBrowser.mainWindow.webContents.send('set-layout', Number(tabLayout));
             BarkerBrowser.mainWindow.webContents.send('activate-tab', 'NewTab'+tabIdNo);
             BarkerBrowser.mainWindow.webContents.send('set-next-tab-name', BarkerBrowser.getNextTabIdName());
-            BarkerBrowser.mainWindow.webContents.send('set-sidebar-layout', Number(sidebarLayout));
+            BarkerBrowser.mainWindow.webContents.send('set-sidebar-layout', sidebarLayout);
             BarkerData.setActualTabIdNo(tabIdNo);
         }
         BarkerSaveLoadState.loadAddressesFromFile();
@@ -384,6 +384,7 @@ static showBrowsers_showSidebar() {
     var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), " showBrowsers(): firstBrowserViewNo="+firstBrowserViewNo+", _left="+_left+", _top="+_top+", sidebar_browser_rows="+sidebar_browser_rows+", sidebar_browser_width="+sidebar_browser_width+", sidebar_browser_height="+sidebar_browser_height);
 
+    BarkerBrowser.mainWindow.webContents.send('set-sidebar-layout', BarkerData.getSidebarLayoutNo());
     BarkerBrowser.hideAllBrowserViews_sidebar();
     for (var i = 1; i<= sidebar_browser_rows; i++) {
         const browserViewNo = BarkerData.getBrowserViewNo(BarkerData.getSidebarRollingWindowOffset()+firstBrowserViewNo+i-1);

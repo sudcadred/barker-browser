@@ -2,7 +2,6 @@
 # NEXT STEPS
 
 ## NOW
-* fix sidebar layout after startup
 
 ## NEXT
 * destroy memory structures created by new when closing app (event before-quit)

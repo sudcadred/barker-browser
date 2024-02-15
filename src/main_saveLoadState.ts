@@ -64,11 +64,13 @@ static saveCurrentTabs() {
 }
 
 static loadAddressesFromFile() {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile()");
     const tabCount = BarkerSaveLoadState.store.get('tabcount');
     const sidebarCount = BarkerSaveLoadState.store.get('sidebar.addresses_count');
+    const sidebarLayout = BarkerSaveLoadState.store.get('sidebar.layout');
+    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): tabcount="+tabCount+", sidebarCount="+sidebarCount+", sidebarLayout="+sidebarLayout);
     
     //sidebar
+    BarkerData.setSidebarLayoutNo(sidebarLayout);
     for (let i=1; i<=sidebarCount; i++) {
         let sideBarAddress = BarkerSaveLoadState.store.get('sidebar.addresses.'+i);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): i="+i+", sideBarAddress="+sideBarAddress);
@@ -94,26 +96,15 @@ static loadAddressesFromFile() {
         if (i ==1) BarkerData.setActualTabIdNo(tabIdNo);
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): tabname="+tabName+", tabLayout="+tabLayout);
 
-        //load addresses
+        //put all tabs to lazy loading (load them when needed - see BarkerBrowser.showLazyAddressesIfExist())
         const addresses = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses');
         if (addresses) {
             for (let j=1; j<=tabLayout;j++) {
-                /*
-                if (j == 1) {   //load first tab immediately
-                    const address = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses.'+j);
-                    if (address) {
-                        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): i="+i+", address="+address);
-                        BarkerBrowser.loadURL(tabIdNo, j, address);
-                    }
-                } else {    
-                    */
-                   //put all tabs to lazy loading (load them when needed - see BarkerBrowser.showLazyAddressesIfExist())
-                    const address = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses.'+j);
-                    if (address) {
-                        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): lazy loading i="+i+", address="+address);
-                        BarkerData.setLazyAddress(tabIdNo, j, address);
-                    }
-                //}
+                const address = BarkerSaveLoadState.store.get('tabs.'+i+'.addresses.'+j);
+                if (address) {
+                    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadAddressesFromFile(): lazy loading i="+i+", address="+address);
+                    BarkerData.setLazyAddress(tabIdNo, j, address);
+                }
             }
         }
     }
@@ -136,7 +127,6 @@ static loadTabsFromFile() {
     BarkerSaveLoadState.loadBookmarks();
     BarkerMenu.createMainMenu(BarkerSaveLoadState.mainWindow);
     BarkerSaveLoadState.loadTypedAddressesIntoData();
-    BarkerData.setSidebarLayoutNo(Number(BarkerSaveLoadState.store.get('sidebar.layout')));
 
     //load tabs
     const tabCount = BarkerSaveLoadState.store.get('tabcount');
