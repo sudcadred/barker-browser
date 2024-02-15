@@ -62,6 +62,11 @@ function _showScrapedWebs() {
     BarkerData.setScrapedWebsActive();
     BarkerScraper.showScrapedWebs(path.join(app.getPath("userData"), 'barker-scraper/'));
 }
+function _showTutorial() {
+    BarkerBrowser.clearRightSidebar();
+    BarkerData.rightSidebarRole = BarkerData.panelRoles.tutorial;
+    BarkerBrowser.showRightSidebar();
+}
 
 /* This class creates main menu
 */
@@ -81,6 +86,7 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
         '{label: \'Show/hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
         '{label: \'Show downloaded webs\',accelerator: \'F11\', click: () => {_showScrapedWebs();}}, ' +
         '{label: \'Show/hide General app developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}},' +
+        '{label: \'Show tutorial\', click: () => {_showTutorial();}}, ' +
         ']},';
 
     let category: string;

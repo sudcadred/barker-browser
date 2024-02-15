@@ -46,4 +46,5 @@ development started from 1.1.2024
 ## 2024 week7
 * scrape web
 * lazy loading (only addresses that are visible are loaded)
+* tutorial
 

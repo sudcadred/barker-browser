@@ -323,7 +323,18 @@ removeBrowserViewsForOneTab(tabName: string) {
 static hideAllBrowserViews_mainArea() {
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_mainArea()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
+
+    //scenario 1 - switching from different tab - hide windows from previous tab
     let tabIdNo = BarkerData.getPreviousTabIdNo();
+    var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
+    for (let i=firstBrowserViewNo; i<=firstBrowserViewNo+BarkerSettings.getMaxBrowserViewsPerTab();i++) {
+        if (browserViews[i]) {
+            browserViews[i].setBounds({ x: 0, y: 0, width: 0, height: 0 });
+        }
+    }
+
+    //scenario 2 - switching layout in actual tab - hide windows in actual tab
+    tabIdNo = BarkerData.getActualTabIdNo();
     var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
     for (let i=firstBrowserViewNo; i<=firstBrowserViewNo+BarkerSettings.getMaxBrowserViewsPerTab();i++) {
         if (browserViews[i]) {
@@ -531,6 +542,14 @@ static showRightSidebar() {
         bounds.y += 10;
         bounds.width = BarkerData.frameRightBar_width - 30;
         bounds.height -= 100;
+        BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
+    } else if (role == BarkerData.panelRoles.tutorial) {
+        let bounds = BarkerBrowser.mainWindow.getBounds();
+        bounds.x = bounds.width - BarkerData.frameRightBar_width;
+        bounds.y += 10;
+        bounds.width = BarkerData.frameRightBar_width - 30;
+        bounds.height -= 100;
+        BarkerBrowser.rightSideBarBrowser.webContents.loadFile('../html/tutorial.html');
         BarkerBrowser.rightSideBarBrowser.setBounds({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height});
     } else {
         BarkerBrowser.rightSideBarBrowser.setBounds({ x: 0, y: 0, width: 0, height: 0});

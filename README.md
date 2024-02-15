@@ -13,8 +13,6 @@ This opens new possibilities of usecases like watching more TV channels at the s
 * browsing history
 * protect tab from closing
 * scrape webs
-* cookie isolation
-* custom addons
 
 # TARGET PLATFORMS
 * currently I build app just for Windows

@@ -154,7 +154,7 @@ function hideMatchedAddresses() {
 
     //create button Go
     const goButton = document.createElement('button');
-    goButton.textContent = 'Go ('+browserNo+')';
+    goButton.textContent = 'Go';
     goButton.id = 'goButton' + browserNo;
     goButton.className += 'headerButton';
     divHeader.appendChild(goButton);

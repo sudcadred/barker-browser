@@ -54,6 +54,7 @@ static panelRoles = {
    developerConsole: 1,
    browsingHistory: 2,
    scrapedWebs: 3,
+   tutorial: 4,
  }
  static rightSidebarRole = BarkerData.panelRoles.empty;
 
