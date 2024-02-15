@@ -12,9 +12,9 @@
 * addons manager
 * browser header in layout 4 looks bad
 * daily statistics of transfer data amount
-* lower statusbar text (1-2 pixels)
 * log of previous status messages
 * make CSS for preferences dialog
+* make RightSidebar main menu category
 
 ## LATER
 * make addons (yt dislike, yt replay, twitch overview)

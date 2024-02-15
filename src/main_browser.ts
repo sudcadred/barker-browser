@@ -629,7 +629,7 @@ static showBrowsers (windowsCnt: number, tabIdNo: number, offset: number) {
 
     //status bar
     const currentBounds = BarkerBrowser.mainWindow.getBounds();
-    BarkerStatusBar.setBoundsForStatusBar(0, currentBounds.height-70-BarkerData.getFrameBottomBarHeight(), currentBounds.width, BarkerData.getFrameBottomBarHeight() + 10);
+    BarkerStatusBar.setBoundsForStatusBar(0, currentBounds.height-68-BarkerData.getFrameBottomBarHeight(), currentBounds.width, BarkerData.getFrameBottomBarHeight() + 10);
 }
 
 static loadUrlInActualTab(browserNo: number, uri: string) {
