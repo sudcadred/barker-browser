@@ -14,7 +14,8 @@
 * daily statistics of transfer data amount
 * log of previous status messages
 * make CSS for preferences dialog
-* make RightSidebar main menu category
+* remove navigation logs
+* solve sqlite errors in logs during startup
 
 ## LATER
 * make addons (yt dislike, yt replay, twitch overview)

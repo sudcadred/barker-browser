@@ -72,17 +72,21 @@ static menu: Menu = null;
 static mainWindow: Electron.BrowserWindow = null;
 
 static createMainMenu(mainWindow: Electron.BrowserWindow) {
-    const templateFirstPart = '[{label: \'File\',submenu: [' +
-        '{label: \'Show /Hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
-        '{label: \'Show /Hide General developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}}, ' +
+    const templateStart = '[';
+    const templateMenuFile = '{label: \'File\',submenu: [' +
         '{label: \'Save tabs and opened windows\',accelerator: \'CmdOrCtrl+S\', click: () => {_saveTabs();}}, ' +
+        '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}' +
+        ']},';
+    const templateMenuRightSidebar = '{label: \'RightSidebar\',submenu: [' +
+        '{label: \'Show/hide Browsing History\',accelerator: \'CmdOrCtrl+H\', click: () => {_getHistory();}}, ' +
         '{label: \'Show downloaded webs\',accelerator: \'F11\', click: () => {_showScrapedWebs();}}, ' +
-        '{label: \'Preferences\',accelerator: \'CmdOrCtrl+P\', click: () => {_showPreferences();}}]},';
-    let category: string;
+        '{label: \'Show/hide General app developer console (not browser-specific)\',accelerator: \'F12\', click: () => {_toggleDevConsole();}},' +
+        ']},';
 
+    let category: string;
     BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu()");
     BarkerMenu.mainWindow = mainWindow;
-    var template = templateFirstPart;
+    var template = templateStart + templateMenuFile + templateMenuRightSidebar;
     for (let i=0; i< BarkerData.bookmarkTopics.length; i++) {
         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): bookmarkTopic="+BarkerData.bookmarkTopics[i]);
         template += '{label: \''+BarkerData.bookmarkTopics[i]+'\',';
