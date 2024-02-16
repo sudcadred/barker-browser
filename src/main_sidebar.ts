@@ -7,6 +7,7 @@ import { BarkerDownload } from "./main_download";
 import isUrlHttp from 'is-url-http';
 import { BarkerBrowser } from "./main_browser";
 import { BarkerStatusBar } from "./main_statusbar";
+import { BarkerLogger } from "./main_logger";
 
 /* This class handles left sidebar creation (displayed in BarkerBrowser.showBrowser())
 */
@@ -45,7 +46,7 @@ static getNextEmptyBrowserNo(browserNo: number) {
     if (addresses) {
         for (let i=browserNo+1; i< BarkerSettings.getMaxBrowserViewsPerTab()-browserNo; i++) {
                 const address = addresses[i];
-                BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextEmptyBrowserNo(): address="+address+", i="+i+", browserNo="+browserNo);
+                BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getNextEmptyBrowserNo(): address="+address+", i="+i+", browserNo="+browserNo);
                 if (!address) {
                     return i;
                 }
@@ -73,17 +74,17 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
         let browserViews = BarkerSideBar.mainWindow.getBrowserViews();
         let firstBrowserNo = browserViews.length -1;
         BarkerData.setFirstBrowserViewNo_sidebar(firstBrowserNo);
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createSideBarBrowserView(): _firstBrowserViewNo_sidebar sets firstBrowserNo="+firstBrowserNo);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createSideBarBrowserView(): _firstBrowserViewNo_sidebar sets firstBrowserNo="+firstBrowserNo);
     }
 
     //BrowserView navigation events (for later get URL and write it somewhere so user can see actual URL)
     browser.webContents.on('will-navigate', function(event, url) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
         BarkerData.setSidebarUrl(browserNo, url);
         BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', browserNo, url);
     });
     browser.webContents.on('did-navigate-in-page', function(event, url) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "Sidebar BrowserView Navigation event: url=" + url);
         BarkerData.setSidebarUrl(browserNo, url);
         BarkerSideBar.mainWindow.webContents.send('update-url-sidebar', browserNo, url);
     });
@@ -140,12 +141,12 @@ static createSideBarBrowserView(browserNo: number, firstBrowser: boolean) {
 }
 
 static showSidebarBrowserHeader(browserNo: number, left: number, top: number, width: number, height: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showSidebarBrowserHeader(): browserNo="+browserNo+", left="+left+", top="+top);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showSidebarBrowserHeader(): browserNo="+browserNo+", left="+left+", top="+top);
     BarkerSideBar.mainWindow.webContents.send('create-sidebar-browser-header', browserNo, left, top);
 }
 
 static loadURLSidebar (browserNo: number, uri: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURLSidebar(): browserNo="+browserNo+", uri="+uri);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "loadURLSidebar(): browserNo="+browserNo+", uri="+uri);
     if (browserNo<1 || browserNo>BarkerSettings.getMaxBrowserViewsPerTab()) {
         browserNo = 1
     }
@@ -158,7 +159,7 @@ static loadURLSidebar (browserNo: number, uri: string) {
     }    
 
     const browserViewNo = firstBrowserNo+browserNo-1;
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURLSidebar(): firstBrowserNo="+firstBrowserNo+", browserViewNo="+browserViewNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "loadURLSidebar(): firstBrowserNo="+firstBrowserNo+", browserViewNo="+browserViewNo);
     if (isUrlHttp(uriWithProtocol)) {
         browserViews[browserViewNo].webContents.loadURL(uriWithProtocol);
         BarkerData.setSidebarUrl(browserNo, uriWithProtocol);
@@ -177,7 +178,7 @@ static openLinkInNextSidebarWindow(browserNo: number, uri: string) {
 
 static openLinkInNextEmptySidebarWindow(browserNo: number, uri: string) {
     const nextBrowserNo = BarkerSideBar.getNextEmptyBrowserNo(0);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): browserNo="+browserNo+", uri="+uri+", nextBrowserNo="+nextBrowserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): browserNo="+browserNo+", uri="+uri+", nextBrowserNo="+nextBrowserNo);
     if ((nextBrowserNo > 0)&&(nextBrowserNo < BarkerSettings.getMaxBrowserViewsPerTab())) {
         BarkerSideBar.loadURLSidebar(nextBrowserNo, uri);
     } else {
@@ -217,9 +218,9 @@ static calculateBrowserWindowPosition_sidebar(browserNo: number) {
     BarkerSideBar.browserWindowPosition.width = sidebar_browser_width;
     BarkerSideBar.browserWindowPosition.height = sidebar_browser_height-BarkerSettings.getBrowserHeaderHeight();
     
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): browserNo="+browserNo);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): header x="+BarkerSideBar.browserHeaderPosition.x+", y="+BarkerSideBar.browserHeaderPosition.y+", width="+BarkerSideBar.browserHeaderPosition.width+", height="+BarkerSideBar.browserHeaderPosition.height);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): window x="+BarkerSideBar.browserWindowPosition.x+", y="+BarkerSideBar.browserWindowPosition.y+", width="+BarkerSideBar.browserWindowPosition.width+", height="+BarkerSideBar.browserWindowPosition.height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): header x="+BarkerSideBar.browserHeaderPosition.x+", y="+BarkerSideBar.browserHeaderPosition.y+", width="+BarkerSideBar.browserHeaderPosition.width+", height="+BarkerSideBar.browserHeaderPosition.height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_sidebar(): window x="+BarkerSideBar.browserWindowPosition.x+", y="+BarkerSideBar.browserWindowPosition.y+", width="+BarkerSideBar.browserWindowPosition.width+", height="+BarkerSideBar.browserWindowPosition.height);
 }
 
 static showMatchedAddresses(uri: string, browserNo: number) {
@@ -238,7 +239,7 @@ static showMatchedAddresses(uri: string, browserNo: number) {
         BarkerSideBar.browserHeaderPosition.x += 220;
         BarkerSideBar.browserHeaderPosition.y += BarkerSettings.getBrowserHeaderHeight();
         BarkerSideBar.browserHeaderPosition.width = BarkerBrowser.browserHeaderPosition.width / 3;
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showMatchedAddresses(): x="+BarkerSideBar.browserHeaderPosition.x+", y="+BarkerSideBar.browserHeaderPosition.y+", width="+BarkerSideBar.browserHeaderPosition.width+", height="+BarkerSideBar.browserHeaderPosition.height);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showMatchedAddresses(): x="+BarkerSideBar.browserHeaderPosition.x+", y="+BarkerSideBar.browserHeaderPosition.y+", width="+BarkerSideBar.browserHeaderPosition.width+", height="+BarkerSideBar.browserHeaderPosition.height);
         BarkerSideBar.mainWindow.webContents.send('show-matched-addresses-sidebar', uri, BarkerSideBar.browserHeaderPosition.x, BarkerSideBar.browserHeaderPosition.y);
 
         //store browserNo for time when address is clicked

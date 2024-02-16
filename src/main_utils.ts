@@ -4,13 +4,13 @@
 */
 
 import { BarkerData } from "./main_data";
+import { BarkerLogger } from "./main_logger";
 var url = require('url');
 var fs = require('fs');
 
 export class BarkerUtils {
 
 /*
-static log(fileLine:string, msg: string)
 static getLastNumber(s: string)
 static formatBytes(bytes: number, decimals = 2)
 static removeLastSubString(s: string, delimiter: string): string
@@ -21,23 +21,12 @@ static getLayout(pos: number): number
 getNameFromUrl(uri: string): string
 */
 
-static log(fileLine:string, msg: string) {
-    var timeStamp = new Date(Date.now()).toISOString();
-    var matches = fileLine.split("\\");
-    var match = matches[matches.length - 1];         //match('([^\/]+$)');
-    if (match) {
-        console.log(timeStamp + " " + match.slice(0, -1) + " " + msg);
-    } else {
-        console.log(timeStamp + " " + fileLine + " " + msg);
-    }
-}
-
 static getLastNumber(s: string) {
     //all of these special characters in regex should be escaped: \ ^ $ * + ? . ( ) | { } [ ]
     var matches = s.match(/\d+$/);
     var lastNumber = -1;
     if (matches) lastNumber = parseInt(matches[0], 10);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getLastNumber(): s="+s+", lastNumber="+lastNumber);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getLastNumber(): s="+s+", lastNumber="+lastNumber);
     return lastNumber;
 }
 
@@ -196,7 +185,7 @@ static similarity2(s1: string, s2: string) {
 static getMostSimilarTypedAddress(input: string) {
     var maxSimilarityValue = 0;
     var mostSimilarString = '';
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getMostSimilarTypedAddress(): input="+input+", BarkerData.getTypedAddresses.length="+BarkerData.typedAddresses.length);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getMostSimilarTypedAddress(): input="+input+", BarkerData.getTypedAddresses.length="+BarkerData.typedAddresses.length);
     for (let i=0; i< BarkerData.typedAddresses.length; i++) {
         let result = BarkerUtils.similarity2(input, BarkerData.getTypedAddress(i));
         if (result > maxSimilarityValue) {

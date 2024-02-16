@@ -1,5 +1,5 @@
-import { BrowserWindow, BrowserView  } from "electron";
-import { BarkerUtils } from './main_utils';
+import { BrowserView  } from "electron";
+import { BarkerLogger } from "./main_logger";
 
 /* This class creates and displays StatusBar at the bottom of application
    Statubar is placeholder for various status messages but also file download progress
@@ -39,7 +39,7 @@ static setBoundsForStatusBar(left:number, top:number, width: number, height: num
     if (BarkerStatusBar.statusBar) {
         BarkerStatusBar.statusBar.setBounds({ x: left, y: top, width: width, height: height});
     } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setBoundsForStatusBar() ERROR statusbar undefined");
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "setBoundsForStatusBar() ERROR statusbar undefined");
     }
 }
     

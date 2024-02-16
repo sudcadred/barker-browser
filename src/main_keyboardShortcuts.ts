@@ -3,6 +3,7 @@ import { BarkerUtils } from './main_utils';
 import { BarkerSettings } from "./main_settings";
 import { BarkerData } from "./main_data";
 import { BarkerBrowser } from "./main_browser";
+import { BarkerLogger } from "./main_logger";
 
 /* This class handles keyboard shortcuts to activate fast tab-switching or layout-switching
 */
@@ -33,12 +34,12 @@ static showTab(tabNo: number) {
     if (BarkerData.getOrderedTabIdName(tabNo-1)) {
         BarkerKeyboardShortcuts.mainWindow.webContents.send('switch-tab', BarkerData.getOrderedTabIdName(tabNo-1));
     } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showTab() tab not found: tabNo="+tabNo+", _orderedTabIds[tabNo-1]="+BarkerData.getOrderedTabIdName(tabNo-1));
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showTab() tab not found: tabNo="+tabNo+", _orderedTabIds[tabNo-1]="+BarkerData.getOrderedTabIdName(tabNo-1));
     }
 }
 
 static showTabIfNumberPressed(input: Object) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showTabIfNumberPressed()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showTabIfNumberPressed()");
     const inputKey = Number((input as any).key.toLowerCase());
     if ((inputKey>=1)&&(inputKey<=9)) {
         BarkerKeyboardShortcuts.showTab(inputKey); 
@@ -46,7 +47,7 @@ static showTabIfNumberPressed(input: Object) {
 }
 
 static showTabIfShiftNumberPressed(input: Object) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showTabIfNumberPressed()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showTabIfNumberPressed()");
     const inputKey = (input as any).key;
     const tabNo = BarkerUtils.shiftKeyToNumber(inputKey);
     if ((tabNo>=1)&&(tabNo<=9)) { 
@@ -55,7 +56,7 @@ static showTabIfShiftNumberPressed(input: Object) {
 }
 
 static showTabIfFkeyPressed(input: Object) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showTabIfFkeyPressed()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showTabIfFkeyPressed()");
     const inputKey = (input as any).key;
     const tabNo = BarkerUtils.functionKeyToNumber(inputKey);
     if ((tabNo>=1)&&(tabNo<=9)) { 
@@ -105,13 +106,13 @@ static changeLayout(pressedNo: number) {
 }
 
 static changeLayoutIfNumberPressed(input: Object) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "changeLayoutIfNumberPressed()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "changeLayoutIfNumberPressed()");
     const inputKey = Number((input as any).key.toLowerCase());
     BarkerKeyboardShortcuts.changeLayout(inputKey);
 }
 
 static changeLayoutIfFkeyPressed(input: Object) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "changeLayoutIfFkeyPressed()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "changeLayoutIfFkeyPressed()");
     const inputKey = (input as any).key;
     const pressedKey = BarkerUtils.functionKeyToNumber(inputKey);
     if ((pressedKey>=1)&&(pressedKey<=9)) { 
@@ -120,7 +121,7 @@ static changeLayoutIfFkeyPressed(input: Object) {
 }
 
 static changeLayoutIfShiftNumberPressed(input: Object) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "changeLayoutIfShiftNumberPressed()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "changeLayoutIfShiftNumberPressed()");
     const inputKey = (input as any).key;
     const pressedKey = BarkerUtils.shiftKeyToNumber(inputKey);
     if ((pressedKey>=1)&&(pressedKey<=9)) { 

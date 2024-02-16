@@ -7,6 +7,7 @@ import { BarkerSideBar } from "./main_sidebar";
 import { BarkerMenu } from "./main_menu";
 import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
+import { BarkerLogger } from "./main_logger";
 const path = require("path");
 
 /* this class handles IPC (inter-process communication) between renderer and main process 
@@ -24,19 +25,19 @@ constructor (mainWindow: Electron.BrowserWindow) {
 }
 
 static ipcChangeLayout (event: IpcMainEvent, cnt: number) {
-	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeLayout(): cnt="+cnt)
+	BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeLayout(): cnt="+cnt)
     BarkerData.setTabLayoutNo(BarkerData.getActualTabIdNo(), cnt);
     BarkerBrowser.updateMainArea(cnt, BarkerData.getActualTabIdNo(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo()));
 }
 
 static ipcChangeSidebarLayout (event: IpcMainEvent, cnt: number) {
-	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeSidebarLayout(): cnt="+cnt)
+	BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeSidebarLayout(): cnt="+cnt)
     BarkerData.setSidebarLayoutNo(cnt);
     BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()), BarkerData.getActualTabIdNo(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo()));
 }
 
 static ipcLoadURL (event: IpcMainEvent, browserNo: number, address: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadURL(): browserNo="+browserNo+", address="+address);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadURL(): browserNo="+browserNo+", address="+address);
     BarkerBrowser.loadUrlInActualTab(browserNo, address);
 
     //restore BrowserView height
@@ -50,7 +51,7 @@ static ipcLoadURL (event: IpcMainEvent, browserNo: number, address: string) {
 }
 
 static ipcLoadURLSidebar (event: IpcMainEvent, browserNo: number, address: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadURL(): browserNo="+browserNo+", address="+address);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadURL(): browserNo="+browserNo+", address="+address);
     BarkerSideBar.loadURLSidebar(browserNo, address);
 }
 
@@ -59,7 +60,7 @@ static ipcCreateTab (event: IpcMainEvent, tabNo: number) {
 }
 
 static ipcChangeTab (event: IpcMainEvent, tabIdNo: number) {
-	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeTab(): tabIdNo="+tabIdNo);
+	BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcChangeTab(): tabIdNo="+tabIdNo);
     const layout = BarkerData.getTabLayoutNo(tabIdNo);
     BarkerData.setActualTabIdNo(tabIdNo);
     BarkerIpc.mainWindow.webContents.send('set-layout', layout);
@@ -68,18 +69,18 @@ static ipcChangeTab (event: IpcMainEvent, tabIdNo: number) {
 }
 
 static ipcDeleteTab(tabIdNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcDeleteTab()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcDeleteTab()");
     var i = 0;
     BarkerData.getTabFirstBrowserMap().delete(tabIdNo);
 }
 
 static ipcRenameTab (event: IpcMainEvent, newTabName: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcRenameTab(): BarkerData.getActualTabIdNo()="+BarkerData.getActualTabIdNo()+", newTabName="+newTabName);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcRenameTab(): BarkerData.getActualTabIdNo()="+BarkerData.getActualTabIdNo()+", newTabName="+newTabName);
     BarkerData.setTabName(BarkerData.getActualTabIdNo(), newTabName);
 }
 
 static ipcTabRightClicked (event: IpcMainEvent, tabIdNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcTabRightClicked()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcTabRightClicked()");
     BarkerMenu.createTabRightClickMenu(tabIdNo).popup();
 }
 
@@ -117,7 +118,7 @@ static ipcShowPreviousBrowser (event: IpcMainEvent) {
 static ipcShowNextBrowser (event: IpcMainEvent) {
     const layout = BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo());
     var browserOffset = BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo());
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcShowNextBrowser(): browserOffset="+browserOffset+", layout="+layout+", BarkerSettings.getMaxBrowserViewsPerTab()="+BarkerSettings.getMaxBrowserViewsPerTab());
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcShowNextBrowser(): browserOffset="+browserOffset+", layout="+layout+", BarkerSettings.getMaxBrowserViewsPerTab()="+BarkerSettings.getMaxBrowserViewsPerTab());
     if (browserOffset+(2*layout) < BarkerSettings.getMaxBrowserViewsPerTab()) {
         browserOffset += layout;
     } else if (browserOffset+layout == BarkerSettings.getMaxBrowserViewsPerTab()) {
@@ -147,7 +148,7 @@ static ipcShowPreviousBrowserSidebar (event: IpcMainEvent) {
 static ipcShowNextBrowserSidebar (event: IpcMainEvent) {
     const layout = BarkerData.getSidebarLayoutNo();
     var browserOffset = BarkerData.getSidebarRollingWindowOffset();
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcShowNextBrowserSidebar(): browserOffset="+browserOffset+", layout="+layout+", BarkerSettings.getMaxBrowserViewsPerTab()="+BarkerSettings.getMaxBrowserViewsPerTab());
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcShowNextBrowserSidebar(): browserOffset="+browserOffset+", layout="+layout+", BarkerSettings.getMaxBrowserViewsPerTab()="+BarkerSettings.getMaxBrowserViewsPerTab());
     if (browserOffset+(2*layout) < BarkerSettings.getMaxBrowserViewsPerTab()) {
         browserOffset += layout;
     } else if (browserOffset+layout == BarkerSettings.getMaxBrowserViewsPerTab()) {
@@ -196,7 +197,7 @@ static ipcFindInPage (event: IpcMainEvent, text: string) {
 }
 
 static ipcClearSelection (event: IpcMainEvent) {
-	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcClearSelection()");
+	BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcClearSelection()");
     let browserViews = BarkerIpc.mainWindow.getBrowserViews();
     let firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo());
     for (let i = firstBrowserViewNo; i< firstBrowserViewNo+BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()); i++) {
@@ -254,12 +255,12 @@ static ipcReloadTab(event: IpcMainEvent, tabIdNo: number) {
 }
 
 static ipcShowThreeDotsMenu(event: IpcMainEvent, browserNo: number) {
-	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcShowThreeDotsMenu(): browserNo="+browserNo)
+	BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcShowThreeDotsMenu(): browserNo="+browserNo)
     BarkerMenu.createThreeDotsMenu(browserNo).popup();
 }
 
 static ipcShowThreeDotsMenuSidebar(event: IpcMainEvent, browserNo: number) {
-	BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcShowThreeDotsMenuSidebar(): browserNo="+browserNo)
+	BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcShowThreeDotsMenuSidebar(): browserNo="+browserNo)
     BarkerMenu.createThreeDotsMenu(browserNo, true).popup();
 }
 
@@ -272,7 +273,7 @@ static ipcAddressKeyPressed(event: IpcMainEvent, browserNo: number, inputUrlAddr
 
 static ipcMatchedAddressSelected(event: IpcMainEvent, uri: string) {
     const browserNo = BarkerBrowser.suggestionBoxBrowserNo;
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMatchedAddressSelected(): browserNo="+BarkerBrowser.suggestionBoxBrowserNo+", uri="+uri);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMatchedAddressSelected(): browserNo="+BarkerBrowser.suggestionBoxBrowserNo+", uri="+uri);
     BarkerBrowser.loadUrlInActualTab(browserNo, uri);
 
     //restore BrowserView height
@@ -296,7 +297,7 @@ static ipcAddressKeyPressedSidebar(event: IpcMainEvent, browserNo: number, input
 
 static ipcMatchedAddressSelectedSidebar(event: IpcMainEvent, uri: string) {
     const browserNo = BarkerSideBar.suggestionBoxBrowserNo;
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMatchedAddressSelectedSidebar(): browserNo="+BarkerSideBar.suggestionBoxBrowserNo+", uri="+uri);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMatchedAddressSelectedSidebar(): browserNo="+BarkerSideBar.suggestionBoxBrowserNo+", uri="+uri);
     BarkerSideBar.loadURLSidebar(browserNo, uri);
 
     //restore BrowserView height
@@ -348,14 +349,14 @@ static ipcReloadTabSidebar(event: IpcMainEvent, tabId: string) {
 }
 
 static ipcMainBodyLoaded(event: IpcMainEvent, height: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMainBodyLoaded(): height="+height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMainBodyLoaded(): height="+height);
     BarkerData.setFrameMainHeight(height);
     BarkerData.setMainBodyLoaded(true);
     BarkerBrowser.showBrowsersIfBodyFullyLoaded();
 }
 
 static ipcBottomBodyLoaded(event: IpcMainEvent, height: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcBottomBodyLoaded(): height="+height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcBottomBodyLoaded(): height="+height);
     BarkerData.setFrameBottomBarHeight(height);
     BarkerData.setBottomBodyLoaded(true);
     BarkerBrowser.showBrowsersIfBodyFullyLoaded();
@@ -363,46 +364,46 @@ static ipcBottomBodyLoaded(event: IpcMainEvent, height: number) {
 
 
 static ipcLeftBodyLoaded(event: IpcMainEvent, width: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLeftBodyLoaded(): width="+width);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcLeftBodyLoaded(): width="+width);
     BarkerData.setFrameSidebarWidth(width);
     BarkerData.setLeftBodyLoaded(true);
     BarkerBrowser.showBrowsersIfBodyFullyLoaded();
 }
 
 static ipcTopBodyLoaded(event: IpcMainEvent, height: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcTopBodyLoaded(): height="+height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcTopBodyLoaded(): height="+height);
     BarkerData.setFrameTopBarHeight(height);
     BarkerData.setTopBodyLoaded(true);
     BarkerBrowser.showBrowsersIfBodyFullyLoaded();
 }
 
 static ipcRightBodyLoaded(event: IpcMainEvent, width: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcRightBodyLoaded(): width="+width);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcRightBodyLoaded(): width="+width);
     BarkerData.setFrameRightBarWidth(width);
     BarkerData.setRightBodyLoaded(true);
     BarkerBrowser.showBrowsersIfBodyFullyLoaded();
 }
 
 static ipcLeftSidebarResized(event: IpcMainEvent, width: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLeftSidebarResized(): width="+width);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcLeftSidebarResized(): width="+width);
     BarkerData.setFrameSidebarWidth(width);
     BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()), BarkerData.getActualTabIdNo(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo()));
 }
 
 static ipcRightSidebarResized(event: IpcMainEvent, width: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcRightSidebarResized(): width="+width);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcRightSidebarResized(): width="+width);
     BarkerData.setFrameRightBarWidth(width);
     BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()), BarkerData.getActualTabIdNo(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo()));
 }
 
 static ipcTopBarResized(event: IpcMainEvent, height: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcTopBarResized(): height="+height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcTopBarResized(): height="+height);
     BarkerData.setFrameTopBarHeight(height);
     BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()), BarkerData.getActualTabIdNo(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo()));
 }
 
 static ipcBottomBarResized(event: IpcMainEvent, height: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcBottomBarResized(): height="+height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcBottomBarResized(): height="+height);
     BarkerData.setFrameBottomBarHeight(height);
     BarkerBrowser.showBrowsers(BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo()), BarkerData.getActualTabIdNo(), BarkerData.getTabBrowserOffset(BarkerData.getActualTabIdNo()));
 }
@@ -412,7 +413,7 @@ static switchBrowserViews(oldBrowserNo:number, newBrowserNo: number, oldPosition
     //switch browser views
     let oldViewNo = BarkerData.getBrowserViewNo(oldPosition);
     let newViewNo = BarkerData.getBrowserViewNo(newPosition);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "switchBrowserViews(): switching positions - old position (internalNo="+oldPosition+", realViewNo="+oldViewNo+"), new position (internalNo="+(newPosition)+", realViewNo="+newViewNo+")");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "switchBrowserViews(): switching positions - old position (internalNo="+oldPosition+", realViewNo="+oldViewNo+"), new position (internalNo="+(newPosition)+", realViewNo="+newViewNo+")");
     BarkerData.setBrowserViewNo(oldPosition, newViewNo);
     BarkerData.setBrowserViewNo(newPosition, oldViewNo);
 
@@ -446,7 +447,7 @@ static switchBrowserViews(oldBrowserNo:number, newBrowserNo: number, oldPosition
 }
 
 static ipcMoveWindowLeft(event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowLeft(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowLeft(): browserNo="+browserNo);
     const switchedBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo())+browserNo-1;
 
     if (browserNo > 1) {
@@ -457,7 +458,7 @@ static ipcMoveWindowLeft(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcMoveWindowRight(event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowRight(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowRight(): browserNo="+browserNo);
     const switchedBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo())+browserNo-1;
 
     if (browserNo < BarkerSettings.getMaxBrowserViewsPerTab()) {
@@ -468,7 +469,7 @@ static ipcMoveWindowRight(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcMoveWindowUp(event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowUp(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowUp(): browserNo="+browserNo);
     const switchedBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo())+browserNo-1;
     const tabLayout = BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo());
     let windowsPerRow: number;
@@ -485,7 +486,7 @@ static ipcMoveWindowUp(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcMoveWindowDown(event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowDown(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowDown(): browserNo="+browserNo);
     const switchedBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(BarkerData.getActualTabIdNo())+browserNo-1;
     const tabLayout = BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo());
     let windowsPerRow: number;
@@ -502,7 +503,7 @@ static ipcMoveWindowDown(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcMoveWindowUpSidebar(event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowUpSidebar(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowUpSidebar(): browserNo="+browserNo);
     const switchedBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar()+browserNo-1;
 
     if (browserNo-1 > 0) {
@@ -513,7 +514,7 @@ static ipcMoveWindowUpSidebar(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcMoveWindowDownSidebar(event: IpcMainEvent, browserNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowDownSidebar(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcMoveWindowDownSidebar(): browserNo="+browserNo);
     const switchedBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar()+browserNo-1;
 
     if (browserNo+1 < BarkerSettings.getMaxBrowserViewsPerTab()) {
@@ -524,18 +525,18 @@ static ipcMoveWindowDownSidebar(event: IpcMainEvent, browserNo: number) {
 }
 
 static ipcGetAllDomains(event: IpcMainEvent, date: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcGetAllDomains(): date="+date);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcGetAllDomains(): date="+date);
     BarkerDb.getAllDomains(date);
 }
 
 static ipcSearchAllHistory(event: IpcMainEvent, searchedString: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcSearchAllHistory(): searchedString="+searchedString);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcSearchAllHistory(): searchedString="+searchedString);
     BarkerDb.searchAllHistory(searchedString);
 }
 
 static ipcLoadScrapedWeb(event: IpcMainEvent, webName: string) {
     const fileName = path.join(app.getPath("userData"), 'barker-scraper')+'\\'+webName+'\\index.html';
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadScrapedWeb(): webName="+webName+", fileName="+fileName);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "ipcLoadScrapedWeb(): webName="+webName+", fileName="+fileName);
 
     let bounds = BarkerBrowser.mainWindow.getBounds();
     bounds.x = bounds.width - BarkerData.frameRightBar_width;
@@ -551,7 +552,7 @@ static ipcHideScrapedWeb(event: IpcMainEvent) {
 }
 
 static showStatusMessage(event: IpcMainEvent, msg: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showStatusMessage(): msg="+msg);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showStatusMessage(): msg="+msg);
     BarkerStatusBar.updateStatusBarText(msg);
 }
 

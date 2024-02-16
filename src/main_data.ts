@@ -1,6 +1,7 @@
 import { BrowserView } from "electron";
 import { BarkerUtils } from './main_utils';
 import { BarkerSettings } from "./main_settings";
+import { BarkerLogger } from "./main_logger";
 
 /* this class is an entry-point for other classes 
    for all temporary run-time data needed during application run
@@ -177,7 +178,7 @@ static addBookmark(category: string, name: string, uri: string) {
 static uriAlreadyAdded(uri: string): boolean {
    for (let i=0; i < BarkerData.typedAddresses.length; i++) {
       if (uri == BarkerData.typedAddresses[i]) {
-         BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "uriAlreadyAdded(): uri="+uri);
+         BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "uriAlreadyAdded(): uri="+uri);
          return true;
       }
    }
@@ -185,7 +186,7 @@ static uriAlreadyAdded(uri: string): boolean {
 }
 
 static addTypedAddress(uri: string) {
-   BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "addTypedAddress(): uri="+uri);
+   BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "addTypedAddress(): uri="+uri);
    if (!BarkerData.uriAlreadyAdded(uri)) {
       BarkerData.typedAddresses.push(uri);
    }

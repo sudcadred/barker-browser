@@ -2,15 +2,13 @@
 # NEXT STEPS
 
 ## SMALL FIXES (not visible to user)
-* destroy memory structures created by new when closing app (event before-quit)
-* remove navigation logs
 * solve sqlite errors in logs during startup
 
 ## SMALL IMPROVEMENTS
-* create logfile
 * browser header in layout 4 looks bad
 * make CSS for preferences dialog
-* log of previous status messages
+* show previous status messages (right sidebar)
+* create separate Folder in user folder for this app
 
 ## FEATURES
 * cancel existing download
@@ -28,11 +26,12 @@
 * check cookies isolation https://stackoverflow.com/questions/55061908/having-two-isolated-in-terms-of-history-cookies-localstorage-browserviews-in-t
 * packager → exe (github release)
 * download video
-* google PDF preview
 
 
 # NOTES FOR BUILDING THE PACKAGE
 -------------- BUILD WIN PACKAGE HINTS -------------
+npm run package-win
+
 Make sure you have build tools installed. You can install them by running this command as administrator:
 $ npm i -g windows-build-tools
 $ yarn # Install needed depedencies.

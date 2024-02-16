@@ -5,7 +5,7 @@ import { BrowserView } from "electron";
 import { BarkerSettings } from "./main_settings";
 import { parse } from 'node-html-parser';
 import {readdir} from 'fs/promises';
-import { BarkerBrowser } from "./main_browser";
+import { BarkerLogger } from "./main_logger";
 const fs = require("fs");
 const path = require("path");
 
@@ -33,7 +33,7 @@ constructor(mainWindow: Electron.BrowserWindow) {
 }
 
 static async scrapeUrl(startingUri: string, maxDepth: number, withinDomain = true) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl()");
     let maxScrappedFiles = Number(BarkerSettings.preferences.value('mainSection.maxScrappedFiles'));
     if (maxScrappedFiles == 0) maxScrappedFiles = 100;
     let startDomain = BarkerUtils.getHostNameFromUrl(startingUri);
@@ -48,7 +48,7 @@ static async scrapeUrl(startingUri: string, maxDepth: number, withinDomain = tru
 
     while (BarkerScraper.linkQueue.length!=0) {
         let internetLink = BarkerScraper.linkQueue[0];
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): internetLink="+internetLink+", linkQueue.length="+BarkerScraper.linkQueue.length);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): internetLink="+internetLink+", linkQueue.length="+BarkerScraper.linkQueue.length);
         let internetLinkDomain = BarkerUtils.getHostNameFromUrl(internetLink);
         let actualDepth = BarkerScraper.depthNo[0];
 
@@ -69,7 +69,7 @@ static async scrapeUrl(startingUri: string, maxDepth: number, withinDomain = tru
             body = await response.text();
         } 
         catch {
-            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Download failed, internetLink="+internetLink);
+            BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Download failed, internetLink="+internetLink);
             BarkerScraper.linkQueue.shift();
             BarkerScraper.depthNo.shift();
             continue;
@@ -154,7 +154,7 @@ static async scrapeUrl(startingUri: string, maxDepth: number, withinDomain = tru
             //save file
             const fileNamePath = path.join(folderPath, localFileName);
             if (!fileAlreadyDownloaded) {
-                BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Saving file "+localFileName);
+                BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Saving file "+localFileName);
 
                 let browser = new BrowserView({webPreferences: {
                     devTools: true, 
@@ -219,7 +219,7 @@ static async scrapeUrl(startingUri: string, maxDepth: number, withinDomain = tru
 
                             fs.writeFile(fileNamePath, pageText, (err: Error) => {
                                 if (err) {
-                                    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): ERROR saving file, internetLink="+internetLink+", error="+ err);
+                                    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): ERROR saving file, internetLink="+internetLink+", error="+ err);
                                 }
                                 BarkerStatusBar.updateStatusBarText("URL " + internetLink + " has been saved (actualDepth="+actualDepth+", total files saved="+BarkerScraper.downloadedLinks.length+")");
                             }); 
@@ -233,12 +233,12 @@ static async scrapeUrl(startingUri: string, maxDepth: number, withinDomain = tru
         }
 
         //remove first link from queue
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Going to shift link queue, BarkerScraper.linkQueue.length="+BarkerScraper.linkQueue.length);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Going to shift link queue, BarkerScraper.linkQueue.length="+BarkerScraper.linkQueue.length);
         BarkerScraper.linkQueue.shift();
         BarkerScraper.depthNo.shift();
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Link queue shifted, BarkerScraper.linkQueue.length="+BarkerScraper.linkQueue.length);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Link queue shifted, BarkerScraper.linkQueue.length="+BarkerScraper.linkQueue.length);
     }
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Web scraping finished, total files saved="+BarkerScraper.downloadedLinks.length);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "scrapeUrl(): Web scraping finished, total files saved="+BarkerScraper.downloadedLinks.length);
     BarkerStatusBar.updateStatusBarText("Web scraping finished, total files saved="+BarkerScraper.downloadedLinks.length);
 
     while (BarkerScraper.downloadedLinks.length!=0) BarkerScraper.downloadedLinks.shift();
@@ -249,7 +249,7 @@ static async showScrapedWebs(parentFolder: string) {
     .filter(dirent => dirent.isDirectory())
     .map(dir => dir.name);
     BarkerScraper.mainWindow.webContents.send('show-scraped-webs', JSON.stringify(directories));
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showScrapedWebs(): JSON.stringify(directories)="+JSON.stringify(directories));
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showScrapedWebs(): JSON.stringify(directories)="+JSON.stringify(directories));
 }
 
 }

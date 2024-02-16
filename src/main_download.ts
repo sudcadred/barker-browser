@@ -4,6 +4,7 @@ import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerData } from "./main_data";
 import { BarkerSettings } from "./main_settings";
 import fs from "fs";
+import { BarkerLogger } from "./main_logger";
 
 /* This class provides methods for file downloads
 */
@@ -104,7 +105,7 @@ static downloadFile(url: string) {
 }
 
 static addToDownloadedItems(s: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "addToDownloadedItems()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "addToDownloadedItems()");
     if (BarkerData.getDownloadedItemsString() == '') {
         BarkerData.setDownloadedItemsString(s);
     } else {
@@ -113,7 +114,7 @@ static addToDownloadedItems(s: string) {
 }
 
 static addToDownloadFailedItems(s: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "addToDownloadFailedItems()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "addToDownloadFailedItems()");
     if (BarkerData.getDownloadFailedItemsString() == '') {
         BarkerData.setDownloadFailedItemsString(s);
     } else {
@@ -122,7 +123,7 @@ static addToDownloadFailedItems(s: string) {
 }
 
 static updateDownloadProgress() {
-    //BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateDownloadProgress()");
+    //BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "updateDownloadProgress()");
     var result = '';
     
     BarkerData.getDownloadProgressMap().forEach((value,key) => {
@@ -139,9 +140,9 @@ static updateDownloadProgress() {
     } else if (result.length < BarkerSettings.getMaxStatusBarTextLength()) {
         BarkerData.setDownloadedItemsString('');
         BarkerData.setDownloadFailedItemsString('');
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateDownloadProgress(): result="+result);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "updateDownloadProgress(): result="+result);
         result = BarkerUtils.removeLastSubString(result, ',');
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateDownloadProgress(): result="+result);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "updateDownloadProgress(): result="+result);
     }
     BarkerStatusBar.updateStatusBarText(result);
 }
@@ -186,7 +187,7 @@ static createDownloadEventCatcher() {
             });
         });
     } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createDownloadEventCatcher() ERROR browser undefined! firstBrowserViewNo="+firstBrowserViewNo+", browserViews.length="+browserViews.length);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createDownloadEventCatcher() ERROR browser undefined! firstBrowserViewNo="+firstBrowserViewNo+", browserViews.length="+browserViews.length);
     }
 }
 

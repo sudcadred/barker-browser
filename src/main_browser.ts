@@ -11,6 +11,7 @@ import isUrlHttp from 'is-url-http';
 import contextMenu from "electron-context-menu";
 import { BarkerMenu } from "./main_menu";
 import { BarkerDb } from "./main_db";
+import { BarkerLogger } from "./main_logger";
 
 /* This class handles browser windows operations 
    like BrowserView creation, setting its bounds, loadURL
@@ -90,7 +91,7 @@ static isBodyFullyLoaded() {
 }
 
 static showBrowsersIfBodyFullyLoaded() {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded()");
     if (BarkerBrowser.isBodyFullyLoaded()) {
         const tabLayout = BarkerData.getTabLayoutNo(BarkerData.getActualTabIdNo());
         const sidebarLayout = BarkerData.getSidebarLayoutNo();
@@ -105,7 +106,7 @@ static showBrowsersIfBodyFullyLoaded() {
         BarkerBrowser.mainWindow.webContents.send('set-layout-buttons', BarkerData.getLayoutString());
         const tabIdNo = BarkerData.getOrderedTabIdNo(0);
         if (BarkerData.getOrderedTabIdNumbersArray().length > 0) {
-            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded(): tabId="+tabIdNo+", tabLayout="+tabLayout+", sidebarLayout="+sidebarLayout);
+            BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowsersIfBodyFullyLoaded(): tabId="+tabIdNo+", tabLayout="+tabLayout+", sidebarLayout="+sidebarLayout);
             BarkerBrowser.mainWindow.webContents.send('set-layout', Number(tabLayout));
             BarkerBrowser.mainWindow.webContents.send('activate-tab', 'NewTab'+tabIdNo);
             BarkerBrowser.mainWindow.webContents.send('set-next-tab-name', BarkerBrowser.getNextTabIdName());
@@ -155,7 +156,7 @@ static getNextEmptyBrowserNo(browserNo: number) {
     if (addresses) {
         for (let i=browserNo+1; i< BarkerSettings.getMaxBrowserViewsPerTab()-browserNo; i++) {
                 const address = addresses.get(i);
-                BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextEmptyBrowserNo(): address="+address+", i="+i+", browserNo="+browserNo);
+                BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getNextEmptyBrowserNo(): address="+address+", i="+i+", browserNo="+browserNo);
                 if (!address) {
                     return i;
                 }
@@ -166,7 +167,7 @@ static getNextEmptyBrowserNo(browserNo: number) {
 
 static openLinkInNextEmptyWindow(browserNo: number, uri: string) {
     const nextBrowserNo = BarkerBrowser.getNextEmptyBrowserNo(0);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): browserNo="+browserNo+", uri="+uri+", nextBrowserNo="+nextBrowserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): browserNo="+browserNo+", uri="+uri+", nextBrowserNo="+nextBrowserNo);
     if ((nextBrowserNo > 0)&&(nextBrowserNo < BarkerSettings.getMaxBrowserViewsPerTab())) {
         BarkerBrowser.loadUrlInActualTab(nextBrowserNo, uri);
     } else {
@@ -176,7 +177,7 @@ static openLinkInNextEmptyWindow(browserNo: number, uri: string) {
 
 static openLinkInFirstEmptyWindow(uri: string) {
     const nextBrowserNo = BarkerBrowser.getNextEmptyBrowserNo(1);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): uri="+uri+", nextBrowserNo="+nextBrowserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "openLinkInNextEmptyWindow(): uri="+uri+", nextBrowserNo="+nextBrowserNo);
     if ((nextBrowserNo > 0)&&(nextBrowserNo < BarkerSettings.getMaxBrowserViewsPerTab())) {
         BarkerBrowser.loadUrlInActualTab(nextBrowserNo, uri);
     } else {
@@ -215,12 +216,11 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
     if (firstBrowser) {
         let firstBrowserNo = BarkerBrowser.mainWindow.getBrowserViews().length - 1;
         BarkerData.setTabFirstBrowserViewNo(tabIdNo, firstBrowserNo);
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserView(): _mapTabsToFirstBrowserViewNo sets tabIdNo=" + tabIdNo + ", firstBrowserViewNo="+firstBrowserNo);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createBrowserView(): _mapTabsToFirstBrowserViewNo sets tabIdNo=" + tabIdNo + ", firstBrowserViewNo="+firstBrowserNo);
     }
 
     //BrowserView navigation events (for later get URL and write it somewhere so user can see actual URL)
     browser.webContents.on('did-navigate', function(event, url) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         BarkerData.setTabAddress(tabIdNo, browserNo, url);
         if (tabIdNo == BarkerData.getActualTabIdNo()) {
             if (BarkerBrowser.mainWindow && BarkerBrowser.mainWindow.webContents)
@@ -232,21 +232,7 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
             });
         }
     });
-    /* FRAME NAVIGATION COMMENTED AS IT GIVES TOO MANY FALSE DB ENTRIES WITH THE SAME CONTENT
-    browser.webContents.on('did-frame-navigate', function(event, url) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
-        const addresses = BarkerData.getTabAddresses(BarkerData.getActualTabIdNo());    //get map of addresses for current tab
-        if (addresses) {
-            addresses.set(browserNo, url);
-        }
-        BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
-        browser.webContents.executeJavaScript("document.querySelector(\'body\').innerText").then( (result) => {
-            BarkerDb.addHistoryEntry(url, result);
-        });
-    });
-    */
     browser.webContents.on('did-navigate-in-page', function(event, url) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "BrowserView Navigation event: url=" + url);
         BarkerData.setTabAddress(tabIdNo, browserNo, url);
         if (BarkerBrowser.mainWindow && BarkerBrowser.mainWindow.webContents && browser && browser.webContents) {
             BarkerBrowser.mainWindow.webContents.send('update-url', browserNo, url);
@@ -304,7 +290,7 @@ static createBrowserView(tabIdNo:number, browserNo: number, firstBrowser: boolea
 }
 
 static createBrowserViewsForOneTab(tabNo: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserViewsForOneTab()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createBrowserViewsForOneTab()");
 
      //create browser windows
      BarkerBrowser.createBrowserView(tabNo, 1, true);
@@ -313,7 +299,7 @@ static createBrowserViewsForOneTab(tabNo: number) {
     }
     
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createBrowserViewsForOneTab(): browserViews=" + browserViews.length);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createBrowserViewsForOneTab(): browserViews=" + browserViews.length);
 }
 
 removeBrowserViewsForOneTab(tabName: string) {
@@ -321,7 +307,7 @@ removeBrowserViewsForOneTab(tabName: string) {
 }
 
 static hideAllBrowserViews_mainArea() {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_mainArea()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_mainArea()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
 
     //scenario 1 - switching from different tab - hide windows from previous tab
@@ -345,7 +331,7 @@ static hideAllBrowserViews_mainArea() {
 
 
 static hideAllBrowserViews_sidebar() {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_sidebar()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews_sidebar()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
     var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
     for (let i=firstBrowserViewNo; i<=firstBrowserViewNo+BarkerSettings.getMaxBrowserViewsPerTab();i++) {
@@ -356,7 +342,7 @@ static hideAllBrowserViews_sidebar() {
 }
 
 static hideAllBrowserViews() {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "hideAllBrowserViews()");
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
     for (let i=0; i<browserViews.length;i++) {
         browserViews[i].setBounds({ x: 0, y: 0, width: 0, height: 0 });
@@ -368,17 +354,17 @@ static removeAllBrowserViews() {
 }
 
 static showBrowserHeader(browserNo: number, left: number, top: number, browserWidth: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowserHeader(): browserNo="+browserNo+", left="+left+", top="+top);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowserHeader(): browserNo="+browserNo+", left="+left+", top="+top);
     BarkerBrowser.mainWindow.webContents.send('create-browser-header', browserNo, left, top, browserWidth);
 }
 
 static showBrowserView(browserViewNo: number, _left: number, _top: number, _width: number, _height: number) {
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowserView(): browserViews=" + browserViews.length+", browserViewNo="+browserViewNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowserView(): browserViews=" + browserViews.length+", browserViewNo="+browserViewNo);
     if (browserViews[browserViewNo]) {
         browserViews[browserViewNo].setBounds({ x: _left, y: _top, width: _width, height: _height }); 
     } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowserView(): ERROR! browserViews=" + browserViews.length+", browserViewNo="+browserViewNo+", browserViews[browserViewNo]="+browserViews[browserViewNo]);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowserView(): ERROR! browserViews=" + browserViews.length+", browserViewNo="+browserViewNo+", browserViews[browserViewNo]="+browserViews[browserViewNo]);
     }
 }
 
@@ -393,7 +379,7 @@ static showBrowsers_showSidebar() {
     const sidebar_browser_width = BarkerData.getFrameSidebarWidth() - 10;
     const sidebar_browser_height = Math.floor((maxHeight-BarkerData.getFrameTopBarHeight()-BarkerData.getFrameBottomBarHeight())/ sidebar_browser_rows);
     var firstBrowserViewNo = BarkerData.getFirstBrowserViewNo_sidebar();
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), " showBrowsers(): firstBrowserViewNo="+firstBrowserViewNo+", _left="+_left+", _top="+_top+", sidebar_browser_rows="+sidebar_browser_rows+", sidebar_browser_width="+sidebar_browser_width+", sidebar_browser_height="+sidebar_browser_height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), " showBrowsers(): firstBrowserViewNo="+firstBrowserViewNo+", _left="+_left+", _top="+_top+", sidebar_browser_rows="+sidebar_browser_rows+", sidebar_browser_width="+sidebar_browser_width+", sidebar_browser_height="+sidebar_browser_height);
 
     BarkerBrowser.mainWindow.webContents.send('set-sidebar-layout', BarkerData.getSidebarLayoutNo());
     BarkerBrowser.hideAllBrowserViews_sidebar();
@@ -470,9 +456,9 @@ static calculateBrowserWindowPosition_mainArea(windowsCnt: number, browserNo: nu
         BarkerBrowser.browserWindowPosition.width = browser_width;
         BarkerBrowser.browserWindowPosition.height = browser_height_netto;
     }
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): browserNo="+browserNo);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): header x="+BarkerBrowser.browserHeaderPosition.x+", y="+BarkerBrowser.browserHeaderPosition.y+", width="+BarkerBrowser.browserHeaderPosition.width+", height="+BarkerBrowser.browserHeaderPosition.height);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): window x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): browserNo="+browserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): header x="+BarkerBrowser.browserHeaderPosition.x+", y="+BarkerBrowser.browserHeaderPosition.y+", width="+BarkerBrowser.browserHeaderPosition.width+", height="+BarkerBrowser.browserHeaderPosition.height);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "calculateBrowserWindowPosition_mainArea(): window x="+BarkerBrowser.browserWindowPosition.x+", y="+BarkerBrowser.browserWindowPosition.y+", width="+BarkerBrowser.browserWindowPosition.width+", height="+BarkerBrowser.browserWindowPosition.height);
 }
 
 static showLazyAddressesIfExist(windowsCnt: number, tabIdNo: number, offset: number) {
@@ -482,7 +468,7 @@ static showLazyAddressesIfExist(windowsCnt: number, tabIdNo: number, offset: num
         for (let i=offset; i<=offset+windowsCnt; i++) {
             const address = lazyAddresses.get(i);
             if (address) {
-                BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showLazyAddressesIfExist(): tabIdNo="+tabIdNo+", address="+address+", i="+i);
+                BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showLazyAddressesIfExist(): tabIdNo="+tabIdNo+", address="+address+", i="+i);
 
                 //load URL
                 let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
@@ -501,10 +487,10 @@ static showLazyAddressesIfExist(windowsCnt: number, tabIdNo: number, offset: num
 static showBrowsers_showMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
     var firstBrowserViewNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
     if (!firstBrowserViewNo) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): no firstBrowserView found, not displaying any browser windows for this tab");
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): no firstBrowserView found, not displaying any browser windows for this tab");
         return;
     }
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): firstBrowserViewNo=" + firstBrowserViewNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers_showMainArea(): firstBrowserViewNo=" + firstBrowserViewNo);
 
     //show browser windows
     BarkerBrowser.hideAllBrowserViews_mainArea();
@@ -557,7 +543,7 @@ static showRightSidebar() {
 }
 
 static updateMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateMainArea(): cnt=" + windowsCnt +", tabIdNo="+tabIdNo+", offset="+offset);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "updateMainArea(): cnt=" + windowsCnt +", tabIdNo="+tabIdNo+", offset="+offset);
 
     BarkerBrowser.hideAllBrowserViews_mainArea();
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers');
@@ -585,7 +571,7 @@ static updateMainArea(windowsCnt: number, tabIdNo: number, offset: number) {
 }
 
 static updateSidebarArea() {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "updateSidebarArea()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "updateSidebarArea()");
 
     BarkerBrowser.hideAllBrowserViews_sidebar();
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers-sidebar');
@@ -614,7 +600,7 @@ static updateSidebarArea() {
 }
 
 static showBrowsers (windowsCnt: number, tabIdNo: number, offset: number) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): cnt=" + windowsCnt +", tabIdNo="+tabIdNo+", offset="+offset);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): cnt=" + windowsCnt +", tabIdNo="+tabIdNo+", offset="+offset);
 
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers');
     BarkerBrowser.mainWindow.webContents.send('delete-all-browser-headers-sidebar');
@@ -633,7 +619,7 @@ static showBrowsers (windowsCnt: number, tabIdNo: number, offset: number) {
             const address = addresses.get(i);
             if (address) {
                 BarkerBrowser.mainWindow.webContents.send('update-url', i, address);
-                BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): browser header no " +i+" updated URL to "+address);
+                BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showBrowsers(): browser header no " +i+" updated URL to "+address);
 
                 //set muted window indication
                 let browserViews = BarkerBrowser.mainWindow.getBrowserViews()
@@ -656,14 +642,14 @@ static loadUrlInActualTab(browserNo: number, uri: string) {
 }
 
 static loadURL (tabIdNo: number, browserNo: number, uri: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserNo="+browserNo+", uri="+uri);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserNo="+browserNo+", uri="+uri);
     if (browserNo>BarkerSettings.getMaxBrowserViewsPerTab()) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL() ERROR - browserNo not valid! browserNo="+browserNo);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "loadURL() ERROR - browserNo not valid! browserNo="+browserNo);
         return;
     }
     let browserViews = BarkerBrowser.mainWindow.getBrowserViews();
     const firstBrowserNo = BarkerData.getTabFirstBrowserViewNo(tabIdNo);
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): tabId="+tabIdNo+", firstBrowserNo="+firstBrowserNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): tabId="+tabIdNo+", firstBrowserNo="+firstBrowserNo);
     
     var uriWithProtocol = uri;
     if (!/^https?:\/\//i.test(uri)) {
@@ -673,7 +659,7 @@ static loadURL (tabIdNo: number, browserNo: number, uri: string) {
     const browserViewNo = BarkerData.getBrowserViewNo(firstBrowserNo+browserNo-1);
     if (isUrlHttp(uriWithProtocol)) {
         browserViews[browserViewNo].webContents.loadURL(uriWithProtocol);
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserViewNo="+browserViewNo);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "loadURL(): browserViewNo="+browserViewNo);
         
         if (!BarkerData.uriAlreadyAdded(uriWithProtocol)) {
             BarkerSaveLoadState.saveTypedAddress(uriWithProtocol);
@@ -693,16 +679,16 @@ static getNextTabIdNo () {
     //find current tab
     var i;
     for (i=0; i<BarkerData.getOrderedTabIdNumbersArray().length;i++) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): i="+i+", _orderedTabIds[i]="+BarkerData.getOrderedTabIdName(i));
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): i="+i+", _orderedTabIds[i]="+BarkerData.getOrderedTabIdName(i));
         if (BarkerData.getOrderedTabIdNo(i) == BarkerData.getActualTabIdNo()) break;
     }
     
     //return next tab
     if (i<BarkerData.getOrderedTabIdNumbersArray().length-1) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): Returning i="+i+", _orderedTabIds[i+1]="+BarkerData.getOrderedTabIdName(i+1));
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): Returning i="+i+", _orderedTabIds[i+1]="+BarkerData.getOrderedTabIdName(i+1));
         return BarkerData.getOrderedTabIdNo(i+1); 
     } else {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): Returning i="+i+", _orderedTabIds[0]="+BarkerData.getOrderedTabIdName(0));
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "getNextTabIdNo(): Returning i="+i+", _orderedTabIds[0]="+BarkerData.getOrderedTabIdName(0));
         return BarkerData.getOrderedTabIdNo(0);
     }
 }
@@ -732,7 +718,7 @@ static showMatchedAddresses(uri: string, browserNo: number) {
         BarkerBrowser.browserHeaderPosition.x += 220;
         BarkerBrowser.browserHeaderPosition.y += BarkerSettings.getBrowserHeaderHeight();
         BarkerBrowser.browserHeaderPosition.width = BarkerBrowser.browserHeaderPosition.width / 3;
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "showMatchedAddresses(): x="+BarkerBrowser.browserHeaderPosition.x+", y="+BarkerBrowser.browserHeaderPosition.y+", width="+BarkerBrowser.browserHeaderPosition.width+", height="+BarkerBrowser.browserHeaderPosition.height);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "showMatchedAddresses(): x="+BarkerBrowser.browserHeaderPosition.x+", y="+BarkerBrowser.browserHeaderPosition.y+", width="+BarkerBrowser.browserHeaderPosition.width+", height="+BarkerBrowser.browserHeaderPosition.height);
         BarkerBrowser.mainWindow.webContents.send('show-matched-addresses', uri, BarkerBrowser.browserHeaderPosition.x, BarkerBrowser.browserHeaderPosition.y);
 
         //store browserNo for time when address is clicked
@@ -751,7 +737,7 @@ static createTab(paramTabIdNo = 0) {
         tabName = BarkerData.getTabName(tabIdNo);
     }
 
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createTab(): tabIdNo="+tabIdNo);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createTab(): tabIdNo="+tabIdNo);
     BarkerData.setTabLayoutNo(tabIdNo, BarkerSettings.getDefautLayoutNo());
     BarkerData.getOrderedTabIdNumbersArray().push(tabIdNo);
     BarkerData.setTabName(tabIdNo, 'NewTab'+tabIdNo);

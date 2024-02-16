@@ -11,6 +11,7 @@ import { BarkerSideBar } from "./main_sidebar";
 import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
 import { BarkerScraper } from "./main_scraper";
+import { BarkerLogger } from "./main_logger";
 const path = require('node:path')
 const Store = require('electron-store');
 const store = new Store();
@@ -32,6 +33,8 @@ function createMainWindow () {
 	_mainWindow = mainWindow;
     _mainWindow.maximize();
     
+    BarkerUtils.createFolderIfDoesNotExist(path.join(app.getPath("userData"), 'barker-browser/'));
+
     //initialize other classes
     new BarkerBrowser(_mainWindow);
     new BarkerDownload(_mainWindow);
@@ -46,6 +49,7 @@ function createMainWindow () {
     BarkerSettings.setAppAccordingToSavedPreferences();
     new BarkerDb();
     new BarkerScraper(mainWindow);
+    new BarkerLogger();
 
     //display HTML and start renderers
     _mainWindow.webContents.loadFile(_mainIndexFile);
@@ -55,7 +59,7 @@ function createMainWindow () {
     // see BarkerBrowser.showBrowsersIfBodyFullyLoaded()
 
     _mainWindow.on('resize', function () {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "mainWindow resized");
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "mainWindow resized");
         const actualTabIdNo = BarkerData.getActualTabIdNo();
         const cnt = BarkerData.getTabLayoutNo(actualTabIdNo);
         BarkerBrowser.showBrowsers(cnt, actualTabIdNo, BarkerData.getTabBrowserOffset(actualTabIdNo));
@@ -75,5 +79,6 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', function () {
+    BarkerLogger.logFileStream.end();
     if (process.platform !== 'darwin') app.quit()
 });

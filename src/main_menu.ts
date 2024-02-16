@@ -9,6 +9,7 @@ import { BarkerStatusBar } from "./main_statusbar";
 import { BarkerDb } from "./main_db";
 import { BarkerSaveLoadState } from "./main_saveLoadState";
 import { BarkerScraper } from "./main_scraper";
+import { BarkerLogger } from "./main_logger";
 const { dialog } = require('electron');
 const path = require("path");
 
@@ -16,7 +17,7 @@ const path = require("path");
 function _showPreferences() { BarkerSettings.showPreferences();}
 function _openBookmark(uri: string) { BarkerBrowser.openLinkInFirstEmptyWindow(uri);}
 function _openAllBookmarks(openedCategory: string) { 
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "_openAllBookmarks(): openedCategory="+openedCategory);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "_openAllBookmarks(): openedCategory="+openedCategory);
     let tabIdNo = BarkerBrowser.createTab(); 
     let browserNo = 1;
     for (let j=0; j< BarkerData.bookmarks.length; j++) {
@@ -90,11 +91,11 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
         ']},';
 
     let category: string;
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu()");
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu()");
     BarkerMenu.mainWindow = mainWindow;
     var template = templateStart + templateMenuFile + templateMenuRightSidebar;
     for (let i=0; i< BarkerData.bookmarkTopics.length; i++) {
-        BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): bookmarkTopic="+BarkerData.bookmarkTopics[i]);
+        BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): bookmarkTopic="+BarkerData.bookmarkTopics[i]);
         template += '{label: \''+BarkerData.bookmarkTopics[i]+'\',';
         template += 'submenu: [';
         template += '{label: \'Open all bookmarks in new tab\',';
@@ -103,7 +104,7 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
         for (let j=0; j< BarkerData.bookmarks.length; j++) {
             const bookmarkItem = BarkerData.bookmarks[j]; 
             category = bookmarkItem['category'];
-            BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): bookmarkItem="+String(bookmarkItem)+", category="+category+", BarkerData.bookmarkTopics[i]="+BarkerData.bookmarkTopics[i]+", i="+i);
+            BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): bookmarkItem="+String(bookmarkItem)+", category="+category+", BarkerData.bookmarkTopics[i]="+BarkerData.bookmarkTopics[i]+", i="+i);
             if (category == BarkerData.bookmarkTopics[i]) {
                 template += '{label: \''+bookmarkItem['name']+'\',';
                 template += 'click: () => {_openBookmark(\''+ bookmarkItem['uri'] +'\')}},';
@@ -113,7 +114,7 @@ static createMainMenu(mainWindow: Electron.BrowserWindow) {
         template += '}';    //end item
     }
     template += ']';
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): template="+template);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "createMainMenu(): template="+template);
     const templateObj = eval(template);
     BarkerMenu.menu = Menu.buildFromTemplate(templateObj);
     Menu.setApplicationMenu(BarkerMenu.menu);

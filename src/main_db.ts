@@ -1,6 +1,7 @@
 import { app } from "electron";
 import { BarkerUtils } from "./main_utils";
 import { BarkerBrowser } from "./main_browser";
+import { BarkerLogger } from "./main_logger";
 const Database = require("better-sqlite3");
 const path = require('node:path')
 const dbPath = path.join(app.getPath("userData"), 'barker_browser.db');
@@ -169,7 +170,7 @@ static readHistorySearchString_uris = (searchedString: string) => {
 }
 
 static searchAllHistory(searchedString: string) {
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "searchAllHistory(): searchedString="+searchedString);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "searchAllHistory(): searchedString="+searchedString);
     const datesList = BarkerDb.readHistoryAllDates();
     const domainsList = BarkerDb.readHistorySearchString_domains(searchedString);
     const uriList = BarkerDb.readHistorySearchString_uris(searchedString);

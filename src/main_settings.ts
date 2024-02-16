@@ -1,6 +1,7 @@
 import { app } from "electron";
 import { BarkerUtils } from "./main_utils";
 import { BarkerData } from "./main_data";
+import { BarkerLogger } from "./main_logger";
 const path = require('node:path')
 const ElectronPreferences = require('electron-preferences');
 
@@ -247,14 +248,14 @@ static showPreferences() {
 static setAppAccordingToSavedPreferences() {
     //app title
     let appTitle = BarkerSettings.preferences.value('mainSection.appTitle');
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): appTitle=" + appTitle);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): appTitle=" + appTitle);
     if (appTitle == '') appTitle = BarkerSettings.appTitle;
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): appTitle=" + appTitle);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): appTitle=" + appTitle);
     BarkerSettings.mainWindow.setTitle(appTitle);
 
     //max number of windows per tab
     const maxWindows = Number(BarkerSettings.preferences.value('mainSection.maxBrowsersPerTab'));
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): maxWindows=" + maxWindows);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): maxWindows=" + maxWindows);
     if (maxWindows > 0) BarkerSettings.maxBrowserViewsPerTab = maxWindows;
     
     //user agent
@@ -284,7 +285,7 @@ static setAppAccordingToSavedPreferences() {
     if (layout25) layoutString += '1,'; else layoutString += '0,';
     if (layout36) layoutString += '1,'; else layoutString += '0,';
     if (layout49) layoutString += '1'; else layoutString += '0';
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): _layoutString="+layoutString);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): _layoutString="+layoutString);
     BarkerData.setLayoutString(layoutString);
 
     //browser header settings
@@ -302,7 +303,7 @@ static setAppAccordingToSavedPreferences() {
     if (btnForward) browserHeaderButtonsString += '1,'; else browserHeaderButtonsString += '0,';
     if (btnRefresh) browserHeaderButtonsString += '1,'; else browserHeaderButtonsString += '0,';
     if (btnClear) browserHeaderButtonsString += '1'; else browserHeaderButtonsString += '0';
-    BarkerUtils.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): _browserHeaderButtonsString="+browserHeaderButtonsString);
+    BarkerLogger.log((new Error().stack.split("at ")[1]).trim(), "setAppAccordingToSavedPreferences(): _browserHeaderButtonsString="+browserHeaderButtonsString);
     BarkerData.setBrowserHeaderString(browserHeaderButtonsString);
 }
 
